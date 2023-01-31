@@ -350,10 +350,12 @@ export const start = () => {
   registerSettings();
   applyInjections();
   addChangeListener();
+  Utils.rerenderChannels();
 };
 
 export const stop = () => {
   PluginInjector.uninjectAll();
+  Utils.rerenderChannels();
 };
 
 export { addSHCEntry } from "./lib/guild-context.jsx";

@@ -5,7 +5,15 @@ import { PluginLogger, shc } from "../index.jsx";
 import { defaultSettings } from "../lib/consts.jsx";
 import { common } from "replugged";
 const { React } = common;
-import { ChannelUtils, GuildMemberStore, TextElement, chat } from "../lib/requiredModules.jsx";
+import {
+  ChannelUtils,
+  GuildMemberStore,
+  RolePill,
+  RolePillClasses,
+  TextElement,
+  UserMentions,
+  chat,
+} from "../lib/requiredModules.jsx";
 import * as Utils from "../lib/utils.jsx";
 export const Lockscreen = React.memo((props) => {
   if (shc.get("debugMode", defaultSettings.debugMode)) PluginLogger.log(props);
