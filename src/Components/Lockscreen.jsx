@@ -83,7 +83,18 @@ export const Lockscreen = React.memo((props) => {
             {Utils.convertToHMS(props.channel.rateLimitPerUser)}
           </TextElement>
         )}
-
+        {props.channel.nsfw && (
+          <TextElement
+            {...{
+              color: TextElement.Colors.INTERACTIVE_NORMAL,
+              size: TextElement.Sizes.SIZE_14,
+              style: {
+                marginTop: 10,
+              },
+            }}>
+            Age-Restricted Channel (NSFW) 🔞
+          </TextElement>
+        )}
         {shc.get("showPerms", defaultSettings.showPerms) && props.channel.permissionOverwrites && (
           <div
             {...{
