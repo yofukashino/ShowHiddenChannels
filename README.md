@@ -5,7 +5,7 @@ Displays all hidden channels which can't be accessed,.
 This won't allow you to read them.
 
 Direct Download Link:
-[Tharki.ShowHiddenChannels.asar](https://github.com/Tharki-God/PremiumScreenShare/releases/latest/download/Tharki.ShowHiddenChannels.asar)
+[Tharki.ShowHiddenChannels.asar](https://github.com/Tharki-God/ShowHiddenChannels/releases/latest/download/Tharki.ShowHiddenChannels.asar)
 
 ![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/showhiddenchannels.png)
 
