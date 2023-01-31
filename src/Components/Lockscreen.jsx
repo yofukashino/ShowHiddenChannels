@@ -83,18 +83,7 @@ export const Lockscreen = React.memo((props) => {
             {Utils.convertToHMS(props.channel.rateLimitPerUser)}
           </TextElement>
         )}
-        {props.channel.nsfw && (
-          <TextElement
-            {...{
-              color: TextElement.Colors.INTERACTIVE_NORMAL,
-              size: TextElement.Sizes.SIZE_14,
-              style: {
-                marginTop: 10,
-              },
-            }}>
-            Age-Restricted Channel (NSFW) 🔞
-          </TextElement>
-        )}
+
         {shc.get("showPerms", defaultSettings.showPerms) && props.channel.permissionOverwrites && (
           <div
             {...{
@@ -137,7 +126,7 @@ export const Lockscreen = React.memo((props) => {
                       userId: m.id,
                       channelId: props.channel.id,
                     },
-                    NOOP,
+                    Utils.NOOP,
                     {
                       noStyleAndInteraction: false,
                     },
@@ -182,10 +171,10 @@ export const Lockscreen = React.memo((props) => {
                         className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
                         disableBorderColor: true,
                         guildId: props.guild.id,
-                        onRemove: NOOP,
+                        onRemove: Utils.NOOP,
                         role: props.guild.roles[m.id],
                       },
-                      NOOP,
+                      Utils.NOOP,
                     ),
                   );
                 })()}

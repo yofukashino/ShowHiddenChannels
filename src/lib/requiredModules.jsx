@@ -34,7 +34,7 @@ export const { U: RolePill } = Webpack.getModule((m) =>
   m?.exports?.U?.render?.toString().includes("roleStyle"),
 );
 export const MessageActions = Webpack.getByProps("jumpToMessage", "_sendMessage");
-export const { Z: UserMentions } = Webpack.getModule((m) =>
+export const UserMentions = Webpack.getModule((m) =>
   m?.exports?.Z?.react?.toString().includes("inlinePreview"),
 );
 export const CategoryUtil = Webpack.getModule((m) =>
