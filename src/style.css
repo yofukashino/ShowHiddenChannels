@@ -1,0 +1,24 @@
+.shc-hidden-notice {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  text-align: center;
+}
+.shc-hidden-notice > div[class^="divider"] {
+  display: none;
+}
+.shc-hidden-notice > div[class^="topic"] {
+  background-color: var(--background-secondary);
+  padding: 5px;
+  max-width: 50vh;
+  text-overflow: ellipsis;
+  border-radius: 5px;
+  margin: 10px auto;
+}
+
+.shc-rolePill {
+  margin-right: 0px !important;
+  background-color: var(--background-primary);
+}

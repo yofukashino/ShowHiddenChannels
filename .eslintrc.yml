@@ -45,13 +45,13 @@ overrides:
       no-void: off
       consistent-return: off
 
-  - files: "**/src/**/*.ts"
+  - files: "**/src/**/*.jsx"
     extends: eslint-config-dmitmel/rules/typescript/with-type-checking
 
-  - files: "**/*.d.ts"
+  - files: "**/*.d.jsx"
     rules:
       no-var: off
 
-  - files: "src/**/*.ts"
+  - files: "src/**/*.jsx"
     parserOptions:
       project: tsconfig.json

@@ -1,18 +1,19 @@
 {
-  "id": "dev.replugged.PluginTemplate",
-  "name": "Plugin Template",
-  "description": "A plugin template",
+  "id": "Tharki.ShowHiddenChannels",
+  "name": "ShowHiddenChannels",
+  "description": "A replugged plugin which displays all hidden Channels, which can't be accessed due to Role Restrictions, this won't allow you to read them (impossible).",
   "author": {
-    "name": "replugged",
-    "discordID": "1000992611840049192",
-    "github": "replugged-org"
+    "name": "Ahlawat",
+    "discordID": "1025214794766221384",
+    "github": "Tharki-God"
   },
   "version": "1.0.0",
   "updater": {
     "type": "github",
-    "id": "replugged-org/plugin-template"
+    "id": "Tharki-God/ShowHiddenChannels"
   },
   "license": "MIT",
   "type": "replugged-plugin",
-  "renderer": "src/index.ts"
+  "renderer": "src/index.jsx",
+  "plaintextPatches": "src/plaintextPatches.jsx"
 }
