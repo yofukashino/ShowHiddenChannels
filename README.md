@@ -7,7 +7,7 @@ This won't allow you to read them.
 Direct Download Link:
 [Tharki.ShowHiddenChannels.asar](https://github.com/Tharki-God/PremiumScreenShare/releases/latest/download/Tharki.ShowHiddenChannels.asar)
 
-![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/premiumscreenshare.png)
+![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/showhiddenchannels.png)
 
 <sub>Ported from Better discord plugin made by
 [JustOptimize](https://github.com/JustOptimize/return-ShowHiddenChannels) which was ported from
