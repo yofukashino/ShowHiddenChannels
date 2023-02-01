@@ -154,43 +154,91 @@ export const Lockscreen = React.memo((props) => {
                   padding: 5,
                 },
               }}>
-              Channel-specific roles: ,
-              <div
-                {...{
-                  style: {
-                    color: "var(--interactive-normal)",
-                    paddingTop: 5,
-                  },
-                }}>
-                {...(() => {
-                  const channelRoles = Object.values(props.channel.permissionOverwrites).filter(
-                    (role) =>
-                      role !== undefined &&
-                      role?.type == 0 &&
-                      ((shc.get("showAdmin", defaultSettings.showAdmin) &&
-                        (props.guild.roles[role.id].permissions & BigInt(8)) == BigInt(8)) ||
-                        (role.allow & BigInt(1024)) == BigInt(1024) ||
-                        (props.guild.roles[role.id].permissions & BigInt(1024) &&
-                          (role.deny & BigInt(1024)) == 0)),
-                  );
-
-                  if (!channelRoles?.length) return ["None"];
-                  return channelRoles.map((m) =>
-                    RolePill.render(
-                      {
-                        canRemove: false,
-                        className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
-                        disableBorderColor: true,
-                        guildId: props.guild.id,
-                        onRemove: Utils.NOOP,
-                        role: props.guild.roles[m.id],
-                      },
-                      Utils.NOOP,
-                    ),
-                  );
-                })()}
-              </div>
+              Channel-specific roles:
             </TextElement>
+            <div
+              {...{
+                style: {
+                  color: "var(--interactive-normal)",
+                  paddingTop: 5,
+                },
+              }}>
+              {...(() => {
+                const channelRoles = Object.values(props.channel.permissionOverwrites).filter(
+                  (role) =>
+                    role !== undefined &&
+                    role?.type == 0 &&
+                    ((shc.get("showAdmin", defaultSettings.showAdmin) &&
+                      (props.guild.roles[role.id].permissions & BigInt(8)) == BigInt(8)) ||
+                      (role.allow & BigInt(1024)) == BigInt(1024) ||
+                      (props.guild.roles[role.id].permissions & BigInt(1024) &&
+                        (role.deny & BigInt(1024)) == 0)),
+                );
+
+                if (!channelRoles?.length) return ["None"];
+                return channelRoles.map((m) =>
+                  RolePill.render(
+                    {
+                      canRemove: false,
+                      className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
+                      disableBorderColor: true,
+                      guildId: props.guild.id,
+                      onRemove: Utils.NOOP,
+                      role: props.guild.roles[m.id],
+                    },
+                    Utils.NOOP,
+                  ),
+                );
+              })()}
+            </div>
+            {shc.get("showAdmin", defaultSettings.showAdmin) &&
+              shc.get("showAdmin", defaultSettings.showAdmin) != "channel" && (
+                <div>
+                  <TextElement
+                    {...{
+                      style: {
+                        color: "var(--interactive-normal)",
+                        borderTop: "1px solid var(--background-tertiary)",
+                        padding: 5,
+                      },
+                    }}>
+                    Admin roles:
+                  </TextElement>
+                  <div
+                    {...{
+                      style: {
+                        color: "var(--interactive-normal)",
+                        paddingTop: 5,
+                      },
+                    }}>
+                    {...(() => {
+                      if (!shc.get("showAdmin", defaultSettings.showAdmin)) return ["None"];
+                      const guildRoles = Object.values(props.guild.roles).filter(
+                        (role) =>
+                          (role.permissions & BigInt(8)) == BigInt(8) &&
+                          (shc.get("showAdmin", defaultSettings.showAdmin) == "include" ||
+                            (shc.get("showAdmin", defaultSettings.showAdmin) == "exclude" &&
+                              !role.tags?.bot_id)),
+                      );
+
+                      if (!guildRoles?.length) return ["None"];
+                      return guildRoles.map((m) =>
+                        RolePill.render(
+                          {
+                            canRemove: false,
+                            className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
+                            disableBorderColor: true,
+                            guildId: props.guild.id,
+                            onRemove: Utils.NOOP,
+                            role: m,
+                          },
+                          Utils.NOOP,
+                        ),
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
           </div>
         )}
         {props.channel.type == 15 && (props.channel.availableTags || props.channel.topic) && (

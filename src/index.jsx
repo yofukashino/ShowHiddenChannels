@@ -295,7 +295,7 @@ const applyInjections = () => {
       case "extra": {
         const hiddenId = `${args[0]}_hidden`;
         const HiddenCategory = res.guildChannels.categories[hiddenId];
-        const hiddenChannels = getHiddenChannelRecord(
+        const hiddenChannels = Utils.getHiddenChannelRecord(
           [
             res.guildChannels.favoritesCategory,
             res.guildChannels.recentsCategory,
