@@ -51,7 +51,8 @@ export class SettingsGroup extends React.Component {
       <div
         {...{
           style: {
-            padding: this.state.open ? "0px 0px 0px 0px" : "0px 0px 10px 0px",
+            padding:
+              this.state.open || !this.props.collapsible ? "0px 0px 0px 0px" : "0px 0px 10px 0px",
           },
         }}>
         <Clickable
@@ -61,7 +62,7 @@ export class SettingsGroup extends React.Component {
               display: "flex",
             },
           }}>
-          {this.state.open ? <Open /> : <Closed />}
+          {this.state.open || !this.props.collapsible ? <Open /> : <Closed />}
           <Text.Eyebrow>{this.props.name}</Text.Eyebrow>
         </Clickable>
         <div
