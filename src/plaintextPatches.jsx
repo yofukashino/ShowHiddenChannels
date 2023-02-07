@@ -7,8 +7,8 @@ export default [
         replace: `_guild=$1,$&`,
       },
       {
-        match: /(id:"leave-guild".{0,200}),(\(0,.{1,3}\.jsxs?\).{0,200}function.{0,118})/,
-        replace: `$1,replugged.plugins.getExports('Tharki.ShowHiddenChannels').addSHCEntry(_guild),$2`,
+        match: /(\[)(D,__OVERLAY__\?null:k,R,[A-Za-z])(])/,
+        replace: `$1 $2 , replugged.plugins.getExports('Tharki.ShowHiddenChannels').addSHCEntry(_guild) $3`,
       },
     ],
   },
