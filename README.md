@@ -1,4 +1,4 @@
-### PremiumScreenShare
+### ShowHiddenChannels
 
 Displays all hidden channels which can't be accessed,.
 
