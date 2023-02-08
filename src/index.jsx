@@ -30,6 +30,7 @@ import { registerSettings } from "./Components/Settings.jsx";
 
 import * as Icons from "./Components/Icons.jsx";
 import { Lockscreen } from "./Components/Lockscreen.jsx";
+import { ErrorBoundary } from "./Components/ErrorBoundry.jsx";
 import "./style.css";
 export const PluginInjector = new Injector();
 export const PluginLogger = Logger.plugin("ShowHiddenChannels");
@@ -104,11 +105,14 @@ const applyInjections = () => {
     const channel = ChannelStore?.getChannel(channelId);
     if (guildId && channel?.isHidden?.() && channel?.id != Voice.getChannelId())
       res.props.render = () => (
-        <Lockscreen
-          {...{
-            channel,
-            guild: GuildStore.getGuild(guildId),
-          }}></Lockscreen>
+        <ErrorBoundary>
+          <Lockscreen
+            {...{
+              channel,
+              guild: GuildStore.getGuild(guildId),
+            }}
+          />
+        </ErrorBoundary>
       );
     return res;
   });

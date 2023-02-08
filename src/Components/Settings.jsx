@@ -1,13 +1,11 @@
 /* eslint-disable eqeqeq */
 import { common, components, util } from "replugged";
 import { PluginLogger, shc } from "../index.jsx";
-const { SwitchItem } = components;
+const { Category, SwitchItem, RadioItem } = components;
 const { React } = common;
 import { ChannelTypes, defaultSettings } from "../lib/consts.jsx";
 import * as Utils from "../lib/utils.jsx";
 import { IconSwitch } from "./IconSwitch.jsx";
-import { SettingsGroup } from "./SettingsGroup.jsx";
-import { RadioGroup } from "./RadioGroup.jsx";
 import { GuildStore, IconUtils } from "../lib/requiredModules.jsx";
 export const registerSettings = () => {
   for (const [key, value] of Object.entries(defaultSettings)) {
@@ -20,10 +18,10 @@ export const registerSettings = () => {
 export const Settings = () => {
   return (
     <div>
-      <SettingsGroup {...{ name: "General Settings", shown: false }}>
-        <RadioGroup
+      <Category {...{ title: "General Settings", open: false }}>
+        <RadioItem
           {...{
-            name: "Hidden Channel Icon",
+            title: "Hidden Channel Icon",
             note: "What icon to show as indicator for hidden channels.",
             options: [
               {
@@ -43,9 +41,9 @@ export const Settings = () => {
           }}
         />
 
-        <RadioGroup
+        <RadioItem
           {...{
-            name: "Sorting Order",
+            title: "Sorting Order",
             note: "Where to display Hidden Channels.",
             options: [
               {
@@ -71,9 +69,9 @@ export const Settings = () => {
           Show Permissions
         </SwitchItem>
 
-        <RadioGroup
+        <RadioItem
           {...{
-            name: "Show Admin Roles",
+            title: "Show Admin Roles",
             note: "Show roles that have ADMINISTRATOR permission in the hidden channel page (requires 'Shows Permission' enabled).",
             options: [
               {
@@ -120,8 +118,8 @@ export const Settings = () => {
           {...util.useSetting(shc, "debugMode")}>
           Enable Debug Mode
         </SwitchItem>
-      </SettingsGroup>
-      <SettingsGroup {...{ name: "Choose what channels you want to display", shown: false }}>
+      </Category>
+      <Category {...{ title: "Choose what channels you want to display", open: false }}>
         {...Object.values(ChannelTypes).map((type) => {
           const typeSetting = shc.get("channels", defaultSettings.channels);
           const [switchValue, setSwitchValue] = React.useState(typeSetting[type]);
@@ -141,9 +139,9 @@ export const Settings = () => {
             </SwitchItem>
           );
         })}
-      </SettingsGroup>
+      </Category>
 
-      <SettingsGroup {...{ name: "Guilds Blacklist", shown: false }}>
+      <Category {...{ title: "Guilds Blacklist", open: false }}>
         {...Object.values(GuildStore.getGuilds()).map((guild) => {
           const blacklistedGuilds = shc.get("blacklistedGuilds", defaultSettings.blacklistedGuilds);
           const [switchValue, setSwitchValue] = React.useState(
@@ -167,7 +165,7 @@ export const Settings = () => {
             </IconSwitch>
           );
         })}
-      </SettingsGroup>
+      </Category>
     </div>
   );
 };
