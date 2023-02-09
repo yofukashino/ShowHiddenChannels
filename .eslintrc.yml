@@ -7,7 +7,7 @@ parser: "@typescript-eslint/parser"
 parserOptions:
   sourceType: module
 plugins:
-  - "@typescript-eslint"
+  - "react"
 rules:
   func-names: off
   node/no-unsupported-features/es-syntax:
@@ -32,11 +32,9 @@ rules:
   no-process-exit: off
   no-undef: off
   no-unused-vars: off
-  "@typescript-eslint/no-unused-vars": error
 
 overrides:
-  - files: "**/*.ts"
-    extends: eslint-config-dmitmel/presets/typescript-addon
+  - files: "**/*.jsx"
     rules:
       node/no-missing-import: off
       eqeqeq: off
@@ -44,9 +42,6 @@ overrides:
       no-return-assign: off
       no-void: off
       consistent-return: off
-
-  - files: "**/src/**/*.jsx"
-    extends: eslint-config-dmitmel/rules/typescript/with-type-checking
 
   - files: "**/*.d.jsx"
     rules:
