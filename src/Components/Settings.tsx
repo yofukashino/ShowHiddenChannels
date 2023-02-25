@@ -1,17 +1,17 @@
 /* eslint-disable eqeqeq */
-import { common, components, util } from "replugged";
-import { PluginLogger, shc } from "../index.jsx";
+import { components, util } from "replugged";
+import { PluginLogger, SettingValues } from "../index";
+import { ChannelTypes, defaultSettings } from "../lib/consts";
+import { IconSwitch } from "./IconSwitch";
+import { GuildStore, IconUtils } from "../lib/requiredModules";
+import * as Utils from "../lib/utils";
+import * as Types from "../types";
 const { Category, SwitchItem, RadioItem } = components;
-const { React } = common;
-import { ChannelTypes, defaultSettings } from "../lib/consts.jsx";
-import * as Utils from "../lib/utils.jsx";
-import { IconSwitch } from "./IconSwitch.jsx";
-import { GuildStore, IconUtils } from "../lib/requiredModules.jsx";
-export const registerSettings = () => {
-  for (const [key, value] of Object.entries(defaultSettings)) {
-    if (shc.has(key)) return;
-    PluginLogger.log(`Adding new setting ${key} with value`, value);
-    shc.set(key, value);
+export const registerSettings = (): void => {
+  for (const key in defaultSettings) {
+    if (SettingValues.has(key as keyof Types.Settings)) return;
+    PluginLogger.log(`Adding new setting ${key} with value ${defaultSettings[key]}.`);
+    SettingValues.set(key as keyof Types.Settings, defaultSettings[key]);
   }
 };
 
@@ -34,10 +34,14 @@ export const Settings = () => {
               },
               {
                 name: "None",
-                value: false,
+                value: "false",
               },
             ],
-            ...util.useSetting(shc, "hiddenChannelIcon"),
+            ...Utils.useSetting(
+              SettingValues,
+              "hiddenChannelIcon",
+              defaultSettings.hiddenChannelIcon,
+            ),
           }}
         />
 
@@ -59,13 +63,13 @@ export const Settings = () => {
                 value: "extra",
               },
             ],
-            ...util.useSetting(shc, "sort"),
+            ...Utils.useSetting(SettingValues, "sort", defaultSettings.sort),
           }}
         />
 
         <SwitchItem
           note="Show what roles/users can access the hidden channel."
-          {...util.useSetting(shc, "showPerms")}>
+          {...util.useSetting(SettingValues, "showPerms")}>
           Show Permissions
         </SwitchItem>
 
@@ -88,50 +92,58 @@ export const Settings = () => {
               },
               {
                 name: "Don't Show Administrator Roles",
-                value: false,
+                value: "false",
               },
             ],
-            ...util.useSetting(shc, "showAdmin"),
+            ...Utils.useSetting(SettingValues, "showAdmin", defaultSettings.showAdmin),
           }}
         />
 
         <SwitchItem
           note="Stops the plugin from marking hidden channels as read."
-          {...util.useSetting(shc, "MarkUnread")}>
+          {...util.useSetting(
+            SettingValues,
+            "stopMarkingUnread",
+            defaultSettings.stopMarkingUnread,
+          )}>
           Stop marking hidden channels as read
         </SwitchItem>
 
         <SwitchItem
           note="Collapse hidden category by default (requires sorting order as extra category)."
-          {...util.useSetting(shc, "alwaysCollapse")}>
+          {...util.useSetting(SettingValues, "alwaysCollapse", defaultSettings.alwaysCollapse)}>
           Collapse Hidden Category
         </SwitchItem>
 
         <SwitchItem
           note="Show Empty Category either because there were no channels in it or all channels are under hidden channels category."
-          {...util.useSetting(shc, "shouldShowEmptyCategory")}>
+          {...util.useSetting(
+            SettingValues,
+            "shouldShowEmptyCategory",
+            defaultSettings.shouldShowEmptyCategory,
+          )}>
           Show Empty Category
         </SwitchItem>
 
         <SwitchItem
           note="Enables debug mode, which will log more information to the console."
-          {...util.useSetting(shc, "debugMode")}>
+          {...util.useSetting(SettingValues, "debugMode", defaultSettings.debugMode)}>
           Enable Debug Mode
         </SwitchItem>
       </Category>
       <Category {...{ title: "Choose what channels you want to display", open: false }}>
         {...Object.values(ChannelTypes).map((type) => {
-          const typeSetting = shc.get("channels", defaultSettings.channels);
-          const [switchValue, setSwitchValue] = React.useState(typeSetting[type]);
           return (
             <SwitchItem
               {...{
-                value: switchValue,
-                onChange: (value) => {
-                  setSwitchValue(value);
-                  typeSetting[type] = value;
-                  shc.set("channels", typeSetting);
-                },
+                ...(Utils.useSetting(
+                  SettingValues,
+                  `channels.${type}`,
+                  defaultSettings.channels[type],
+                ) as unknown as {
+                  value: boolean;
+                  onChange: (newValue: boolean) => void;
+                }),
               }}>
               {`Show ${Utils.capitalizeFirst(type.split("_")[1])}${
                 type.split("_").length == 3 ? ` ${Utils.capitalizeFirst(type.split("_")[2])}` : ""
@@ -142,29 +154,25 @@ export const Settings = () => {
       </Category>
 
       <Category {...{ title: "Guilds Blacklist", open: false }}>
-        {...Object.values(GuildStore.getGuilds()).map((guild) => {
-          const blacklistedGuilds = shc.get("blacklistedGuilds", defaultSettings.blacklistedGuilds);
-          const [switchValue, setSwitchValue] = React.useState(
-            Boolean(blacklistedGuilds[guild.id]),
-          );
-          return (
-            <IconSwitch
-              {...{
-                note: guild.description,
-                icon:
-                  IconUtils.getGuildIconURL(guild) ??
-                  IconUtils.getDefaultAvatarURL(Utils.randomNo(0, 69)),
-                value: switchValue,
-                onChange: (value) => {
-                  setSwitchValue(value);
-                  blacklistedGuilds[guild.id] = value;
-                  shc.set("blacklistedGuilds", blacklistedGuilds);
-                },
-              }}>
-              {guild.name}
-            </IconSwitch>
-          );
-        })}
+        {...Object.values(GuildStore.getGuilds()).map((guild) => (
+          <IconSwitch
+            {...{
+              title: guild.name,
+              note: guild.description,
+              icon:
+                IconUtils.getGuildIconURL(guild) ??
+                IconUtils.getDefaultAvatarURL(Utils.randomNo(0, 69)),
+              ...(Utils.useSetting(
+                SettingValues,
+                `blacklistedGuilds.${guild.id}`,
+                false as unknown as string,
+              ) as unknown as {
+                value: boolean;
+                onChange: (newValue: boolean) => void;
+              }),
+            }}
+          />
+        ))}
       </Category>
     </div>
   );

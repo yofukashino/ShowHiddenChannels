@@ -1,4 +1,4 @@
-import { IconClasses } from "../lib/requiredModules.jsx";
+import { IconClasses } from "../lib/requiredModules";
 export const Eye = (
   <svg {...{ class: IconClasses.actionIcon, viewBox: "0 0 24 24" }}>
     <path

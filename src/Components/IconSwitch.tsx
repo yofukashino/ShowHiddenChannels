@@ -1,14 +1,14 @@
 import { common, components } from "replugged";
+import * as Types from "../types";
 const { React } = common;
-const { SwitchItem } = components;
+const SwitchItem = components.SwitchItem as unknown as Types.SwitchItem;
 
-export class IconSwitch extends React.Component {
+export class IconSwitch extends React.Component<Types.IconSwitch> {
   render() {
     return (
       <div>
         <SwitchItem {...this.props}>
           <div>
-            {" "}
             {this.props.icon && (
               <img
                 {...{
@@ -33,7 +33,7 @@ export class IconSwitch extends React.Component {
                     }
                   : {},
               }}>
-              {this.props.children}
+              {this.props.title || this.props.children}
             </div>
           </div>
         </SwitchItem>

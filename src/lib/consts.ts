@@ -3,7 +3,7 @@ export const defaultSettings = {
   sort: "native",
   showPerms: true,
   showAdmin: "exclude",
-  MarkUnread: false,
+  stopMarkingUnread: false,
 
   shouldShowEmptyCategory: true,
   alwaysCollapse: false,
@@ -20,6 +20,7 @@ export const defaultSettings = {
   },
 
   blacklistedGuilds: {},
+  collapsed: {},
 };
 
 export const ChannelTypes = [
