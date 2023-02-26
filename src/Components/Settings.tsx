@@ -21,7 +21,6 @@ export const Settings = () => {
       <Category {...{ title: "General Settings", open: false }}>
         <RadioItem
           {...{
-            title: "Hidden Channel Icon",
             note: "What icon to show as indicator for hidden channels.",
             options: [
               {
@@ -42,12 +41,11 @@ export const Settings = () => {
               "hiddenChannelIcon",
               defaultSettings.hiddenChannelIcon,
             ),
-          }}
-        />
-
+          }}>
+          Hidden Channel Icon
+        </RadioItem>
         <RadioItem
           {...{
-            title: "Sorting Order",
             note: "Where to display Hidden Channels.",
             options: [
               {
@@ -64,18 +62,18 @@ export const Settings = () => {
               },
             ],
             ...Utils.useSetting(SettingValues, "sort", defaultSettings.sort),
-          }}
-        />
-
+          }}>
+          Sorting Order
+        </RadioItem>
         <SwitchItem
-          note="Show what roles/users can access the hidden channel."
-          {...util.useSetting(SettingValues, "showPerms")}>
+          {...{
+            note: "Show what roles/users can access the hidden channel.",
+            ...util.useSetting(SettingValues, "showPerms"),
+          }}>
           Show Permissions
         </SwitchItem>
-
         <RadioItem
           {...{
-            title: "Show Admin Roles",
             note: "Show roles that have ADMINISTRATOR permission in the hidden channel page (requires 'Shows Permission' enabled).",
             options: [
               {
@@ -96,38 +94,43 @@ export const Settings = () => {
               },
             ],
             ...Utils.useSetting(SettingValues, "showAdmin", defaultSettings.showAdmin),
-          }}
-        />
-
+          }}>
+          Show Admin Roles
+        </RadioItem>
         <SwitchItem
-          note="Stops the plugin from marking hidden channels as read."
-          {...util.useSetting(
-            SettingValues,
-            "stopMarkingUnread",
-            defaultSettings.stopMarkingUnread,
-          )}>
+          {...{
+            note: "Stops the plugin from marking hidden channels as read.",
+            ...util.useSetting(
+              SettingValues,
+              "stopMarkingUnread",
+              defaultSettings.stopMarkingUnread,
+            ),
+          }}>
           Stop marking hidden channels as read
         </SwitchItem>
-
         <SwitchItem
-          note="Collapse hidden category by default (requires sorting order as extra category)."
-          {...util.useSetting(SettingValues, "alwaysCollapse", defaultSettings.alwaysCollapse)}>
+          {...{
+            note: "Collapse hidden category by default (requires sorting order as extra category).",
+            ...util.useSetting(SettingValues, "alwaysCollapse", defaultSettings.alwaysCollapse),
+          }}>
           Collapse Hidden Category
         </SwitchItem>
-
         <SwitchItem
-          note="Show Empty Category either because there were no channels in it or all channels are under hidden channels category."
-          {...util.useSetting(
-            SettingValues,
-            "shouldShowEmptyCategory",
-            defaultSettings.shouldShowEmptyCategory,
-          )}>
+          {...{
+            note: "Show Empty Category either because there were no channels in it or all channels are under hidden channels category.",
+            ...util.useSetting(
+              SettingValues,
+              "shouldShowEmptyCategory",
+              defaultSettings.shouldShowEmptyCategory,
+            ),
+          }}>
           Show Empty Category
         </SwitchItem>
-
         <SwitchItem
-          note="Enables debug mode, which will log more information to the console."
-          {...util.useSetting(SettingValues, "debugMode", defaultSettings.debugMode)}>
+          {...{
+            note: "Enables debug mode, which will log more information to the console.",
+            ...util.useSetting(SettingValues, "debugMode", defaultSettings.debugMode),
+          }}>
           Enable Debug Mode
         </SwitchItem>
       </Category>
@@ -152,7 +155,6 @@ export const Settings = () => {
           );
         })}
       </Category>
-
       <Category {...{ title: "Guilds Blacklist", open: false }}>
         {...Object.values(GuildStore.getGuilds()).map((guild) => (
           <IconSwitch
