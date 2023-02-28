@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 import { components, util } from "replugged";
 import { PluginLogger, SettingValues } from "../index";
-import { ChannelTypes, defaultSettings } from "../lib/consts";
+import { defaultSettings } from "../lib/consts";
 import { IconSwitch } from "./IconSwitch";
 import { GuildStore, IconUtils } from "../lib/requiredModules";
 import * as Utils from "../lib/utils";
@@ -135,7 +135,7 @@ export const Settings = () => {
         </SwitchItem>
       </Category>
       <Category {...{ title: "Choose what channels you want to display", open: false }}>
-        {...Object.values(ChannelTypes).map((type) => {
+        {...Object.keys(SettingValues.get("channels", defaultSettings.channels)).map((type) => {
           return (
             <SwitchItem
               {...{

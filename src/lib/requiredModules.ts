@@ -95,7 +95,7 @@ export const ChannelStore = webpack.getByProps(
   "getDMFromUserId",
 ) as unknown as Types.ChannelStore;
 export const ChannelUtilsModule = webpack.getBySource(
-  /\.Types\.STAFF_ONLY_DM.*.GUILD_ANNOUNCEMENT/,
+  /\.Types\.STAFF_ONLY_DM.*.DM/,
 ) as unknown as Types.DefaultTypes.ObjectExports;
 export const ChannelUtils = {
   channelTopic: webpack.getFunctionBySource(ChannelUtilsModule, /\{channel:.*,guild:.*\}/),

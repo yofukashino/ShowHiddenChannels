@@ -4,12 +4,9 @@ export const defaultSettings = {
   showPerms: true,
   showAdmin: "exclude",
   stopMarkingUnread: false,
-
   shouldShowEmptyCategory: true,
   alwaysCollapse: false,
-
   debugMode: false,
-
   channels: {
     GUILD_TEXT: true,
     GUILD_VOICE: true,
@@ -18,16 +15,6 @@ export const defaultSettings = {
     GUILD_STAGE_VOICE: true,
     GUILD_FORUM: true,
   },
-
   blacklistedGuilds: {},
   collapsed: {},
 };
-
-export const ChannelTypes = [
-  "GUILD_TEXT",
-  "GUILD_VOICE",
-  "GUILD_ANNOUNCEMENT",
-  "GUILD_STORE",
-  "GUILD_STAGE_VOICE",
-  "GUILD_FORUM",
-];
