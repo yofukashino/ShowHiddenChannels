@@ -4,6 +4,7 @@ import { defaultSettings } from "../lib/consts";
 import * as Types from "../types";
 const { React, users: UserStore } = common;
 import {
+  BigIntUtils,
   ChannelUtils,
   ChatClasses,
   DiscordConstants,
@@ -20,13 +21,11 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
   return (
     <div
       {...{
-        className: ["SettingValues-hidden-chat-content", ChatClasses.chat]
-          .filter(Boolean)
-          .join(" "),
+        className: ["shc-hidden-chat-content", ChatClasses.chat].filter(Boolean).join(" "),
       }}>
       <div
         {...{
-          className: "SettingValues-hidden-notice",
+          className: "shc-hidden-notice",
         }}>
         <img
           {...{
@@ -176,10 +175,16 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                       role &&
                       role?.type === 0 &&
                       ((SettingValues.get("showAdmin", defaultSettings.showAdmin) !== "false" &&
-                        (props.guild.roles[role.id].permissions & BigInt(8)) === BigInt(8)) ||
-                        (role.allow & BigInt(1024)) === BigInt(1024) ||
-                        (props.guild.roles[role.id].permissions & BigInt(1024) &&
-                          !(role.deny & BigInt(1024)))),
+                        BigIntUtils.has(
+                          props.guild.roles[role.id].permissions,
+                          DiscordConstants.Permissions.ADMINISTRATOR,
+                        )) ||
+                        BigIntUtils.has(role.allow, DiscordConstants.Permissions.VIEW_CHANNEL) ||
+                        (BigIntUtils.has(
+                          props.guild.roles[role.id].permissions,
+                          DiscordConstants.Permissions.VIEW_CHANNEL,
+                        ) &&
+                          !BigIntUtils.has(role.deny, DiscordConstants.Permissions.VIEW_CHANNEL))),
                   );
 
                   if (!channelRoles?.length) return ["None"];
@@ -187,7 +192,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                     RolePill.render(
                       {
                         canRemove: false,
-                        className: `${RolePillClasses.rolePill} SettingValues-rolePill`, //${rolePillBorder}
+                        className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
                         disableBorderColor: true,
                         guildId: props.guild.id,
                         onRemove: Utils.NOOP,
@@ -223,7 +228,10 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                           return ["None"];
                         const guildRoles = Object.values(props.guild.roles).filter(
                           (role) =>
-                            (role.permissions & BigInt(8)) === BigInt(8) &&
+                            BigIntUtils.has(
+                              role.permissions,
+                              DiscordConstants.Permissions.ADMINISTRATOR,
+                            ) &&
                             (SettingValues.get("showAdmin", defaultSettings.showAdmin) ===
                               "include" ||
                               (SettingValues.get("showAdmin", defaultSettings.showAdmin) ===
@@ -236,7 +244,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                           RolePill.render(
                             {
                               canRemove: false,
-                              className: `${RolePillClasses.rolePill} SettingValues-rolePill`, //${rolePillBorder}
+                              className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
                               disableBorderColor: true,
                               guildId: props.guild.id,
                               onRemove: Utils.NOOP,

@@ -1,4 +1,3 @@
-/* eslint-disable eqeqeq */
 import { components, util } from "replugged";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
@@ -149,7 +148,7 @@ export const Settings = () => {
                 }),
               }}>
               {`Show ${Utils.capitalizeFirst(type.split("_")[1])}${
-                type.split("_").length == 3 ? ` ${Utils.capitalizeFirst(type.split("_")[2])}` : ""
+                type.split("_").length === 3 ? ` ${Utils.capitalizeFirst(type.split("_")[2])}` : ""
               } Channels`}
             </SwitchItem>
           );

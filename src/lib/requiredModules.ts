@@ -59,9 +59,7 @@ export const GuildStore = webpack.getByProps(
   "getGuild",
   "getGuilds",
 ) as unknown as Types.GuildStore;
-export const RolePillModule = webpack.getBySource(
-  /\.disableBorderColor,.*roleId:.*,size:.*,guildId:/,
-);
+export const RolePillModule = webpack.getBySource(/\.disableBorderColor,/);
 export const RolePill = webpack.getExportsForProps(RolePillModule, [
   "$$typeof",
   "render",
@@ -94,9 +92,14 @@ export const ChannelStore = webpack.getByProps(
   "getChannel",
   "getDMFromUserId",
 ) as unknown as Types.ChannelStore;
+export const BigIntUtils = webpack.getByProps(
+  "deserialize",
+  "invert",
+  "has",
+) as unknown as Types.BigIntUtils;
 export const ChannelUtilsModule = webpack.getBySource(
   /\.Types\.STAFF_ONLY_DM.*.DM/,
 ) as unknown as Types.DefaultTypes.ObjectExports;
 export const ChannelUtils = {
-  channelTopic: webpack.getFunctionBySource(ChannelUtilsModule, /\{channel:.*,guild:.*\}/),
+  channelTopic: webpack.getFunctionBySource(ChannelUtilsModule, /function \w+\(\w+,\w+\)/),
 } as Types.ChannelUtils;

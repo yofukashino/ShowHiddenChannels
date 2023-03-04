@@ -46,7 +46,6 @@ export interface Channel {
       type: number;
     };
   };
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   guild_id: string;
   position_: number;
   rateLimitPerUser_: number;
@@ -132,8 +131,7 @@ export interface PermissionStore {
   getHighestRole: DefaultTypes.AnyFunction;
   initialize: DefaultTypes.AnyFunction;
   isRoleHigher: DefaultTypes.AnyFunction;
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  __getLocalVars: () => PermsssionCache;
+  clearVars: DefaultTypes.AnyFunction;
 }
 export interface MessageActions {
   clearChannel: DefaultTypes.AnyFunction;
@@ -396,8 +394,7 @@ export interface ChannelListStore {
   getGuildWithoutChangingCommunityRows: DefaultTypes.AnyFunction;
   initialize: DefaultTypes.AnyFunction;
   recentsChannelCount: DefaultTypes.AnyFunction;
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  __getLocalVars: () => ChanneListCache;
+  clearVars: DefaultTypes.AnyFunction;
 }
 export interface ChanneListCache {
   lastSelectedChannelId: string;
@@ -464,7 +461,6 @@ export interface PermsssionCache {
   };
 }
 export interface ChannelConstructorProps {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   guild_id?: string;
   id: string;
   name: string;
@@ -581,7 +577,6 @@ export interface Role {
   permissions: bigint;
   position: number;
   tags: {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     bot_id?: string;
   };
   unicodeEmoji: null | string;
@@ -592,7 +587,6 @@ export interface Guild {
   applicationCommandCounts: {
     [key: number]: number;
   };
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   application_id: null | string;
   banner: string;
   defaultMessageNotifications: number;
@@ -698,6 +692,18 @@ export interface IconUtils {
   hasAnimatedGuildIcon: DefaultTypes.AnyFunction;
   isAnimatedIconHash: DefaultTypes.AnyFunction;
   makeSource: DefaultTypes.AnyFunction;
+}
+export interface BigIntUtils {
+  add: DefaultTypes.AnyFunction;
+  combine: DefaultTypes.AnyFunction;
+  deserialize: DefaultTypes.AnyFunction;
+  equals: DefaultTypes.AnyFunction;
+  filter: DefaultTypes.AnyFunction;
+  getFlag: DefaultTypes.AnyFunction;
+  has: DefaultTypes.AnyFunction;
+  hasAny: DefaultTypes.AnyFunction;
+  invert: DefaultTypes.AnyFunction;
+  remove: DefaultTypes.AnyFunction;
 }
 export interface Settings {
   hiddenChannelIcon: string;

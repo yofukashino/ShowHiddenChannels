@@ -14,7 +14,9 @@ export class LoadingBoundary extends React.PureComponent<
     };
   }
   componentDidCatch() {
-    PluginLogger.error("An error has occurred. Do Not Contact the developer for help, its Normal!");
+    PluginLogger.warn(
+      "An error has occurred. Do Not Contact the developer for help, its Normal, if the page still loads!",
+    );
     this.setState({
       loaded: false,
     });
@@ -30,6 +32,7 @@ export class LoadingBoundary extends React.PureComponent<
       return (
         <div
           {...{
+            className: "shc-loading-container",
             style: {
               textAlign: "center",
               margin: "auto",

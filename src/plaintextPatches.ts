@@ -13,4 +13,24 @@ export default [
       },
     ],
   },
+  {
+    find: /\.displayName="PermissionStore"/,
+    replacements: [
+      {
+        match:
+          /((\w+)\.__getLocalVars=function\(\)\{return\{guildCache:(\w+),channelCache:(\w+),guildVersions:(\w+),channelsVersion:(\w+)}};)/,
+        replace: `$2.clearVars=function(){$3={};$4={};$5={};$6=0;};$1`,
+      },
+    ],
+  },
+  {
+    find: /\.displayName="ChannelListStore"/,
+    replacements: [
+      {
+        match:
+          /((\w+)\.__getLocalVars=function\(\){return{lastSelectedChannelId:(\w+),lastSelectedVoiceChannelId:(\w+),state:(\w+)}};)/gm,
+        replace: `$2.clearVars=function(){$3=null;$4=null;$5.clear();};$1`,
+      },
+    ],
+  },
 ] as Types.DefaultTypes.PlaintextPatch[];

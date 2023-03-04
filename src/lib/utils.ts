@@ -118,8 +118,9 @@ export const useSetting = (
         }
       : () => null,
     onChange: (newValue) => {
-      if (typeof newValue == "object") newValue = newValue.value;
-      setValue(newValue);
+      if (typeof newValue == "object" && Object.hasOwnProperty.call(newValue, "value"))
+        newValue = newValue.value;
+      setValue(newValue as unknown as string);
       const changed = realPath.length
         ? lodash.set(setting as object, realPathJoined, newValue)
         : (newValue as never);
@@ -165,20 +166,25 @@ export const getHiddenChannelRecord = (
   guildId: string,
 ): Types.HiddenChannelRecord => {
   const hiddenChannels = getHiddenChannels(guildId);
-  if (!hiddenChannelCache[guildId]) {
-    hiddenChannelCache[guildId] = [];
-  }
+  if (!hiddenChannelCache[guildId]) hiddenChannelCache[guildId] = [];
 
   for (const category of categories) {
-    const channels = Object.entries(category.channels);
-    for (const channel of channels) {
-      if (hiddenChannels.channels.some((m) => m.id === channel[0])) {
-        if (!hiddenChannelCache[guildId].some((m) => m[0] === channel[0]))
-          hiddenChannelCache[guildId].push(channel);
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete category.channels[channel[0]];
-      }
-    }
+    const channelRecords = Object.entries(category.channels);
+    const filteredChannelRecords = channelRecords
+      .map(
+        ([channelID, channelRecord]: [string, Types.ChannelRecord]):
+          | [string, Types.ChannelRecord]
+          | boolean => {
+          if (hiddenChannels.channels.some((m) => m.id === channelID)) {
+            if (!hiddenChannelCache[guildId].some((m) => m[0] === channelID))
+              hiddenChannelCache[guildId].push([channelID, channelRecord]);
+            return false;
+          }
+          return [channelID, channelRecord];
+        },
+      )
+      .filter(Boolean) as Array<[string, Types.ChannelRecord]>;
+    category.channels = Object.fromEntries(filteredChannelRecords);
   }
 
   return { records: Object.fromEntries(hiddenChannelCache[guildId]), ...hiddenChannels };
@@ -196,22 +202,11 @@ export const forceUpdate = (element: Element): void => {
 };
 
 export const rerenderChannels = (): void => {
-  const PermsssionCache = PermissionStore.__getLocalVars();
+  PermissionStore.clearVars();
 
-  for (const key in PermsssionCache) {
-    if (!isObject(PermsssionCache[key])) continue;
-    for (const id in PermsssionCache[key]) {
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete PermsssionCache[key][id];
-    }
-  }
   PermissionStore.initialize();
 
-  const ChanneListCache = ChannelListStore.__getLocalVars();
-  for (const guildId in ChanneListCache.state.guilds) {
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete ChanneListCache.state.guilds[guildId];
-  }
+  ChannelListStore.clearVars();
 
   ChannelListStore.initialize();
 

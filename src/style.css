@@ -1,4 +1,4 @@
-.SettingValues-hidden-notice {
+.shc-hidden-notice {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -6,10 +6,10 @@
   margin: auto;
   text-align: center;
 }
-.SettingValues-hidden-notice > div[class^="divider"] {
+.shc-hidden-notice > div[class^="divider"] {
   display: none;
 }
-.SettingValues-hidden-notice > div[class^="topic"] {
+.shc-hidden-notice > div[class^="topic"] {
   background-color: var(--background-secondary);
   padding: 5px;
   max-width: 50vh;
@@ -18,7 +18,7 @@
   margin: 10px auto;
 }
 
-.SettingValues-rolePill {
+.shc-rolePill {
   margin-right: 0px !important;
   background-color: var(--background-primary);
 }

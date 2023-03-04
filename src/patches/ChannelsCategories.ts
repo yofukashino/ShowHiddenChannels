@@ -110,7 +110,6 @@ export const patchChannelCategories = (): void => {
       return;
     const hiddenId = `${args[0]}_hidden`;
     const HiddenCategoryChannel = new Channel({
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       guild_id: args[0],
       id: hiddenId,
       name: "Hidden Channels",
@@ -142,11 +141,9 @@ export const patchChannelCategories = (): void => {
         Utils.sortChannels(res.guildChannels.favoritesCategory);
         Utils.sortChannels(res.guildChannels.recentsCategory);
         Utils.sortChannels(res.guildChannels.noParentCategory);
-
         for (const id in res.guildChannels.categories) {
           Utils.sortChannels(res.guildChannels.categories[id]);
         }
-
         break;
       }
 

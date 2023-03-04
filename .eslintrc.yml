@@ -32,6 +32,7 @@ rules:
   no-process-exit: off
   no-undef: off
   no-unused-vars: off
+  "@typescript-eslint/naming-convention": off
   "@typescript-eslint/no-unused-vars": error
 
 overrides:
@@ -44,6 +45,7 @@ overrides:
       no-return-assign: off
       no-void: off
       consistent-return: off
+      "@typescript-eslint/naming-convention": off
 
   - files: "**/src/**/*.ts"
     extends: eslint-config-dmitmel/rules/typescript/with-type-checking
