@@ -8,7 +8,7 @@ export default [
         replace: `_guild=$1`,
       },
       {
-        match: /\[([A-Za-z],__OVERLAY__\?null:[A-Za-z],[A-Za-z],[A-Za-z])\]/,
+        match: /\[(\w+,__OVERLAY__\?null:\w+,\w+,\w+)\]/,
         replace: `[$1,replugged.plugins.getExports('Tharki.ShowHiddenChannels').addSHCEntry(_guild)]`,
       },
     ],
