@@ -28,7 +28,7 @@ export default [
     replacements: [
       {
         match:
-          /((\w+)\.__getLocalVars=function\(\){return{lastSelectedChannelId:(\w+),\nlastSelectedVoiceChannelId:(\w+),state:(\w+)}};)/,
+          /((\w+)\.__getLocalVars=function\(\){return{lastSelectedChannelId:(\w+),lastSelectedVoiceChannelId:(\w+),state:(\w+)}};)/,
         replace: `$2.clearVars=function(){$3=null;$4=null;$5.clear();};$1`,
       },
     ],

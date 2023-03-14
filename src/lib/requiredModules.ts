@@ -63,7 +63,7 @@ export const RolePillModule = webpack.getBySource(/\.disableBorderColor,/);
 export const RolePill = webpack.getExportsForProps(RolePillModule, [
   "$$typeof",
   "render",
-]) as unknown as Types.RolePill;
+]) as unknown as Types.ComponentClass;
 export const MessageActions = webpack.getByProps(
   "jumpToMessage",
   "_sendMessage",

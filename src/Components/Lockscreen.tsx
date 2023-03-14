@@ -137,6 +137,20 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                       ),
                   );
                   if (!allUsers?.length) return ["None"];
+                  console.log(
+                    allUsers.map((m: Types.permissionOverwrite) =>
+                      UserMentions.react(
+                        {
+                          userId: m.id,
+                          channelId: props.channel.id,
+                        },
+                        Utils.NOOP,
+                        {
+                          noStyleAndInteraction: false,
+                        },
+                      ),
+                    ),
+                  );
                   return allUsers.map((m: Types.permissionOverwrite) =>
                     UserMentions.react(
                       {
@@ -188,19 +202,18 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                   );
 
                   if (!channelRoles?.length) return ["None"];
-                  return channelRoles.map((m) =>
-                    RolePill.render(
-                      {
+                  return channelRoles.map((m) => (
+                    <RolePill
+                      {...{
                         canRemove: false,
                         className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
                         disableBorderColor: true,
                         guildId: props.guild.id,
                         onRemove: Utils.NOOP,
                         role: props.guild.roles[m.id],
-                      },
-                      Utils.NOOP,
-                    ),
-                  );
+                      }}
+                    />
+                  ));
                 })() as Types.ReactElement[]}
               </div>
               {SettingValues.get("showAdmin", defaultSettings.showAdmin) !== "false" &&
@@ -240,19 +253,18 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                         );
 
                         if (!guildRoles?.length) return ["None"];
-                        return guildRoles.map((m) =>
-                          RolePill.render(
-                            {
+                        return guildRoles.map((m) => (
+                          <RolePill
+                            {...{
                               canRemove: false,
                               className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
                               disableBorderColor: true,
                               guildId: props.guild.id,
                               onRemove: Utils.NOOP,
                               role: m,
-                            },
-                            Utils.NOOP,
-                          ),
-                        );
+                            }}
+                          />
+                        ));
                       })() as Types.ReactElement[]}
                     </div>
                   </div>

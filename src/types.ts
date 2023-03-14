@@ -2,7 +2,6 @@ import { types as DefaultTypes } from "replugged";
 export { types as DefaultTypes } from "replugged";
 export { ReactElement, ComponentClass } from "react";
 import { ComponentClass, ReactElement } from "react";
-import { RolePill } from "./lib/requiredModules";
 export interface UnreadStore {
   ackMessageId: DefaultTypes.AnyFunction;
   getAllReadStates: DefaultTypes.AnyFunction;
@@ -206,20 +205,6 @@ export interface UserMentions {
     styles: {
       noStyleAndInteraction: boolean;
     },
-  ) => ReactElement;
-}
-export interface RolePill {
-  $$typeof: symbol;
-  render: (
-    info: {
-      canRemove: boolean;
-      className: string;
-      disableBorderColor: boolean;
-      guildId: string;
-      onRemove: DefaultTypes.AnyFunction;
-      role: Role;
-    },
-    AnyFunction: DefaultTypes.AnyFunction,
   ) => ReactElement;
 }
 export interface User {
