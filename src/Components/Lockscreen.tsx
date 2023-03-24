@@ -137,20 +137,6 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                       ),
                   );
                   if (!allUsers?.length) return ["None"];
-                  console.log(
-                    allUsers.map((m: Types.permissionOverwrite) =>
-                      UserMentions.react(
-                        {
-                          userId: m.id,
-                          channelId: props.channel.id,
-                        },
-                        Utils.NOOP,
-                        {
-                          noStyleAndInteraction: false,
-                        },
-                      ),
-                    ),
-                  );
                   return allUsers.map((m: Types.permissionOverwrite) =>
                     UserMentions.react(
                       {

@@ -9,7 +9,7 @@ export default [
       },
       {
         match: /\[(\w+,__OVERLAY__\?null:\w+,\w+,\w+)\]/,
-        replace: `[$1,replugged.plugins.getExports('Tharki.ShowHiddenChannels').addSHCEntry(_guild)]`,
+        replace: `[$1,replugged.plugins.getExports('Tharki.ShowHiddenChannels')?.addSHCEntry(_guild)]`,
       },
     ],
   },
