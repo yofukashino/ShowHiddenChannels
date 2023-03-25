@@ -9,6 +9,7 @@ import {
   GuildStore,
   IconClasses,
   Route,
+  TransitionUtil,
   UserMentions,
   Voice,
 } from "../lib/requiredModules";
@@ -101,7 +102,11 @@ export const patchVisuals = (): void => {
         ) as Types.ReactElement;
 
         if (mainContent) {
-          mainContent.props.onClick = () => {};
+          mainContent.props.onClick = () =>
+            instance.channel.isGuildVocal() &&
+            TransitionUtil.transitionToChannel(
+              `/channels/${instance.channel.guild_id}/${instance.channel.id}`,
+            );
           mainContent.props.href = null;
         }
       }

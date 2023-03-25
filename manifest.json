@@ -7,7 +7,7 @@
     "discordID": "1025214794766221384",
     "github": "Tharki-God"
   },
-  "version": "1.0.4",
+  "version": "1.0.5",
   "updater": {
     "type": "github",
     "id": "Tharki-God/ShowHiddenChannels"

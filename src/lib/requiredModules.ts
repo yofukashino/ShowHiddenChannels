@@ -97,6 +97,15 @@ export const BigIntUtils = webpack.getByProps(
   "invert",
   "has",
 ) as unknown as Types.BigIntUtils;
+export const TransitionUtilModule = webpack.getBySource(
+  "transitionTo - Transitioning to ",
+) as unknown as Types.DefaultTypes.ObjectExports;
+export const TransitionUtil = {
+  transitionToChannel: webpack.getFunctionBySource(
+    TransitionUtilModule,
+    "transitionTo - Transitioning to ",
+  ),
+};
 export const ChannelUtilsModule = webpack.getBySource(
   /\.Types\.STAFF_ONLY_DM.*.DM/,
 ) as unknown as Types.DefaultTypes.ObjectExports;
