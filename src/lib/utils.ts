@@ -1,5 +1,5 @@
 import { common, util } from "replugged";
-import { PluginInjector, PluginLogger, SettingValues } from "../index";
+import { PluginInjector, PluginLogger, SettingValues, lodash } from "../index";
 import {
   ChannelListClasses,
   ChannelListStore,
@@ -8,7 +8,6 @@ import {
   LocaleManager,
   PermissionStore,
 } from "./requiredModules";
-import * as lodash from "lodash";
 import * as Types from "../types";
 const { React } = common;
 export const findInTree = (
