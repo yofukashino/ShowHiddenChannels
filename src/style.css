@@ -22,3 +22,10 @@
   margin-right: 0px !important;
   background-color: var(--background-primary);
 }
+
+.shc-size-increase .actionIcon-2sw4Sl {
+  width: 20px;
+  height: 20px;
+  display: block;
+  color: var(--channel-icon);
+}

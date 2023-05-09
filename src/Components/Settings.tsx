@@ -5,7 +5,7 @@ import { IconSwitch } from "./IconSwitch";
 import { GuildStore, IconUtils } from "../lib/requiredModules";
 import * as Utils from "../lib/utils";
 import * as Types from "../types";
-const { Category, SwitchItem, RadioItem } = components;
+const { ButtonItem, Category, SwitchItem, RadioItem } = components;
 export const registerSettings = (): void => {
   for (const key in defaultSettings) {
     if (SettingValues.has(key as keyof Types.Settings)) return;
@@ -43,6 +43,13 @@ export const Settings = () => {
           }}>
           Hidden Channel Icon
         </RadioItem>
+        <SwitchItem
+          {...{
+            note: "Fade away hidden channel like if they are muted.",
+            ...util.useSetting(SettingValues, "faded"),
+          }}>
+          Faded Channel
+        </SwitchItem>
         <RadioItem
           {...{
             note: "Where to display Hidden Channels.",
@@ -175,6 +182,15 @@ export const Settings = () => {
           />
         ))}
       </Category>
+      <ButtonItem
+        {...{
+          button: "Reload discord",
+          onClick: () => {
+            window.location.reload();
+          },
+        }}>
+        Some Settings Might require an reload to take effect.
+      </ButtonItem>
     </div>
   );
 };

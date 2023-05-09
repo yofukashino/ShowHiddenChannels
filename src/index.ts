@@ -27,6 +27,6 @@ export const stop = (): void => {
   Utils.rerenderChannels();
 };
 
-export { addSHCEntry } from "./patches/index";
+export { addSHCEntry, makeChannelBrowerLockIcon } from "./patches/index";
 
 export { Settings } from "./Components/Settings";

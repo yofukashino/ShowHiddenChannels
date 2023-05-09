@@ -1,10 +1,8 @@
-import { PluginInjector, PluginLogger, SettingValues } from "../index";
+import { PluginInjector, SettingValues } from "../index";
 import { ChannelStore, UnreadStore } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 
 export const patchUnreadStore = (): void => {
-  if (SettingValues.get("debugMode", defaultSettings.debugMode))
-    PluginLogger.log("UnreadStore", UnreadStore);
   if (SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)) return;
   PluginInjector.after(UnreadStore, "getGuildChannelUnreadState", (args, res) => {
     return args[0]?.isHidden?.() ? { mentionCount: 0, hasNotableUnread: false } : res;

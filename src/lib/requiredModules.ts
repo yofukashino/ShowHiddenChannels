@@ -18,6 +18,9 @@ export const { exports: Route } = webpack.getBySource(
   /\.impressionName.*\.impressionProperties.*\.disableTrack.*\.PAGE/,
   { raw: true },
 ) as unknown as Types.RouteExports;
+export const ChatContent = webpack.getBySource(
+  "showAutomodUserProfileChatBlocker",
+) as unknown as Types.ChatContent;
 export const ChannelItem = webpack.getBySource(
   /\.unread,.*\.canHaveDot.*\.mentionCount.*\.relevant/,
 ) as unknown as Types.genericObjectExport;
@@ -51,6 +54,10 @@ export const Channel = webpack.getFunctionBySource(
 export const ChannelListStore = webpack.getByProps(
   "getGuildWithoutChangingCommunityRows",
 ) as unknown as Types.ChannelListStore;
+export const UserGuildSettingsStore = webpack.getByProps([
+  "getMutedChannels",
+  "isChannelMuted",
+]) as unknown as Types.UserGuildSettingsStore;
 export const IconUtils = webpack.getByProps("getUserAvatarURL") as unknown as Types.IconUtils;
 export const IconClasses = webpack.getByProps("iconItem");
 export const UnreadStore = webpack.getByProps("isForumPostUnread") as unknown as Types.UnreadStore;

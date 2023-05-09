@@ -1,69 +1,58 @@
 import { components, webpack } from "replugged";
-import { PluginInjector, PluginLogger, SettingValues } from "../index";
+import { PluginInjector, SettingValues } from "../index";
 import {
   ChannelClasses,
   ChannelItem,
   ChannelItemUtil,
   ChannelStore,
+  ChatContent,
   DiscordConstants,
   GuildStore,
   IconClasses,
   Route,
   TransitionUtil,
-  UserMentions,
+  UserGuildSettingsStore,
   Voice,
 } from "../lib/requiredModules";
-import * as Icons from "../Components/Icons";
+import HiddenChannelIcon from "../Components/HiddenChannelIcon";
 import { Lockscreen } from "../Components/Lockscreen";
 import { LoadingBoundary } from "../Components/LoadingBoundary";
 import { defaultSettings } from "../lib/consts";
 import * as Utils from "../lib/utils";
 import * as Types from "../types";
 const { Tooltip } = components;
-export const patchVisuals = (): void => {
-  if (SettingValues.get("debugMode", defaultSettings.debugMode)) {
-    PluginLogger.log("ChannelItem", ChannelItem);
-    PluginLogger.log("UserMention", UserMentions);
-  }
-
-  const routePatchFunctionKey = webpack.getFunctionKeyBySource(
-    Route,
-    /\.impressionName.*\.impressionProperties.*\.disableTrack.*\.PAGE/,
-  ) as string;
-  PluginInjector.after(Route, routePatchFunctionKey, (_args, res: Types.ReactElement) => {
-    const channelId = res.props?.computedMatch?.params?.channelId;
-    const guildId = res.props?.computedMatch?.params?.guildId;
-    const channel = ChannelStore?.getChannel(channelId);
-    if (guildId && channel?.isHidden?.() && channel?.id !== Voice.getChannelId())
-      res.props.render = () => (
-        <LoadingBoundary>
-          <Lockscreen
-            {...{
-              channel,
-              guild: GuildStore.getGuild(guildId),
-            }}
-          />
-        </LoadingBoundary>
-      );
-    return res;
-  });
-
-  const channelItemPatchFunctionKey = webpack.getFunctionKeyBySource(
+export const makeChannelBrowerLockIcon = ({ channel, originalIcon }) => {
+  if (
+    !channel?.isHidden() ||
+    SettingValues.get("hiddenChannelIcon", defaultSettings.hiddenChannelIcon) === "false"
+  )
+    return originalIcon;
+  return (
+    <Tooltip
+      {...{
+        text: "Hidden Channel",
+        className: `${IconClasses.iconItem}`,
+        style: {
+          display: "block",
+        },
+      }}>
+      <HiddenChannelIcon {...{ className: `shc-size-increase ${IconClasses.actionIcon}` }} />
+    </Tooltip>
+  );
+};
+export const patchChannelItem = (): void => {
+  const FunctionKey = webpack.getFunctionKeyBySource(
     ChannelItem,
     /\.unread,.*\.canHaveDot.*\.mentionCount.*\.relevant/,
   ) as string;
   PluginInjector.after(
     ChannelItem,
-    channelItemPatchFunctionKey,
-    (args, res: Types.ReactElement) => {
-      if (SettingValues.get("hiddenChannelIcon", defaultSettings.hiddenChannelIcon) === "false")
-        return res;
-      const [instance] = args as [{ channel: Types.Channel; connected: boolean }];
-      if (!instance.channel?.isHidden?.()) return res;
+    FunctionKey,
+    ([props]: [{ channel: Types.Channel; connected: boolean }], res: Types.ReactElement) => {
+      if (!props.channel?.isHidden?.()) return res;
       const item = res.props?.children?.props;
       if (item?.className)
-        item.className += ` shc-hidden-channel shc-hidden-channel-type-${instance.channel.type}`;
-
+        item.className += ` shc-hidden-channel shc-hidden-channel-type-${props.channel.type}`;
       const children = Utils.findInReactTree(res, (m: Types.ReactElement) =>
         m?.props?.onClick?.toString().includes("stopPropagation"),
       ) as Types.ReactElement;
@@ -77,19 +66,19 @@ export const patchVisuals = (): void => {
                 display: "block",
               },
             }}>
-            {
-              Utils.getParameterCaseInsensitive(
-                Icons,
-                SettingValues.get("hiddenChannelIcon", defaultSettings.hiddenChannelIcon),
-              ) as Types.ReactElement
-            }
+            <HiddenChannelIcon
+              {...{
+                className: IconClasses.actionIcon,
+                style: SettingValues.get("faded", defaultSettings.faded)
+                  ? {
+                      color: "var(--interactive-muted)",
+                    }
+                  : {},
+              }}
+            />
           </Tooltip>,
         ];
-
-      if (
-        instance.channel.type === DiscordConstants.ChanneTypes.GUILD_VOICE &&
-        !instance.connected
-      ) {
+      if (props.channel.type === DiscordConstants.ChanneTypes.GUILD_VOICE && !props.connected) {
         const wrapper = Utils.findInReactTree(res, (n: Types.ReactElement) =>
           n?.props?.className?.includes(ChannelClasses.wrapper),
         ) as Types.ReactElement;
@@ -103,9 +92,9 @@ export const patchVisuals = (): void => {
 
         if (mainContent) {
           mainContent.props.onClick = () =>
-            instance.channel.isGuildVocal() &&
+            props.channel.isGuildVocal() &&
             TransitionUtil.transitionToChannel(
-              `/channels/${instance.channel.guild_id}/${instance.channel.id}`,
+              `/channels/${props.channel.guild_id}/${props.channel.id}`,
             );
           mainContent.props.href = null;
         }
@@ -113,15 +102,17 @@ export const patchVisuals = (): void => {
       return res;
     },
   );
+};
 
+export const patchChannelItemUtil = (): void => {
   //* Remove lock icon from hidden voice channels
-  const channelItemUtilPatchFunctionKey = webpack.getFunctionKeyBySource(
+  const FunctionKey = webpack.getFunctionKeyBySource(
     ChannelItemUtil,
     /\.locked,.*\.video.*\.hasActiveThreads.*\.textFocused/,
   ) as string;
   PluginInjector.before(
     ChannelItemUtil,
-    channelItemUtilPatchFunctionKey,
+    FunctionKey,
     (args: [Types.Channel, undefined, Types.ChannelIconArgs2]) => {
       if (!args[2]) return;
       if (args[0]?.isHidden?.() && args[2].locked) {
@@ -129,4 +120,67 @@ export const patchVisuals = (): void => {
       }
     },
   );
+};
+
+export const patchUserGuildSettingsStore = (): void => {
+  PluginInjector.after(
+    UserGuildSettingsStore,
+    "getMutedChannels",
+    (args: [string], res: Set<string>) => {
+      if (!SettingValues.get("faded", defaultSettings.faded)) return res;
+      const HiddenChannelIDs = Utils.getHiddenChannels(args[0]).channels.map((c) => c.id);
+      return new Set([...res, ...HiddenChannelIDs]);
+    },
+  );
+};
+
+export const patchRoute = (): void => {
+  const FunctionKey = webpack.getFunctionKeyBySource(
+    Route,
+    /\.impressionName.*\.impressionProperties.*\.disableTrack.*\.PAGE/,
+  ) as string;
+  PluginInjector.before(Route, FunctionKey, (args) => {
+    const channelId = args[0]?.computedMatch?.params?.channelId;
+    const guildId = args[0]?.computedMatch?.params?.guildId;
+    const channel = ChannelStore?.getChannel(channelId);
+    if (guildId && channel?.isHidden?.() && channel?.id !== Voice.getChannelId())
+      args[0].render = () => (
+        <LoadingBoundary>
+          <Lockscreen
+            {...{
+              channel,
+              guild: GuildStore.getGuild(guildId),
+            }}
+          />
+        </LoadingBoundary>
+      );
+    return args;
+  });
+};
+export const patchSidebarChatContent = (): void => {
+  PluginInjector.after(ChatContent, "type", ([{ channel, chatInputType, guild }], res) => {
+    if (
+      !channel?.isHidden() ||
+      channel?.id === Voice.getChannelId() ||
+      chatInputType.analyticsName !== "sidebar"
+    )
+      return res;
+    return (
+      <LoadingBoundary>
+        <Lockscreen
+          {...{
+            channel,
+            guild: GuildStore.getGuild(guild.id),
+          }}
+        />
+      </LoadingBoundary>
+    );
+  });
+};
+export const patchVisuals = (): void => {
+  patchChannelItem();
+  patchChannelItemUtil();
+  patchUserGuildSettingsStore();
+  patchRoute();
+  patchSidebarChatContent();
 };

@@ -17,7 +17,8 @@ import {
 } from "../lib/requiredModules";
 import * as Utils from "../lib/utils";
 export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
-  if (SettingValues.get("debugMode", defaultSettings.debugMode)) PluginLogger.log(props);
+  if (SettingValues.get("debugMode", defaultSettings.debugMode))
+    PluginLogger.log("LockScreen Props", props);
   return (
     <div
       {...{

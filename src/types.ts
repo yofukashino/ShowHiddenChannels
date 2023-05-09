@@ -167,6 +167,79 @@ export interface RouteExports {
     [key: string]: DefaultTypes.AnyFunction;
   };
 }
+export interface ChatContentArgs {
+  channel: Channel;
+  chatInputType: {
+    analyticsName: string;
+    attachments: boolean;
+    autocomplete: { addReactionShortcut: boolean; forceChatLayer: boolean; reactions: boolean };
+    commands: { enabled: boolean };
+    drafts: { type: 0; autoSave: boolean };
+    emojis: { button: boolean };
+    gifs: { button: boolean; allowSending: boolean };
+    gifts: { button: boolean };
+    permissions: { requireSendMessages: boolean };
+    sedReplace: boolean;
+    showCharacterCount: boolean;
+    showThreadPromptOnReply: boolean;
+    stickers: { button: boolean; allowSending: boolean; autoSuggest: boolean };
+    submit: {
+      button: boolean;
+      ignorePreference: boolean;
+      disableEnterToSubmit: boolean;
+      clearOnSubmit: boolean;
+      useDisabledStylesOnSubmit: boolean;
+    };
+    uploadLongMessages: boolean;
+    upsellLongMessages: { iconOnly: boolean };
+  };
+  guild: Guild;
+}
+export interface ChatContent {
+  $$typeof: symbol;
+  compare: null;
+  type: (ChatContentArgs: ChatContentArgs) => ReactElement;
+}
+export interface UserGuildSettingsStore {
+  allowAllMessages: DefaultTypes.AnyFunction;
+  allowNoMessages: DefaultTypes.AnyFunction;
+  getAllSettings: DefaultTypes.AnyFunction;
+  getChannelFlags: DefaultTypes.AnyFunction;
+  getChannelMessageNotifications: DefaultTypes.AnyFunction;
+  getChannelMuteConfig: DefaultTypes.AnyFunction;
+  getChannelOverrides: DefaultTypes.AnyFunction;
+  getChannelUnreadSetting: DefaultTypes.AnyFunction;
+  getGuildChannelFlags: DefaultTypes.AnyFunction;
+  getGuildFavorites: DefaultTypes.AnyFunction;
+  getGuildFlags: DefaultTypes.AnyFunction;
+  getMessageNotifications: DefaultTypes.AnyFunction;
+  getMuteConfig: DefaultTypes.AnyFunction;
+  getMutedChannels: DefaultTypes.AnyFunction;
+  getNewForumThreadsCreated: DefaultTypes.AnyFunction;
+  getNotifyHighlights: DefaultTypes.AnyFunction;
+  getOptedInChannels: DefaultTypes.AnyFunction;
+  getOptedInChannelsWithPendingUpdates: DefaultTypes.AnyFunction;
+  getPendingChannelUpdates: DefaultTypes.AnyFunction;
+  getState: DefaultTypes.AnyFunction;
+  initialize: DefaultTypes.AnyFunction;
+  isCategoryMuted: DefaultTypes.AnyFunction;
+  isChannelMuted: DefaultTypes.AnyFunction;
+  isChannelOptedIn: DefaultTypes.AnyFunction;
+  isChannelOrParentOptedIn: DefaultTypes.AnyFunction;
+  isChannelRecordOrParentOptedIn: DefaultTypes.AnyFunction;
+  isChannelRelevant: DefaultTypes.AnyFunction;
+  isFavorite: DefaultTypes.AnyFunction;
+  isGuildCollapsed: DefaultTypes.AnyFunction;
+  isGuildOrCategoryOrChannelMuted: DefaultTypes.AnyFunction;
+  isGuildUnreadSettingEnabled: DefaultTypes.AnyFunction;
+  isMobilePushEnabled: DefaultTypes.AnyFunction;
+  isMuteScheduledEventsEnabled: DefaultTypes.AnyFunction;
+  isMuted: DefaultTypes.AnyFunction;
+  isOptInEnabled: DefaultTypes.AnyFunction;
+  isSuppressEveryoneEnabled: DefaultTypes.AnyFunction;
+  isSuppressRolesEnabled: DefaultTypes.AnyFunction;
+  resolvedMessageNotifications: DefaultTypes.AnyFunction;
+}
 export interface GuildStore {
   getGuild: (guildId: string) => Guild;
   getGuildCount: DefaultTypes.AnyFunction;
@@ -692,6 +765,7 @@ export interface BigIntUtils {
 }
 export interface Settings {
   hiddenChannelIcon: string;
+  faded: boolean;
   sort: string;
   showPerms: boolean;
   showAdmin: string;
