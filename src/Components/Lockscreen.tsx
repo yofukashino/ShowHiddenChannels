@@ -56,7 +56,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
             },
           }}>
           You cannot see the contents of this channel.
-          {props.channel.topic && props.channel.type !== 15 && "However, you may see its topic."}
+          {props.channel.topic && props.channel.type !== 15 && " However, you may see its topic."}
         </TextElement>
         {props.channel.topic &&
           props.channel.type !== 15 &&
