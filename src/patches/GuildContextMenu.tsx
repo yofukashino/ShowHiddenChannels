@@ -5,7 +5,7 @@ const {
   ContextMenu: { MenuCheckboxItem },
 } = components;
 import { SettingValues } from "../index";
-export const addSHCEntry = (guild: Types.Guild): Types.ReactElement => {
+export const makeSHCContextMenuEntry = (guild: Types.Guild): Types.ReactElement => {
   const { value, onChange } = Utils.useSetting(
     SettingValues,
     `blacklistedGuilds.${guild.id}`,

@@ -132,6 +132,15 @@ export const patchUserGuildSettingsStore = (): void => {
       return new Set([...res, ...HiddenChannelIDs]);
     },
   );
+  PluginInjector.after(
+    UserGuildSettingsStore,
+    "isChannelMuted",
+    (args: [string, string], res: boolean) => {
+      const Channel = ChannelStore.getChannel(args[1]);
+      if (!SettingValues.get("faded", defaultSettings.faded) || !Channel?.isHidden()) return res;
+      return true;
+    },
+  );
 };
 
 export const patchRoute = (): void => {
