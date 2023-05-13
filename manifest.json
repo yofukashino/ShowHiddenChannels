@@ -1,5 +1,5 @@
 {
-  "id": "Tharki.ShowHiddenChannels",
+  "id": "dev.tharki.ShowHiddenChannels",
   "name": "ShowHiddenChannels",
   "description": "A replugged plugin which displays all hidden Channels, which can't be accessed due to Role Restrictions, this won't allow you to read them (impossible).",
   "author": {
@@ -7,7 +7,7 @@
     "discordID": "1025214794766221384",
     "github": "Tharki-God"
   },
-  "version": "1.0.8",
+  "version": "1.0.9",
   "updater": {
     "type": "github",
     "id": "Tharki-God/ShowHiddenChannels"

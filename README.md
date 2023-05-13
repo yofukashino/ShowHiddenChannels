@@ -6,7 +6,7 @@ This won't allow you to read them.
 
 Direct Download Link:
 
-[Tharki.ShowHiddenChannels.asar](https://github.com/Tharki-God/ShowHiddenChannels/releases/latest/download/Tharki.ShowHiddenChannels.asar)
+[dev.tharki.ShowHiddenChannels.asar](https://github.com/Tharki-God/ShowHiddenChannels/releases/latest/download/dev.tharki.ShowHiddenChannels.asar)
 
 Install Link:
 
@@ -17,5 +17,11 @@ Install Link:
 <sub>Ported from Better discord plugin made by
 [JustOptimize](https://github.com/JustOptimize/return-ShowHiddenChannels) which was ported from
 powercord plugin by [eternal](https://github.com/discord-modifications/show-hidden-channels).</sub>
+
+
+> For issues related to plugin either DM the dev or ask in support server listed below.
+>If making a post in support channel on replugged server then ping me!
+>
+> [![Support Server](https://discordapp.com/api/guilds/919649417005506600/widget.png?style=banner3)](https://discord.gg/SgKSKyh9gY)
 
 > For Contributing: [Make a pr thats all.]

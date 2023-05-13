@@ -9,7 +9,7 @@ export default [
       },
       {
         match: /\[(\w+,__OVERLAY__\?null:\w+,\w+,\w+)\]/,
-        replace: `[$1,replugged.plugins.getExports('Tharki.ShowHiddenChannels')?.makeSHCContextMenuEntry(_guild)]`,
+        replace: `[$1,replugged.plugins.getExports('dev.tharki.ShowHiddenChannels')?.makeSHCContextMenuEntry(_guild)]`,
       },
     ],
   },
@@ -23,7 +23,7 @@ export default [
       {
         match:
           /(\.channelName,children:\[)(\(0,\w+\.jsx\)\([\w$_]+\.[\w$_]+,{channel:\w+,guild:\w+}\))/,
-        replace: `$1replugged.plugins.getExports('Tharki.ShowHiddenChannels')?.makeChannelBrowerLockIcon({channel,originalIcon:$2})`,
+        replace: `$1replugged.plugins.getExports('dev.tharki.ShowHiddenChannels')?.makeChannelBrowerLockIcon({channel,originalIcon:$2})`,
       },
     ],
   },
