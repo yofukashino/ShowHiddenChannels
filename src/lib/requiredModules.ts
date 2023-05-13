@@ -114,7 +114,7 @@ export const TransitionUtil = {
   ),
 };
 export const ChannelUtilsModule = webpack.getBySource(
-  /\.Types\.STAFF_ONLY_DM.*.DM/,
+  /\w+.[\w$_]+.GROUP_DM:return null/,
 ) as unknown as Types.DefaultTypes.ObjectExports;
 export const ChannelUtils = {
   channelTopic: webpack.getFunctionBySource(ChannelUtilsModule, /function \w+\(\w+,\w+\)/),
