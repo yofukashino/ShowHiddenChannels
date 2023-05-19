@@ -1,6 +1,6 @@
 {
   "name": "show-hidden-channels",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A replugged plugin which displays all hidden Channels, which can't be accessed due to Role Restrictions, this won't allow you to read them (impossible).",
   "engines": {
     "node": ">=14.0.0"
