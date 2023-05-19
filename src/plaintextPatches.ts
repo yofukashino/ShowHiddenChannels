@@ -32,8 +32,8 @@ export default [
     replacements: [
       {
         match:
-          /([^]*)((\w+)\.__getLocalVars=function\(\)\{[^]*?return\{[^]*?guildCache:(\w+),[^]*?channelCache:(\w+),[^]*?guildVersions:(\w+),[^]*?channelsVersion:(\w+)[^]*?}[^]*?}[^]*?;)/s,
-        replace: `$1$3.clearVars=function(){$4={};$5={};$6={};$7=0;};$2`,
+          /((\w+)\.__getLocalVars=function\(\){.{0,1}return.{0,1}{.{0,1}guildCache:(\w+),.{0,1}channelCache:(\w+),.{0,1}guildVersions:(\w+),.{0,1}channelsVersion:(\w+).{0,1}}.{0,1}}.{0,1};)/s,
+        replace: `$2.clearVars=function(){$3={};$4={};$5={};$6=0;};$1`,
       },
     ],
   },
@@ -42,8 +42,8 @@ export default [
     replacements: [
       {
         match:
-          /([^]*)((\w+)\.__getLocalVars=function\(\){[^]*?return{[^]*?lastSelectedChannelId:(\w+),[^]*?lastSelectedVoiceChannelId:(\w+),[^]*?state:(\w+)[^]*?}[^]*?}[^]*?;)/,
-        replace: `$1$3.clearVars=function(){$4=null;$5=null;$6.clear();};$2`,
+          /((\w+)\.__getLocalVars=function\(\){.{0,1}return.{0,1}{.{0,1}lastSelectedChannelId:(\w+),.{0,1}lastSelectedVoiceChannelId:(\w+),.{0,1}state:(\w+).{0,1}}.{0,1}}.{0,1};)/s,
+        replace: `$2.clearVars=function(){$3=null;$4=null;$5.clear();};$1`,
       },
     ],
   },
