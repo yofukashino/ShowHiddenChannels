@@ -1,7 +1,7 @@
 import { types as DefaultTypes } from "replugged";
 export { types as DefaultTypes } from "replugged";
-export { ReactElement, ComponentClass } from "react";
-import { ComponentClass, ReactElement } from "react";
+export type { ReactElement, ComponentClass } from "react";
+import type { ComponentClass, ReactElement } from "react";
 export interface UnreadStore {
   ackMessageId: DefaultTypes.AnyFunction;
   getAllReadStates: DefaultTypes.AnyFunction;
@@ -69,9 +69,14 @@ export interface Channel {
   userLimit: number;
   availableTags: Array<{
     name: string;
+    id: string;
   }>;
   isHidden: () => boolean;
   isGuildVocal: () => boolean;
+}
+export interface RolePill extends ComponentClass {
+  $$typeof: symbol;
+  render: DefaultTypes.AnyFunction;
 }
 export interface PermissionUtils {
   ALL: number;
@@ -199,6 +204,30 @@ export interface ChatContent {
   $$typeof: symbol;
   compare: null;
   type: (ChatContentArgs: ChatContentArgs) => ReactElement;
+}
+export interface RouteArgs {
+  computedMatch: {
+    isExact: boolean;
+    params: {
+      channelId: undefined | string;
+      guildId: undefined | string;
+      messageId: undefined | string;
+    };
+
+    path: string;
+    url: string;
+  };
+  disableTrack: boolean;
+  impressionName: string;
+  location: {
+    pathname: string;
+    search: string;
+    hash: string;
+    state: undefined | string;
+    key: string;
+  };
+  path: string;
+  render: DefaultTypes.AnyFunction;
 }
 export interface UserGuildSettingsStore {
   allowAllMessages: DefaultTypes.AnyFunction;
@@ -561,9 +590,93 @@ export interface ChannelListClasses {
   viewAllChannelsButton: string;
   visibilityHidden: string;
 }
-export interface genericObjectExport {
-  [key: string | number]: DefaultTypes.AnyFunction;
+export interface ChatClasses {
+  avatar: string;
+  channelEmoji: string;
+  channelEmojiLeftOfIcon: string;
+  channelEmojiRightOfIcon: string;
+  channelName: string;
+  channelTextArea: string;
+  chat: string;
+  chatContent: string;
+  content: string;
+  cursorPointer: string;
+  editPartyIcon: string;
+  followButton: string;
+  form: string;
+  forumPostTitle: string;
+  guildBreadcrumbContainer: string;
+  guildBreadcrumbIcon: string;
+  loader: string;
+  noChat: string;
+  parentChannelName: string;
+  status: string;
+  threadSidebarFloating: string;
+  threadSidebarOpen: string;
+  title: string;
+  titleWrapper: string;
+  twemoji: string;
+  typing: string;
+  uploadArea: string;
 }
+export interface RolePillClasses {
+  rolePill: string;
+  rolePillBorder: string;
+  roles: string;
+}
+export interface ChannelClasses {
+  channelEmoji: string;
+  channelEmojiLeftOfIcon: string;
+  channelEmojiRightOfIcon: string;
+  channelName: string;
+  children: string;
+  content: string;
+  emojiColorFill: string;
+  favoriteSuggestion: string;
+  icon: string;
+  iconContainer: string;
+  mainContent: string;
+  mainContentWithChannelEmoji: string;
+  modeConnected: string;
+  modeLocked: string;
+  modeMuted: string;
+  modeSelected: string;
+  modeUnread: string;
+  name: string;
+  newBadge: string;
+  notInteractive: string;
+  numberBadge: string;
+  responsiveWidthMobile: string;
+  ripple: string;
+  subtitle: string;
+  topicDiv: string;
+  topicText: string;
+  twemoji: string;
+  typeThread: string;
+  unread: string;
+  unreadRelevant: string;
+  wrapper: string;
+}
+export interface IconClasses {
+  actionIcon: string;
+  alwaysShown: string;
+  channelInfo: string;
+  containerDefault: string;
+  containerDragAfter: string;
+  containerDragBefore: string;
+  containerUserOver: string;
+  disableClick: string;
+  disabled: string;
+  iconBase: string;
+  iconItem: string;
+  iconLive: string;
+  iconVisibility: string;
+  openChatIconItem: string;
+  selected: string;
+  subtitleHasThreads: string;
+  summary: string;
+}
+export interface genericObjectExport extends Record<string | number, DefaultTypes.AnyFunction> {}
 export interface collapsedCategoryIds {
   [key: string]: boolean;
 }
@@ -586,6 +699,55 @@ export interface LocaleManager {
   _maxListeners: undefined | string;
   _provider: DefaultTypes.ObjectExports;
   _requestedLocale: string;
+}
+export interface Permissions {
+  ADD_REACTIONS: bigint;
+  ADMINISTRATOR: bigint;
+  ATTACH_FILES: bigint;
+  BAN_MEMBERS: bigint;
+  CHANGE_NICKNAME: bigint;
+  CONNECT: bigint;
+  CREATE_EVENTS: bigint;
+  CREATE_GUILD_EXPRESSIONS: bigint;
+  CREATE_INSTANT_INVITE: bigint;
+  CREATE_PRIVATE_THREADS: bigint;
+  CREATE_PUBLIC_THREADS: bigint;
+  DEAFEN_MEMBERS: bigint;
+  EMBED_LINKS: bigint;
+  KICK_MEMBERS: bigint;
+  MANAGE_CHANNELS: bigint;
+  MANAGE_EVENTS: bigint;
+  MANAGE_GUILD: bigint;
+  MANAGE_GUILD_EXPRESSIONS: bigint;
+  MANAGE_MESSAGES: bigint;
+  MANAGE_NICKNAMES: bigint;
+  MANAGE_ROLES: bigint;
+  MANAGE_THREADS: bigint;
+  MANAGE_WEBHOOKS: bigint;
+  MENTION_EVERYONE: bigint;
+  MODERATE_MEMBERS: bigint;
+  MOVE_MEMBERS: bigint;
+  MUTE_MEMBERS: bigint;
+  PRIORITY_SPEAKER: bigint;
+  READ_MESSAGE_HISTORY: bigint;
+  REQUEST_TO_SPEAK: bigint;
+  SEND_MESSAGES: bigint;
+  SEND_MESSAGES_IN_THREADS: bigint;
+  SEND_TTS_MESSAGES: bigint;
+  SEND_VOICE_MESSAGES: bigint;
+  SPEAK: bigint;
+  STREAM: bigint;
+  USE_APPLICATION_COMMANDS: bigint;
+  USE_EMBEDDED_ACTIVITIES: bigint;
+  USE_EXTERNAL_EMOJIS: bigint;
+  USE_EXTERNAL_SOUNDS: bigint;
+  USE_EXTERNAL_STICKERS: bigint;
+  USE_SOUNDBOARD: bigint;
+  USE_VAD: bigint;
+  VIEW_AUDIT_LOG: bigint;
+  VIEW_CHANNEL: bigint;
+  VIEW_CREATOR_MONETIZATION_ANALYTICS: bigint;
+  VIEW_GUILD_ANALYTICS: bigint;
 }
 export interface LoadingBoundaryProps {
   children: React.ReactNode;

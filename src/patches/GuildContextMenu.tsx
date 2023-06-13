@@ -1,24 +1,40 @@
-import { components } from "replugged";
-import * as Utils from "../lib/utils";
+import { PluginInjectorUtils } from "../index";
+import shcContextMenuEntry from "../Components/MenuItem";
 import * as Types from "../types";
-const {
-  ContextMenu: { MenuCheckboxItem },
-} = components;
-import { SettingValues } from "../index";
-export const makeSHCContextMenuEntry = (guild: Types.Guild): Types.ReactElement => {
-  const { value, onChange } = Utils.useSetting(
-    SettingValues,
-    `blacklistedGuilds.${guild.id}`,
-    false as unknown as string,
+export const patchGuildContextMenu = (): void => {
+  PluginInjectorUtils.addMenuItem(
+    Types.DefaultTypes.ContextMenuTypes.GuildContext,
+    (data, menu) => {
+      const ItemGroup = (menu.children as Types.ReactElement[]).find((element) =>
+        element?.props?.children?.some?.((item) => item?.props?.id === "hide-muted-channels"),
+      );
+      const HideMutedIndex =
+        Array.isArray(ItemGroup?.props?.children) &&
+        ItemGroup?.props?.children?.findIndex((item) => item?.props?.id === "hide-muted-channels");
+      if (!HideMutedIndex) return;
+      ItemGroup?.props?.children.splice(
+        HideMutedIndex + 1,
+        0,
+        shcContextMenuEntry(data.guild as Types.Guild, menu.navId),
+      );
+    },
   );
-  return (
-    <MenuCheckboxItem
-      {...{
-        id: "hidden-channel-toggle",
-        label: "Hide Hidden Channels",
-        checked: value,
-        action: () => onChange(!value as unknown as string),
-      }}
-    />
+  PluginInjectorUtils.addMenuItem(
+    Types.DefaultTypes.ContextMenuTypes.GuildHeaderPopout,
+    (data, menu) => {
+      const ItemGroup = (menu.children as Types.ReactElement[]).find((element) =>
+        element?.props?.children?.some?.((item) => item?.props?.id === "hide-muted-channels"),
+      );
+      const HideMutedIndex =
+        Array.isArray(ItemGroup?.props?.children) &&
+        ItemGroup?.props?.children?.findIndex((item) => item?.props?.id === "hide-muted-channels");
+      if (!HideMutedIndex) return;
+      console.log(data, menu, ItemGroup);
+      ItemGroup?.props?.children.splice(
+        HideMutedIndex + 1,
+        0,
+        shcContextMenuEntry(data.guild as Types.Guild, menu.navId),
+      );
+    },
   );
 };

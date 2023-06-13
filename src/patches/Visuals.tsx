@@ -148,7 +148,7 @@ export const patchRoute = (): void => {
     Route,
     /\.impressionName.*\.impressionProperties.*\.disableTrack.*\.PAGE/,
   ) as string;
-  PluginInjector.before(Route, FunctionKey, (args) => {
+  PluginInjector.before(Route, FunctionKey, (args: [Types.RouteArgs]) => {
     const channelId = args[0]?.computedMatch?.params?.channelId;
     const guildId = args[0]?.computedMatch?.params?.guildId;
     const channel = ChannelStore?.getChannel(channelId);

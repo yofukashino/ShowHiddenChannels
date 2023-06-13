@@ -7,8 +7,9 @@ import { patchChannelCategories } from "./ChannelsCategories";
 import { patchPermissions } from "./Permissions";
 import { patchUnreadStore } from "./UnreadStore";
 import { patchVisuals } from "./Visuals";
+import { patchGuildContextMenu } from "./GuildContextMenu";
+import { patchSettingSetter } from "./SettingValues";
 export { makeChannelBrowerLockIcon } from "./Visuals";
-export { makeSHCContextMenuEntry } from "./GuildContextMenu";
 export const applyInjections = (): void => {
   if (SettingValues.get("debugMode", defaultSettings.debugMode)) {
     PluginLogger.log("Below are the Modules used by Show Hidden Channels Plugins.");
@@ -20,4 +21,6 @@ export const applyInjections = (): void => {
   patchPermissions();
   patchUnreadStore();
   patchVisuals();
+  patchGuildContextMenu();
+  patchSettingSetter();
 };

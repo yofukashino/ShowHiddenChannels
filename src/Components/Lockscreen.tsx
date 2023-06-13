@@ -8,6 +8,7 @@ import {
   ChannelUtils,
   ChatClasses,
   DiscordConstants,
+  ForumTags,
   GuildMemberStore,
   PermissionUtils,
   RolePill,
@@ -56,10 +57,10 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
             },
           }}>
           You cannot see the contents of this channel.
-          {props.channel.topic && props.channel.type !== 15 && " However, you may see its topic."}
+          {props.channel.topic &&
+            ` However, you may see its ${props.channel.type !== 15 ? "topic" : "guidelines"}.`}
         </TextElement>
         {props.channel.topic &&
-          props.channel.type !== 15 &&
           props.guild &&
           ChannelUtils?.channelTopic(props.channel, props.guild)}
         {props.channel.lastMessageId && (
@@ -258,7 +259,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                 )}
             </div>
           )}
-        {props.channel.type === 15 && (props.channel.availableTags || props.channel.topic) && (
+        {props.channel.type === 15 && props.channel.availableTags && (
           <div
             {...{
               style: {
@@ -278,32 +279,21 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                   marginBottom: 10,
                 },
               }}>
-              Forum
+              Forum Tags
             </TextElement>
-            {props.channel.availableTags && props.channel.availableTags.length > 0 && (
-              <TextElement
-                {...{
-                  color: TextElement.Colors.INTERACTIVE_NORMAL,
-                  size: TextElement.Sizes.SIZE_14,
-                  style: {
-                    marginTop: 10,
-                  },
-                }}>
-                Tags: ,{props.channel.availableTags.map((tag) => tag.name).join(", ")}
-              </TextElement>
-            )}
-            {props.channel.topic && (
-              <TextElement
-                {...{
-                  color: TextElement.Colors.INTERACTIVE_NORMAL,
-                  size: TextElement.Sizes.SIZE_14,
-                  style: {
-                    marginTop: 10,
-                  },
-                }}>
-                Guidelines: ,{props.channel.topic}
-              </TextElement>
-            )}
+            {props.channel.availableTags &&
+              props.channel.availableTags.length > 0 &&
+              props.channel.availableTags.map((tag) => (
+                <ForumTags
+                  {...{
+                    key: tag.id,
+                    className: "tag-3T_qsl",
+                    onClick: () => null,
+                    selected: false,
+                    tag,
+                  }}
+                />
+              ))}
           </div>
         )}
       </div>

@@ -1,19 +1,6 @@
 import * as Types from "./types";
 export default [
   {
-    find: '"GuildContextMenu:',
-    replacements: [
-      {
-        match: /(\w=(\w)\.id)/,
-        replace: `$1,_guild=$2`,
-      },
-      {
-        match: /\[(\w+,__OVERLAY__\?null:\w+,\w+,\w+)\]/,
-        replace: `[$1,replugged.plugins.getExports('dev.tharki.ShowHiddenChannels')?.makeSHCContextMenuEntry(_guild)]`,
-      },
-    ],
-  },
-  {
     find: "isCopiedStreakGodlike",
     replacements: [
       {
@@ -24,6 +11,15 @@ export default [
         match:
           /(\.channelName,children:\[)(\(0,\w+\.jsx\)\([\w$_]+\.[\w$_]+,{channel:\w+,guild:\w+}\))/,
         replace: `$1replugged.plugins.getExports('dev.tharki.ShowHiddenChannels')?.makeChannelBrowerLockIcon({channel,originalIcon:$2})`,
+      },
+    ],
+  },
+  {
+    find: /\w+.[\w$_]+.GROUP_DM:return null/,
+    replacements: [
+      {
+        match: /(case (\w+.[\w$_]+).GROUP_DM:return null!=\w+\?)/,
+        replace: `case $2.GUILD_FORUM:$1!arguments[0]?.isHidden?.()&&arguments[0].type==$2.GUILD_FORUM?null:`,
       },
     ],
   },

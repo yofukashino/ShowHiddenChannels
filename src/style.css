@@ -1,3 +1,12 @@
+.shc-hidden-chat-content {
+  overflow-y: auto;
+  max-width: 90%;
+  padding-top: 12.5%;
+  padding-bottom: 5%;
+}
+.shc-hidden-chat-content::-webkit-scrollbar {
+  display: none;
+}
 .shc-hidden-notice {
   display: flex;
   flex-direction: column;
