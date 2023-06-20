@@ -1,8 +1,8 @@
 import { components, util } from "replugged";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
-import { IconSwitch } from "./IconSwitch";
-import { GuildStore, IconUtils } from "../lib/requiredModules";
+
+import SearchableGuilds from "./SearchableGuilds";
 import * as Utils from "../lib/utils";
 import * as Types from "../types";
 const { ButtonItem, Category, SwitchItem, RadioItem } = components;
@@ -162,25 +162,7 @@ export const Settings = () => {
         })}
       </Category>
       <Category {...{ title: "Guilds Blacklist", open: false }}>
-        {...Object.values(GuildStore.getGuilds()).map((guild) => (
-          <IconSwitch
-            {...{
-              title: guild.name,
-              note: guild.description,
-              icon:
-                IconUtils.getGuildIconURL(guild) ??
-                IconUtils.getDefaultAvatarURL(Utils.randomNo(0, 69)),
-              ...(Utils.useSetting(
-                SettingValues,
-                `blacklistedGuilds.${guild.id}`,
-                false as unknown as string,
-              ) as unknown as {
-                value: boolean;
-                onChange: (newValue: boolean) => void;
-              }),
-            }}
-          />
-        ))}
+        <SearchableGuilds />
       </Category>
       <ButtonItem
         {...{

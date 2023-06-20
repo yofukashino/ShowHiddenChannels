@@ -29,7 +29,6 @@ export const patchGuildContextMenu = (): void => {
         Array.isArray(ItemGroup?.props?.children) &&
         ItemGroup?.props?.children?.findIndex((item) => item?.props?.id === "hide-muted-channels");
       if (!HideMutedIndex) return;
-      console.log(data, menu, ItemGroup);
       ItemGroup?.props?.children.splice(
         HideMutedIndex + 1,
         0,

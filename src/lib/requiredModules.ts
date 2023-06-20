@@ -107,3 +107,8 @@ export const ForumTags = webpack.getFunctionBySource<Types.ComponentClass>(
   ForumTagsModule,
   ".Messages.FORUM_TAG_A11Y_FILTER_BY_TAG.",
 );
+export const DiscordComponents = webpack.getByProps<Types.DiscordComponents>(
+  "PopoutList",
+  "AdvancedScrollerAuto",
+);
+export const ScrollerClasses = webpack.getByProps<Types.ScrollerClasses>("listWrapper", "scroller");

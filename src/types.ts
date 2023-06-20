@@ -862,7 +862,9 @@ export interface LockscreenProps {
   channel: Channel;
   guild: Guild;
 }
-export interface SwitchItem extends ComponentClass {
+export interface IconSwitch {
+  title: string;
+  icon?: string;
   value: boolean;
   onChange: (e: boolean) => void;
   note?: string;
@@ -872,10 +874,6 @@ export interface SwitchItem extends ComponentClass {
   style?: React.CSSProperties;
   className?: string;
   children?: ReactElement;
-}
-export interface IconSwitch extends SwitchItem {
-  title: string;
-  icon?: string;
 }
 export interface IconUtils {
   getAnimatableSourceWithFallback: DefaultTypes.AnyFunction;
@@ -924,6 +922,29 @@ export interface BigIntUtils {
   hasAny: DefaultTypes.AnyFunction;
   invert: DefaultTypes.AnyFunction;
   remove: DefaultTypes.AnyFunction;
+}
+export interface ScrollerClasses {
+  listHeight: string;
+  listItems: string;
+  listWrapper: string;
+  scroller: string;
+}
+export interface PopoutList extends ComponentClass {
+  Divider: ComponentClass;
+  Empty: ComponentClass;
+  Item: ComponentClass;
+  SearchBar: ComponentClass;
+}
+export interface DiscordComponents {
+  AdvancedScroller: ComponentClass;
+  AdvancedScrollerAuto: ComponentClass;
+  AdvancedScrollerNone: ComponentClass;
+  AdvancedScrollerThin: ComponentClass;
+  PopoutList: PopoutList;
+  Scroller: ComponentClass;
+  ScrollerAuto: ComponentClass;
+  ScrollerNone: ComponentClass;
+  ScrollerThin: ComponentClass;
 }
 export interface Settings {
   hiddenChannelIcon: string;

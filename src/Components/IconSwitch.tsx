@@ -1,43 +1,87 @@
 import { common, components } from "replugged";
 import * as Types from "../types";
 const { React } = common;
-const SwitchItem = components.SwitchItem as unknown as Types.SwitchItem;
+const { Divider, Flex, Switch, Text } = components;
 
-export class IconSwitch extends React.Component<Types.IconSwitch> {
-  render() {
-    return (
-      <div>
-        <SwitchItem {...this.props}>
-          <div>
-            {this.props.icon && (
+export default (props: Types.IconSwitch) => {
+  return (
+    <div
+      {...{
+        style: {
+          marginTop: "12.5px",
+        },
+      }}>
+      <Flex>
+        <Flex>
+          <div
+            {...{
+              style: {
+                display: "inline",
+                position: "relative",
+              },
+            }}>
+            {props.icon && (
               <img
                 {...{
-                  src: this.props.icon,
-                  width: 32,
-                  height: 32,
+                  src: props.icon,
+                  width: 52,
+                  height: 52,
                   style: {
                     borderRadius: "360px",
                   },
                 }}
               />
             )}
-            <div
+            <Text.H2
               {...{
-                style: this.props.icon
+                style: props.icon
                   ? {
                       display: "inline",
-                      fontSize: "22px",
                       position: "relative",
-                      bottom: "7.5px",
-                      left: "2.5px",
+                      bottom: "20.5px",
+                      left: "3.5px",
                     }
                   : {},
               }}>
-              {this.props.title || this.props.children}
-            </div>
+              {props.title || props.children}
+            </Text.H2>
+            <Text.Normal
+              {...{
+                style: {
+                  display: "block",
+                  position: "relative",
+                  bottom: "15px",
+                  left: "55.5px",
+                },
+              }}>
+              {props.note}
+            </Text.Normal>
           </div>
-        </SwitchItem>
-      </div>
-    );
-  }
-}
+        </Flex>
+        <div
+          {...{
+            style: {
+              marginTop: "15px",
+              minWidth: "16px",
+              maxWidth: "16px",
+            },
+          }}>
+          <Switch
+            {...{
+              checked: props.value,
+              onChange: props.onChange,
+              disabled: props.disabled,
+            }}
+          />
+        </div>
+      </Flex>
+      <Divider
+        {...{
+          style: {
+            marginTop: "2.5px",
+          },
+        }}
+      />
+    </div>
+  );
+};
