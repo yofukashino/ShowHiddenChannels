@@ -9,7 +9,6 @@ export const patchChannel = (): void => {
     "isHidden",
     (_args, _res, instance: Types.Channel & Types.DefaultTypes.ObjectExports) => {
       const { type } = instance;
-      return true;
       return (
         ![1, 3].includes(type) && !originalCan(DiscordConstants.Permissions.VIEW_CHANNEL, instance)
       );
