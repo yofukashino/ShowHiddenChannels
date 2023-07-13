@@ -12,6 +12,7 @@ import {
   ForumTags,
   GuildMemberStore,
   PermissionUtils,
+  ProfileActions,
   RolePill,
   RolePillClasses,
   ScrollerClasses,
@@ -24,6 +25,123 @@ const { AdvancedScrollerAuto } = DiscordComponents;
 export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
   if (SettingValues.get("debugMode", defaultSettings.debugMode))
     PluginLogger.log("LockScreen Props", props);
+
+  const [channelSpecificRoles, setChannelSpecificRoles] = React.useState<
+    Types.ReactElement[] | string[]
+  >([]);
+  const [adminRoles, setAdminRoles] = React.useState<Types.ReactElement[] | string[]>([]);
+  const [userMentionComponents, setUserMentionComponents] = React.useState<
+    Types.ReactElement[] | string[]
+  >([]);
+
+  const mapChannelRoles = (): void => {
+    const channelRoleOverwrites = Object.values(props.channel.permissionOverwrites).filter(
+      (role: Types.permissionOverwrite) =>
+        role &&
+        role?.type === 0 &&
+        ((SettingValues.get("showAdmin", defaultSettings.showAdmin) !== "false" &&
+          BigIntUtils.has(
+            props.guild.roles[role.id].permissions,
+            DiscordConstants.Permissions.ADMINISTRATOR,
+          )) ||
+          BigIntUtils.has(role.allow, DiscordConstants.Permissions.VIEW_CHANNEL) ||
+          (BigIntUtils.has(
+            props.guild.roles[role.id].permissions,
+            DiscordConstants.Permissions.VIEW_CHANNEL,
+          ) &&
+            !BigIntUtils.has(role.deny, DiscordConstants.Permissions.VIEW_CHANNEL))),
+    );
+
+    if (!channelRoleOverwrites?.length) return setChannelSpecificRoles(["None"]);
+    const roleComponentArray = channelRoleOverwrites.map((m) => (
+      <RolePill
+        {...{
+          canRemove: false,
+          className: `${RolePillClasses.rolePill} shc-rolePill`,
+          disableBorderColor: true,
+          guildId: props.guild.id,
+          onRemove: Utils.NOOP,
+          role: props.guild.roles[m.id],
+        }}
+      />
+    ));
+    return setChannelSpecificRoles(roleComponentArray);
+  };
+
+  const mapAdminRoles = (): void => {
+    if (SettingValues.get("showAdmin", defaultSettings.showAdmin) === "false")
+      return setAdminRoles(["None"]);
+    const adminRoles = Object.values(props.guild.roles).filter(
+      (role) =>
+        BigIntUtils.has(role.permissions, DiscordConstants.Permissions.ADMINISTRATOR) &&
+        (SettingValues.get("showAdmin", defaultSettings.showAdmin) === "include" ||
+          (SettingValues.get("showAdmin", defaultSettings.showAdmin) === "exclude" &&
+            !role.tags?.bot_id)),
+    );
+
+    if (!adminRoles?.length) return setAdminRoles(["None"]);
+
+    const roleComponentArray = adminRoles.map((m) => (
+      <RolePill
+        {...{
+          canRemove: false,
+          className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
+          disableBorderColor: true,
+          guildId: props.guild.id,
+          onRemove: Utils.NOOP,
+          role: m,
+        }}
+      />
+    ));
+    return setAdminRoles(roleComponentArray);
+  };
+
+  const fetchMemberAndMap = async (): Promise<void> => {
+    const allUserOverwrites = Object.values(props.channel.permissionOverwrites).filter(
+      (user: Types.permissionOverwrite): boolean => Boolean(user && user?.type === 1),
+    );
+
+    for (const user of allUserOverwrites) {
+      await ProfileActions.fetchProfile(user.id, {
+        guildId: props.guild.id,
+        withMutualGuilds: false,
+      });
+    }
+
+    const filteredUserOverwrites = Object.values(props.channel.permissionOverwrites).filter(
+      (user: Types.permissionOverwrite): boolean =>
+        Boolean(
+          PermissionUtils.can({
+            permission: DiscordConstants.Permissions.VIEW_CHANNEL,
+            user: UltimateUserStore.getUser(user.id),
+            context: props.channel,
+          }) && GuildMemberStore.isMember(props.guild.id, user.id),
+        ),
+    );
+
+    if (!filteredUserOverwrites?.length) return setUserMentionComponents(["None"]);
+    const mentionArray = filteredUserOverwrites.map((m: Types.permissionOverwrite) =>
+      UserMentions.react(
+        {
+          userId: m.id,
+          channelId: props.channel.id,
+        },
+        Utils.NOOP,
+        {
+          noStyleAndInteraction: false,
+        },
+      ),
+    );
+
+    return setUserMentionComponents(mentionArray);
+  };
+
+  React.useEffect(() => {
+    mapChannelRoles();
+    mapAdminRoles();
+    fetchMemberAndMap();
+  }, []);
+
   return (
     <div
       {...{
@@ -136,34 +254,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                         marginBottom: 5,
                       },
                     }}>
-                    {...(() => {
-                      const allUsers = Object.values(props.channel.permissionOverwrites).filter(
-                        (user: Types.permissionOverwrite): boolean =>
-                          Boolean(
-                            user &&
-                              user?.type === 1 &&
-                              PermissionUtils.can({
-                                permission: DiscordConstants.Permissions.VIEW_CHANNEL,
-                                user: UltimateUserStore.getUser(user.id),
-                                context: props.channel,
-                              }) &&
-                              GuildMemberStore.isMember(props.guild.id, user.id),
-                          ),
-                      );
-                      if (!allUsers?.length) return ["None"];
-                      return allUsers.map((m: Types.permissionOverwrite) =>
-                        UserMentions.react(
-                          {
-                            userId: m.id,
-                            channelId: props.channel.id,
-                          },
-                          Utils.NOOP,
-                          {
-                            noStyleAndInteraction: false,
-                          },
-                        ),
-                      );
-                    })() as Types.ReactElement[]}
+                    {userMentionComponents}
                   </div>
 
                   <TextElement
@@ -183,44 +274,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                         paddingTop: 5,
                       },
                     }}>
-                    {...(() => {
-                      const channelRoles = Object.values(props.channel.permissionOverwrites).filter(
-                        (role: Types.permissionOverwrite) =>
-                          role &&
-                          role?.type === 0 &&
-                          ((SettingValues.get("showAdmin", defaultSettings.showAdmin) !== "false" &&
-                            BigIntUtils.has(
-                              props.guild.roles[role.id].permissions,
-                              DiscordConstants.Permissions.ADMINISTRATOR,
-                            )) ||
-                            BigIntUtils.has(
-                              role.allow,
-                              DiscordConstants.Permissions.VIEW_CHANNEL,
-                            ) ||
-                            (BigIntUtils.has(
-                              props.guild.roles[role.id].permissions,
-                              DiscordConstants.Permissions.VIEW_CHANNEL,
-                            ) &&
-                              !BigIntUtils.has(
-                                role.deny,
-                                DiscordConstants.Permissions.VIEW_CHANNEL,
-                              ))),
-                      );
-
-                      if (!channelRoles?.length) return ["None"];
-                      return channelRoles.map((m) => (
-                        <RolePill
-                          {...{
-                            canRemove: false,
-                            className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
-                            disableBorderColor: true,
-                            guildId: props.guild.id,
-                            onRemove: Utils.NOOP,
-                            role: props.guild.roles[m.id],
-                          }}
-                        />
-                      ));
-                    })() as Types.ReactElement[]}
+                    {channelSpecificRoles}
                   </div>
                   {SettingValues.get("showAdmin", defaultSettings.showAdmin) !== "false" &&
                     SettingValues.get("showAdmin", defaultSettings.showAdmin) !== "channel" && (
@@ -242,38 +296,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                               paddingTop: 5,
                             },
                           }}>
-                          {...(() => {
-                            if (
-                              SettingValues.get("showAdmin", defaultSettings.showAdmin) === "false"
-                            )
-                              return ["None"];
-                            const guildRoles = Object.values(props.guild.roles).filter(
-                              (role) =>
-                                BigIntUtils.has(
-                                  role.permissions,
-                                  DiscordConstants.Permissions.ADMINISTRATOR,
-                                ) &&
-                                (SettingValues.get("showAdmin", defaultSettings.showAdmin) ===
-                                  "include" ||
-                                  (SettingValues.get("showAdmin", defaultSettings.showAdmin) ===
-                                    "exclude" &&
-                                    !role.tags?.bot_id)),
-                            );
-
-                            if (!guildRoles?.length) return ["None"];
-                            return guildRoles.map((m) => (
-                              <RolePill
-                                {...{
-                                  canRemove: false,
-                                  className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
-                                  disableBorderColor: true,
-                                  guildId: props.guild.id,
-                                  onRemove: Utils.NOOP,
-                                  role: m,
-                                }}
-                              />
-                            ));
-                          })() as Types.ReactElement[]}
+                          {adminRoles}
                         </div>
                       </div>
                     )}

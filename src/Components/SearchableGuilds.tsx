@@ -9,7 +9,7 @@ const {
   PopoutList: { SearchBar, Divider },
 } = DiscordComponents;
 export default () => {
-  const [searchValue, setSearchValue] = React.useState("");
+  const [searchValue, setSearchValue] = React.useState([]);
   const filteredGuildsWithState = Object.values(GuildStore.getGuilds())
     .map((Guild: Types.Guild) => ({
       Guild,
@@ -24,9 +24,11 @@ export default () => {
     }))
     .filter(({ Guild }: { Guild: Types.Guild }) =>
       searchValue
-        ? Guild?.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          Guild?.description?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          Guild?.id?.includes(searchValue)
+        ? searchValue.every(value => Guild?.name?.toLowerCase().includes(value.toLowerCase())) ||
+        searchValue.every(value => Guild?.description?.toLowerCase().includes(value.toLowerCase())) ||
+        (searchValue.some(value => Guild?.name?.toLowerCase().includes(value.toLowerCase())) &&
+        searchValue.some(value => Guild?.description?.toLowerCase().includes(value.toLowerCase()))) ||
+        searchValue.some(value => Guild?.id?.includes(value)) 
         : true,
     )
     .sort((a, b) => a.Guild.name.localeCompare(b.Guild.name));
@@ -40,9 +42,9 @@ export default () => {
         {...{
           autoFocus: true,
           placeholder: "Search Guilds",
-          query: searchValue || "",
-          onChange: (query) => setSearchValue(query),
-          onClear: () => setSearchValue(""),
+          query: searchValue.join(" ") || "",
+          onChange: (query) => setSearchValue(query.split(" ")),
+          onClear: () => setSearchValue([]),
         }}
       />
       <Divider />

@@ -1,7 +1,8 @@
-import { components, webpack } from "replugged";
+import { components, webpack, util } from "replugged";
 import { PluginInjector, SettingValues } from "../index";
 import {
-  ChannelClasses,
+  ChannelItemClasses,
+  ChannelButtonClasses,
   ChannelItem,
   ChannelItemUtil,
   ChannelStore,
@@ -54,7 +55,7 @@ export const patchChannelItem = (): void => {
       if (item?.className)
         item.className += ` shc-hidden-channel shc-hidden-channel-type-${props.channel.type}`;
       const children = Utils.findInReactTree(res, (m: Types.ReactElement) =>
-        m?.props?.onClick?.toString().includes("stopPropagation"),
+        m?.props?.onClick?.toString().includes("stopPropagation") && m.type === "div",
       ) as Types.ReactElement;
       if (children?.props?.children)
         children.props.children = [
@@ -78,27 +79,32 @@ export const patchChannelItem = (): void => {
             />
           </Tooltip>,
         ];
+
       if (props.channel.type === DiscordConstants.ChanneTypes.GUILD_VOICE && !props.connected) {
+      
         const wrapper = Utils.findInReactTree(res, (n: Types.ReactElement) =>
-          n?.props?.className?.includes(ChannelClasses.wrapper),
-        ) as Types.ReactElement;
-        if (wrapper) {
-          wrapper.props.onMouseDown = () => {};
-          wrapper.props.onMouseUp = () => {};
-        }
-        const mainContent = Utils.findInReactTree(res, (n: Types.ReactElement) =>
-          n?.props?.className?.includes(ChannelClasses.mainContent),
+          n?.props?.className?.includes(ChannelItemClasses.wrapper),
         ) as Types.ReactElement;
 
-        if (mainContent) {
-          mainContent.props.onClick = () =>
+        if (wrapper?.props) {
+          wrapper.props.onMouseDown = () => {};
+          wrapper.props.onMouseUp = () => {};
+        } 
+
+        const button = Utils.findInReactTree(res, (n: Types.ReactElement) =>
+          n?.props?.className?.includes(ChannelButtonClasses.link),
+        ) as Types.ReactElement;
+
+        if (button?.props) {
+          button.props.href = `/channels/${props.channel.guild_id}/${props.channel.id}`;
+          button.props.onClick = () =>
             props.channel.isGuildVocal() &&
             TransitionUtil.transitionToChannel(
-              `/channels/${props.channel.guild_id}/${props.channel.id}`,
+              button.props.href,
             );
-          mainContent.props.href = null;
         }
       }
+        
       return res;
     },
   );

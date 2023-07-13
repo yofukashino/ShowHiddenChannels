@@ -30,7 +30,14 @@ export const RolePillClasses = webpack.getByProps<Types.RolePillClasses>(
   "rolePill",
   "rolePillBorder",
 );
-export const ChannelClasses = webpack.getByProps<Types.ChannelClasses>("wrapper", "mainContent");
+export const ChannelItemClasses = webpack.getByProps<Types.ChannelItemClasses>(
+  "wrapper",
+  "mainContent",
+);
+export const ChannelButtonClasses = webpack.getByProps<Types.ChannelButtonClasses>(
+  "channelEmoji",
+  "linkBottom",
+);
 export const PermissionStore = webpack.getByProps<Types.PermissionStore>("getChannelPermissions");
 export const PermissionUtils = webpack.getByProps<Types.PermissionUtils>(
   "isRoleHigher",
@@ -112,3 +119,18 @@ export const DiscordComponents = webpack.getByProps<Types.DiscordComponents>(
   "AdvancedScrollerAuto",
 );
 export const ScrollerClasses = webpack.getByProps<Types.ScrollerClasses>("listWrapper", "scroller");
+
+export const ProfileActionsModule = webpack.getBySource<Types.DefaultTypes.ObjectExports>(
+  "setFlag: user cannot be undefined",
+);
+
+export const ProfileActions = {
+  getUser: webpack.getFunctionBySource<Types.DefaultTypes.AnyFunction>(
+    ProfileActionsModule,
+    '"USER_UPDATE"',
+  ),
+  fetchProfile: webpack.getFunctionBySource<Types.DefaultTypes.AnyFunction>(
+    ProfileActionsModule,
+    ".apply(",
+  ),
+};

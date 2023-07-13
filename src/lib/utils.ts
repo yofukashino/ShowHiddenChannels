@@ -189,15 +189,19 @@ export const getHiddenChannelRecord = (
   return { records: Object.fromEntries(hiddenChannelCache[guildId]), ...hiddenChannels };
 };
 
-export const forceUpdate = (element: Element): void => {
+export const forceRerenderElement = (selector: string): void => {
+  const element = document.querySelector(selector);
+
   if (!element) return;
-  const toForceUpdate = util.getOwnerInstance(element);
-  const forceRerender = PluginInjector.instead(toForceUpdate, "render", () => {
-    forceRerender();
+
+  const ownerInstance = util.getOwnerInstance(element);
+
+  const unpatchRender = PluginInjector.instead(ownerInstance, "render", () => {
+    unpatchRender();
     return null;
   });
 
-  toForceUpdate.forceUpdate(() => toForceUpdate.forceUpdate(() => {}));
+  ownerInstance.forceUpdate(() => ownerInstance.forceUpdate(() => {}));
 };
 
 export const rerenderChannels = (): void => {
@@ -209,5 +213,5 @@ export const rerenderChannels = (): void => {
 
   ChannelListStore.initialize();
 
-  forceUpdate(document.querySelector(`.${ChannelListClasses.container}`));
+  forceRerenderElement(`.${ChannelListClasses.container}`);
 };
