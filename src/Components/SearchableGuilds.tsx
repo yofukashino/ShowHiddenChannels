@@ -24,11 +24,15 @@ export default () => {
     }))
     .filter(({ Guild }: { Guild: Types.Guild }) =>
       searchValue
-        ? searchValue.every(value => Guild?.name?.toLowerCase().includes(value.toLowerCase())) ||
-        searchValue.every(value => Guild?.description?.toLowerCase().includes(value.toLowerCase())) ||
-        (searchValue.some(value => Guild?.name?.toLowerCase().includes(value.toLowerCase())) &&
-        searchValue.some(value => Guild?.description?.toLowerCase().includes(value.toLowerCase()))) ||
-        searchValue.some(value => Guild?.id?.includes(value)) 
+        ? searchValue.every((value) => Guild?.name?.toLowerCase().includes(value.toLowerCase())) ||
+          searchValue.every((value) =>
+            Guild?.description?.toLowerCase().includes(value.toLowerCase()),
+          ) ||
+          (searchValue.some((value) => Guild?.name?.toLowerCase().includes(value.toLowerCase())) &&
+            searchValue.some((value) =>
+              Guild?.description?.toLowerCase().includes(value.toLowerCase()),
+            )) ||
+          searchValue.some((value) => Guild?.id?.includes(value))
         : true,
     )
     .sort((a, b) => a.Guild.name.localeCompare(b.Guild.name));

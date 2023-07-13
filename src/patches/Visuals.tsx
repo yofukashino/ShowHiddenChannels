@@ -1,9 +1,9 @@
-import { components, webpack, util } from "replugged";
+import { components, webpack } from "replugged";
 import { PluginInjector, SettingValues } from "../index";
 import {
-  ChannelItemClasses,
   ChannelButtonClasses,
   ChannelItem,
+  ChannelItemClasses,
   ChannelItemUtil,
   ChannelStore,
   ChatContent,
@@ -54,8 +54,10 @@ export const patchChannelItem = (): void => {
       const item = res.props?.children?.props;
       if (item?.className)
         item.className += ` shc-hidden-channel shc-hidden-channel-type-${props.channel.type}`;
-      const children = Utils.findInReactTree(res, (m: Types.ReactElement) =>
-        m?.props?.onClick?.toString().includes("stopPropagation") && m.type === "div",
+      const children = Utils.findInReactTree(
+        res,
+        (m: Types.ReactElement) =>
+          m?.props?.onClick?.toString().includes("stopPropagation") && m.type === "div",
       ) as Types.ReactElement;
       if (children?.props?.children)
         children.props.children = [
@@ -81,7 +83,6 @@ export const patchChannelItem = (): void => {
         ];
 
       if (props.channel.type === DiscordConstants.ChanneTypes.GUILD_VOICE && !props.connected) {
-      
         const wrapper = Utils.findInReactTree(res, (n: Types.ReactElement) =>
           n?.props?.className?.includes(ChannelItemClasses.wrapper),
         ) as Types.ReactElement;
@@ -89,7 +90,7 @@ export const patchChannelItem = (): void => {
         if (wrapper?.props) {
           wrapper.props.onMouseDown = () => {};
           wrapper.props.onMouseUp = () => {};
-        } 
+        }
 
         const button = Utils.findInReactTree(res, (n: Types.ReactElement) =>
           n?.props?.className?.includes(ChannelButtonClasses.link),
@@ -98,13 +99,10 @@ export const patchChannelItem = (): void => {
         if (button?.props) {
           button.props.href = `/channels/${props.channel.guild_id}/${props.channel.id}`;
           button.props.onClick = () =>
-            props.channel.isGuildVocal() &&
-            TransitionUtil.transitionToChannel(
-              button.props.href,
-            );
+            props.channel.isGuildVocal() && TransitionUtil.transitionToChannel(button.props.href);
         }
       }
-        
+
       return res;
     },
   );
