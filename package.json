@@ -9,6 +9,7 @@
     "build": "replugged build plugin",
     "watch": "replugged build plugin --watch",
     "bundle": "replugged bundle plugin",
+    "release": "replugged release",
     "check": "tsc --noEmit",
     "prettier:check": "prettier ./src --check",
     "eslint:check": "eslint ./src",
@@ -21,16 +22,16 @@
   "author": "Ahlawat",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^18.16.19",
-    "@types/react": "^18.2.14",
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "@typescript-eslint/parser": "^5.60.1",
-    "eslint": "^8.44.0",
+    "@types/node": "^18.17.19",
+    "@types/react": "^18.2.22",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
+    "eslint": "^8.50.0",
     "eslint-config-dmitmel": "github:dmitmel/eslint-config-dmitmel",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react": "^7.33.2",
     "prettier": "^2.8.8",
-    "replugged": "^4.5.0",
+    "replugged": "^4.6.3",
     "typescript": "^4.9.5"
   }
 }

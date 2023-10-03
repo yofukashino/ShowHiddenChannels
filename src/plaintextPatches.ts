@@ -1,21 +1,7 @@
 import * as Types from "./types";
 export default [
   {
-    find: "isCopiedStreakGodlike",
-    replacements: [
-      {
-        match: /(\.isLastChannel,\w+=(\w+)\.onChannelClick)/,
-        replace: `$1,{channel}=$2`,
-      },
-      {
-        match:
-          /(\.channelName,children:\[)(\(0,\w+\.jsx\)\([\w$_]+\.[\w$_]+,{channel:\w+,guild:\w+}\))/,
-        replace: `$1replugged.plugins.getExports('dev.tharki.ShowHiddenChannels')?.makeChannelBrowerLockIcon({channel,originalIcon:$2})`,
-      },
-    ],
-  },
-  {
-    find: /\w+.[\w$_]+.GROUP_DM:return null/,
+    find: "GROUP_DM:return null",
     replacements: [
       {
         match: /(case (\w+.[\w$_]+).GROUP_DM:return null!=\w+\?)/,
@@ -24,12 +10,27 @@ export default [
     ],
   },
   {
+    find: "isThreadSidebarFloating",
+    replacements: [
+      {
+        match:
+          /((\w+)\s*=\s*\w+\s*\.\s*memo\s*\(\s*\(\s*function\s*\(\s*\w+\s*\)\s*{\s*var\s*\w+\s*=\s*\w+\s*\.\s*colorRoleId[^]*?\)\s*\)\s*;\s*)(function)/,
+        replace:
+          `$1replugged.webpack.waitForModule(replugged.webpack.filters.bySource("isThreadSidebarFloating"),{raw:true, timeout: 10000}).then((mod)=>Object.defineProperty(mod.exports,"MemberRow",{` +
+          `get:()=>$2,` +
+          `set:(value)=>value===mod.exports.MemberRow?null:mod.exports.MemberRow=$2,` +
+          `configurable:true,` +
+          `}));$3`,
+      },
+    ],
+  },
+  {
     find: /\.displayName="PermissionStore"/,
     replacements: [
       {
         match:
-          /((\w+)\.__getLocalVars=function\(\){.{0,1}return.{0,1}{.{0,1}guildCache:(\w+),.{0,1}channelCache:(\w+),.{0,1}guildVersions:(\w+),.{0,1}channelsVersion:(\w+).{0,1}}.{0,1}}.{0,1};)/s,
-        replace: `$2.clearVars=function(){$3={};$4={};$5={};$6=0;};$1`,
+          /(function\s*\w+\s*\(\s*\)\s*{\s*(\w+)\s*=\s*{\s*}\s*;\s*(\w+)\s*=\s*{\s*}\s*;\s*for\s*\(\s*var\s*\w+\s*in\s*(\w+)\s*\)\s*\w+\s*\[\s*\w+\s*\]\s*\+=\s*1\s*;\s*(\w+)\s*\+=\s*1\s*}[^]*)((\w+)\s*\.\s*getChannelsVersion\s*=\s*function\s*\(\)\s*{)/,
+        replace: `$1$7.clearVars=function(){$2={};$3={};$4={};$5=0;};$6`,
       },
     ],
   },
@@ -38,8 +39,8 @@ export default [
     replacements: [
       {
         match:
-          /((\w+)\.__getLocalVars=function\(\){.{0,1}return.{0,1}{.{0,1}lastSelectedChannelId:(\w+),.{0,1}lastSelectedVoiceChannelId:(\w+),.{0,1}state:(\w+).{0,1}}.{0,1}}.{0,1};)/s,
-        replace: `$2.clearVars=function(){$3=null;$4=null;$5.clear();};$1`,
+          /(var\s*(\w+)\s*=\s*null\s*,\s*(\w+)\s*=\s*null\s*,\s*(\w)\s*=\s*new\s*\w+\s*\.\s*\w+\s*;\s*function[^]*)((\w+)\s*\.\s*recentsChannelCount)/,
+        replace: `$1$6.clearVars=function(){$2=null;$3=null;$4.clear();};$5`,
       },
     ],
   },

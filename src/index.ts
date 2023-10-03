@@ -23,6 +23,4 @@ export const stop = (): void => {
   Utils.rerenderChannels();
 };
 
-export { makeChannelBrowerLockIcon } from "./patches/index";
-
 export { Settings } from "./Components/Settings";

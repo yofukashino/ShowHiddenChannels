@@ -49,6 +49,8 @@ overrides:
 
   - files: "**/src/**/*.ts"
     extends: eslint-config-dmitmel/rules/typescript/with-type-checking
+    rules:
+      "@typescript-eslint/no-unnecessary-condition": off
 
   - files: "**/*.d.ts"
     rules:

@@ -1,82 +1,27 @@
-import { webpack } from "replugged";
 import { PluginInjector, PluginLogger, SettingValues } from "../index";
 import {
   CategoryStore,
-  CategoryUtil,
   Channel,
   ChannelListStore,
   ChannelStore,
   DiscordConstants,
-  GuildChannelsStore,
+  GuildChannelStore,
 } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 import * as Utils from "../lib/utils";
 import * as Types from "../types";
 
 export const patchChannelCategories = (): void => {
-  PluginInjector.after(
-    CategoryStore,
-    "getCollapsedCategories",
-    (_args, res: Types.collapsedCategoryIds) => {
-      return { ...res, ...SettingValues.get("collapsed", defaultSettings.collapsed) };
-    },
-  );
   PluginInjector.after(CategoryStore, "isCollapsed", (args, res) => {
-    if (!args[0]?.endsWith("hidden")) return res;
-
-    if (!SettingValues.get("alwaysCollapse", defaultSettings.alwaysCollapse))
-      return SettingValues.get("collapsed", defaultSettings.collapsed)[args[0]];
-
-    return (
-      SettingValues.get("alwaysCollapse", defaultSettings.alwaysCollapse) &&
-      SettingValues.get("collapsed", defaultSettings.collapsed)[args[0]] !== false
-    );
-  });
-  const CategoryCollapse = webpack.getFunctionKeyBySource(
-    CategoryUtil,
-    /"CATEGORY_COLLAPSE"/,
-  ) as unknown as string;
-  PluginInjector.after(CategoryUtil, CategoryCollapse, (args) => {
     if (
       !args[0]?.endsWith("hidden") ||
-      SettingValues.get("collapsed", defaultSettings.collapsed)[args[0]]
+      !SettingValues.get("alwaysCollapse", defaultSettings.alwaysCollapse)
     )
-      return;
-    const collapsed = SettingValues.get("collapsed", defaultSettings.collapsed);
-    collapsed[args[0]] = true;
-    SettingValues.set("collapsed", collapsed);
-  });
-  const CategoryCollapseAll = webpack.getFunctionKeyBySource(
-    CategoryUtil,
-    /"CATEGORY_COLLAPSE_ALL"/,
-  ) as unknown as string;
-  PluginInjector.after(CategoryUtil, CategoryCollapseAll, (args) => {
-    if (SettingValues.get("collapsed", defaultSettings.collapsed)[`${args[0]}_hidden`]) return;
-    const collapsed = SettingValues.get("collapsed", defaultSettings.collapsed);
-    collapsed[`${args[0]}_hidden`] = true;
-    SettingValues.set("collapsed", collapsed);
-  });
-  const CategoryExpand = webpack.getFunctionKeyBySource(
-    CategoryUtil,
-    /"CATEGORY_EXPAND"/,
-  ) as unknown as string;
-  PluginInjector.after(CategoryUtil, CategoryExpand, (args) => {
-    if (!args[0]?.endsWith("hidden")) return;
-    const collapsed = SettingValues.get("collapsed", defaultSettings.collapsed);
-    collapsed[args[0]] = false;
-    SettingValues.set("collapsed", collapsed);
-  });
-  const CategoryExpandAll = webpack.getFunctionKeyBySource(
-    CategoryUtil,
-    /"CATEGORY_EXPAND_ALL"/,
-  ) as unknown as string;
-  PluginInjector.after(CategoryUtil, CategoryExpandAll, (args) => {
-    const collapsed = SettingValues.get("collapsed", defaultSettings.collapsed);
-    collapsed[`${args[0]}_hidden`] = false;
-    SettingValues.set("collapsed", collapsed);
+      return res;
+    return SettingValues.get("alwaysCollapse", defaultSettings.alwaysCollapse) && res;
   });
 
-  PluginInjector.after(GuildChannelsStore, "getChannels", (args: [string], res) => {
+  PluginInjector.after(GuildChannelStore, "getChannels", (args: [string], res) => {
     const GuildCategories = res[DiscordConstants.ChanneTypes.GUILD_CATEGORY];
     const hiddenId = `${args[0]}_hidden`;
     const hiddenCategory = GuildCategories?.find(
@@ -102,12 +47,31 @@ export const patchChannelCategories = (): void => {
     });
     return res;
   });
+
+  PluginInjector.after(ChannelStore, "getChannel", (args, res) => {
+    if (
+      SettingValues.get("sort", defaultSettings.sort) !== "extra" ||
+      SettingValues.get("blacklistedGuilds", defaultSettings.blacklistedGuilds)[
+        args[0]?.replace("_hidden", "")
+      ] ||
+      !args[0]?.endsWith("_hidden")
+    )
+      return res;
+    const HiddenCategoryChannel = new Channel({
+      guild_id: args[0]?.replace("_hidden", ""),
+      id: args[0],
+      name: "Hidden Channels",
+      type: DiscordConstants.ChanneTypes.GUILD_CATEGORY,
+    });
+    return HiddenCategoryChannel;
+  });
+
   PluginInjector.after(ChannelStore, "getMutableGuildChannelsForGuild", (args, res) => {
     if (
       SettingValues.get("sort", defaultSettings.sort) !== "extra" ||
       SettingValues.get("blacklistedGuilds", defaultSettings.blacklistedGuilds)[args[0]]
     )
-      return;
+      return res;
     const hiddenId = `${args[0]}_hidden`;
     const HiddenCategoryChannel = new Channel({
       guild_id: args[0],
@@ -115,7 +79,7 @@ export const patchChannelCategories = (): void => {
       name: "Hidden Channels",
       type: DiscordConstants.ChanneTypes.GUILD_CATEGORY,
     });
-    const GuildCategories = GuildChannelsStore.getChannels(args[0])[
+    const GuildCategories = GuildChannelStore.getChannels(args[0])[
       DiscordConstants.ChanneTypes.GUILD_CATEGORY
     ] as Array<{ channel: Types.Channel; comparator: number }>;
     Object.defineProperty(HiddenCategoryChannel, "position", {
@@ -170,14 +134,9 @@ export const patchChannelCategories = (): void => {
             },
           ),
         );
-
-        HiddenCategory.isCollapsed =
-          SettingValues.get("alwaysCollapse", defaultSettings.alwaysCollapse) &&
-          SettingValues.get("collapsed", defaultSettings.collapsed)[hiddenId] !== false;
+        HiddenCategory.isCollapsed = Boolean(res.guildChannels.collapsedCategoryIds[hiddenId]);
         HiddenCategory.shownChannelIds =
-          SettingValues.get("collapsed", {})[hiddenId] ||
-          res.guildChannels.collapsedCategoryIds[hiddenId] ||
-          HiddenCategory.isCollapsed
+          res.guildChannels.collapsedCategoryIds[hiddenId] || HiddenCategory.isCollapsed
             ? []
             : hiddenChannels.channels
                 .sort((x: Types.Channel, y: Types.Channel) => {

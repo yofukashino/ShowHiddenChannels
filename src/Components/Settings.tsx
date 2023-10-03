@@ -35,7 +35,7 @@ export const Settings = () => {
                 value: "false",
               },
             ],
-            ...Utils.useSetting(
+            ...util.useSetting(
               SettingValues,
               "hiddenChannelIcon",
               defaultSettings.hiddenChannelIcon,
@@ -67,7 +67,7 @@ export const Settings = () => {
                 value: "extra",
               },
             ],
-            ...Utils.useSetting(SettingValues, "sort", defaultSettings.sort),
+            ...util.useSetting(SettingValues, "sort", defaultSettings.sort),
           }}>
           Sorting Order
         </RadioItem>
@@ -99,7 +99,7 @@ export const Settings = () => {
                 value: "false",
               },
             ],
-            ...Utils.useSetting(SettingValues, "showAdmin", defaultSettings.showAdmin),
+            ...util.useSetting(SettingValues, "showAdmin", defaultSettings.showAdmin),
           }}>
           Show Admin Roles
         </RadioItem>
@@ -141,28 +141,34 @@ export const Settings = () => {
         </SwitchItem>
       </Category>
       <Category {...{ title: "Choose what channels you want to display", open: false }}>
-        {...Object.keys(SettingValues.get("channels", defaultSettings.channels)).map((type) => {
-          return (
-            <SwitchItem
-              {...{
-                ...(Utils.useSetting(
-                  SettingValues,
-                  `channels.${type}`,
-                  defaultSettings.channels[type],
-                ) as unknown as {
-                  value: boolean;
-                  onChange: (newValue: boolean) => void;
-                }),
-              }}>
-              {`Show ${Utils.capitalizeFirst(type.split("_")[1])}${
-                type.split("_").length === 3 ? ` ${Utils.capitalizeFirst(type.split("_")[2])}` : ""
-              } Channels`}
-            </SwitchItem>
-          );
-        })}
+        {...Object.keys(SettingValues.get("channels", defaultSettings.channels)).map(
+          (type: keyof typeof defaultSettings.channels) => {
+            return (
+              <SwitchItem
+                {...{
+                  ...Utils.useSetting(
+                    SettingValues,
+                    `channels.${type}`,
+                    defaultSettings.channels[type],
+                  ),
+                }}>
+                {`Show ${Utils.capitalizeFirst(type.split("_")[1])}${
+                  type.split("_").length === 3
+                    ? ` ${Utils.capitalizeFirst(type.split("_")[2])}`
+                    : ""
+                } Channels`}
+              </SwitchItem>
+            );
+          },
+        )}
       </Category>
       <Category {...{ title: "Guilds Blacklist", open: false }}>
-        <SearchableGuilds />
+        <SearchableGuilds
+          {...{
+            SettingManager: SettingValues,
+            path: "blacklistedGuilds",
+          }}
+        />
       </Category>
       <ButtonItem
         {...{

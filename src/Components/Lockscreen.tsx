@@ -18,14 +18,17 @@ import {
   ScrollerClasses,
   TextElement,
   UserMentions,
+  PresenceStore,
+  MemberMemos,
 } from "../lib/requiredModules";
 import * as Utils from "../lib/utils";
 const { React, users: UltimateUserStore } = common;
+
 const { AdvancedScrollerAuto } = DiscordComponents;
+const { MemberRow } = MemberMemos;
 export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
   if (SettingValues.get("debugMode", defaultSettings.debugMode))
     PluginLogger.log("LockScreen Props", props);
-
   const [channelSpecificRoles, setChannelSpecificRoles] = React.useState<
     Types.ReactElement[] | string[]
   >([]);
@@ -120,18 +123,43 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
     );
 
     if (!filteredUserOverwrites?.length) return setUserMentionComponents(["None"]);
-    const mentionArray = filteredUserOverwrites.map((m: Types.permissionOverwrite) =>
-      UserMentions.react(
-        {
-          userId: m.id,
-          channelId: props.channel.id,
-        },
-        Utils.NOOP,
-        {
-          noStyleAndInteraction: false,
-        },
-      ),
-    );
+    const mentionArray = filteredUserOverwrites.map((m: Types.permissionOverwrite) => {
+      const GuildMember = GuildMemberStore.getMember(props.guild.id, m.id) as {
+        colorString: string;
+        colorRoleId: string;
+        premiumSince: string;
+        nick: string;
+      };
+      return MemberRow ? (
+        <MemberRow
+          {...{
+            user: UltimateUserStore.getUser(m.id),
+            colorString: GuildMember.colorString,
+            colorRoleId: GuildMember.colorRoleId,
+            nick: GuildMember.nick,
+            premiumSince: GuildMember.premiumSince,
+            status: PresenceStore.getStatus(m.id),
+            isMobileOnline: PresenceStore.isMobileOnline(m.id),
+            activities: PresenceStore.getActivities(m.id),
+            isOwner: false,
+            applicationStream: null,
+            channel: props.channel,
+            guildId: props.guild.id,
+          }}
+        />
+      ) : (
+        UserMentions.react(
+          {
+            userId: m.id,
+            channelId: props.channel.id,
+          },
+          Utils.NOOP,
+          {
+            noStyleAndInteraction: false,
+          },
+        )
+      );
+    });
 
     return setUserMentionComponents(mentionArray);
   };
@@ -140,7 +168,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
     mapChannelRoles();
     mapAdminRoles();
     fetchMemberAndMap();
-  }, []);
+  }, [props.channel.id, props.guild.id]);
 
   return (
     <div

@@ -2,7 +2,8 @@ import { types as DefaultTypes } from "replugged";
 export { types as DefaultTypes } from "replugged";
 export type { ReactElement, ComponentClass } from "react";
 import type { ComponentClass, ReactElement } from "react";
-export interface UnreadStore {
+import type { Store } from "replugged/dist/renderer/modules/common/flux";
+export interface ReadStateStore extends Store {
   ackMessageId: DefaultTypes.AnyFunction;
   getAllReadStates: DefaultTypes.AnyFunction;
   getForDebugging: DefaultTypes.AnyFunction;
@@ -26,6 +27,20 @@ export interface UnreadStore {
   isNewForumThread: DefaultTypes.AnyFunction;
   lastMessageId: DefaultTypes.AnyFunction;
   lastPinTimestamp: DefaultTypes.AnyFunction;
+}
+export interface PresenceStore extends Store {
+  findActivity: DefaultTypes.AnyFunction;
+  getActivities: DefaultTypes.AnyFunction;
+  getActivityMetadata: DefaultTypes.AnyFunction;
+  getAllApplicationActivities: DefaultTypes.AnyFunction;
+  getApplicationActivity: DefaultTypes.AnyFunction;
+  getPrimaryActivity: DefaultTypes.AnyFunction;
+  getState: DefaultTypes.AnyFunction;
+  getStatus: DefaultTypes.AnyFunction;
+  getUserIds: DefaultTypes.AnyFunction;
+  initialize: DefaultTypes.AnyFunction;
+  isMobileOnline: DefaultTypes.AnyFunction;
+  setCurrentUserOnConnectionOpen: DefaultTypes.AnyFunction;
 }
 export interface Channel {
   defaultAutoArchiveDuration: undefined | number;
@@ -100,7 +115,7 @@ export interface PermissionUtils {
   isRoleHigher: DefaultTypes.AnyFunction;
   makeEveryoneOverwrite: DefaultTypes.AnyFunction;
 }
-export interface ChannelStore {
+export interface ChannelStore extends Store {
   getAllThreadsForParent: DefaultTypes.AnyFunction;
   getBasicChannel: DefaultTypes.AnyFunction;
   getCachedChannelJsonForGuild: DefaultTypes.AnyFunction;
@@ -119,7 +134,7 @@ export interface ChannelStore {
   initialize: DefaultTypes.AnyFunction;
   loadAllGuildAndPrivateChannelsFromDisk: DefaultTypes.AnyFunction;
 }
-export interface PermissionStore {
+export interface PermissionStore extends Store {
   can: DefaultTypes.AnyFunction;
   canAccessGuildSettings: DefaultTypes.AnyFunction;
   canBasicChannel: DefaultTypes.AnyFunction;
@@ -229,7 +244,7 @@ export interface RouteArgs {
   path: string;
   render: DefaultTypes.AnyFunction;
 }
-export interface UserGuildSettingsStore {
+export interface UserGuildSettingsStore extends Store {
   allowAllMessages: DefaultTypes.AnyFunction;
   allowNoMessages: DefaultTypes.AnyFunction;
   getAllSettings: DefaultTypes.AnyFunction;
@@ -269,7 +284,7 @@ export interface UserGuildSettingsStore {
   isSuppressRolesEnabled: DefaultTypes.AnyFunction;
   resolvedMessageNotifications: DefaultTypes.AnyFunction;
 }
-export interface GuildStore {
+export interface GuildStore extends Store {
   getGuild: (guildId: string) => Guild;
   getGuildCount: DefaultTypes.AnyFunction;
   getGuilds: DefaultTypes.AnyFunction;
@@ -278,7 +293,7 @@ export interface GuildStore {
 export interface ChannelUtils {
   channelTopic: (channel: Channel, guild: Guild) => ReactElement;
 }
-export interface GuildMemberStore {
+export interface GuildMemberStore extends Store {
   getCommunicationDisabledUserMap: DefaultTypes.AnyFunction;
   getCommunicationDisabledVersion: DefaultTypes.AnyFunction;
   getMember: DefaultTypes.AnyFunction;
@@ -424,7 +439,7 @@ export interface ChannelList {
     optedInChannels: Set<string>;
     recentsCategory: ChannelListCategory;
     recentsSectionNumber: number;
-    rows: string[];
+    rows: string[][];
     sections: number[];
     sortedNamedCategories: ChannelListCategory[];
     suggestedFavoriteChannelId: null | string;
@@ -440,7 +455,7 @@ export interface ChannelList {
   };
   guildChannelsVersion: number;
 }
-export interface CategoryStore {
+export interface CategoryStore extends Store {
   getCollapsedCategories: DefaultTypes.AnyFunction;
   getState: DefaultTypes.AnyFunction;
   initialize: DefaultTypes.AnyFunction;
@@ -462,7 +477,7 @@ export interface ChannelTypes {
   PUBLIC_THREAD: number;
   UNKNOWN: number;
 }
-export interface GuildChannelsStore {
+export interface GuildChannelStore extends Store {
   getAllGuilds: DefaultTypes.AnyFunction;
   getChannels: (guildId: string) => GuildChannels;
   getDefaultChannel: DefaultTypes.AnyFunction;
@@ -476,7 +491,7 @@ export interface GuildChannelsStore {
   hasSelectableChannel: DefaultTypes.AnyFunction;
   initialize: DefaultTypes.AnyFunction;
 }
-export interface ChannelListStore {
+export interface ChannelListStore extends Store {
   getGuild: DefaultTypes.AnyFunction;
   getGuildWithoutChangingCommunityRows: DefaultTypes.AnyFunction;
   initialize: DefaultTypes.AnyFunction;
@@ -509,7 +524,7 @@ export interface ChanneListCache {
         optedInChannels: Set<string>;
         recentsCategory: ChannelListCategory;
         recentsSectionNumber: number;
-        rows: string[];
+        rows: string[][];
         sections: number[];
         sortedNamedCategories: ChannelListCategory[];
         suggestedFavoriteChannelId: null | string;
@@ -978,6 +993,37 @@ export interface DiscordComponents {
   ScrollerNone: ComponentClass;
   ScrollerThin: ComponentClass;
 }
+export type Jsonifiable =
+  | null
+  | undefined
+  | boolean
+  | number
+  | string
+  | Jsonifiable[]
+  | { [key: string]: Jsonifiable };
+export type ValType<T> =
+  | T
+  | React.ChangeEvent<HTMLInputElement>
+  | (Record<string, unknown> & { value?: T; checked?: T });
+
+export type NestedType<T, P> = P extends `${infer Left}.${infer Right}`
+  ? Left extends keyof T
+    ? NestedType<T[Left], Right>
+    : Left extends `${infer FieldKey}[${infer IndexKey}]`
+    ? FieldKey extends keyof T
+      ? NestedType<Exclude<T[FieldKey], undefined> extends infer U ? U : never, IndexKey>
+      : undefined
+    : undefined
+  : P extends keyof T
+  ? T[P]
+  : P extends `${infer FieldKey}[${infer _IndexKey}]`
+  ? FieldKey extends keyof T
+    ? Exclude<T[FieldKey], undefined> extends infer U
+      ? U
+      : never
+    : undefined
+  : undefined;
+
 export interface Settings {
   hiddenChannelIcon: string;
   faded: boolean;
@@ -996,10 +1042,6 @@ export interface Settings {
     GUILD_STAGE_VOICE: boolean;
     GUILD_FORUM: boolean;
   };
-  blacklistedGuilds: {
-    [key: string]: boolean;
-  };
-  collapsed: {
-    [key: string]: boolean;
-  };
+  blacklistedGuilds: Record<string, boolean>;
+  collapsed: Record<string, boolean>;
 }

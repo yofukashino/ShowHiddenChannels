@@ -12,6 +12,9 @@ export const patchGuildContextMenu = (): void => {
         Array.isArray(ItemGroup?.props?.children) &&
         ItemGroup?.props?.children?.findIndex((item) => item?.props?.id === "hide-muted-channels");
       if (!HideMutedIndex) return;
+      ItemGroup.props.children = ItemGroup?.props?.children.filter(
+        (c) => c?.props?.id !== "hidden-channel-toggle",
+      );
       ItemGroup?.props?.children.splice(
         HideMutedIndex + 1,
         0,
@@ -29,6 +32,9 @@ export const patchGuildContextMenu = (): void => {
         Array.isArray(ItemGroup?.props?.children) &&
         ItemGroup?.props?.children?.findIndex((item) => item?.props?.id === "hide-muted-channels");
       if (!HideMutedIndex) return;
+      ItemGroup.props.children = ItemGroup?.props?.children.filter(
+        (c) => c?.props?.id !== "hidden-channel-toggle",
+      );
       ItemGroup?.props?.children.splice(
         HideMutedIndex + 1,
         0,

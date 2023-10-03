@@ -1,5 +1,6 @@
-import { common, util } from "replugged";
-import { PluginInjector, PluginLogger, SettingValues, lodash } from "../index";
+/* eslint-disable no-undefined */
+import { common, settings, util } from "replugged";
+import { PluginInjector, PluginLogger } from "../index";
 import {
   ChannelListClasses,
   ChannelListStore,
@@ -9,7 +10,7 @@ import {
   PermissionStore,
 } from "./requiredModules";
 import * as Types from "../types";
-const { React } = common;
+const { React, lodash } = common;
 export const findInTree = (
   tree: object,
   searchFilter: Types.DefaultTypes.AnyFunction,
@@ -86,44 +87,51 @@ export const getParameterCaseInsensitive = (object: object, key: string): unknow
   const asLowercase = key.toLowerCase();
   return object[Object.keys(object).find((k) => k.toLowerCase() === asLowercase)];
 };
-export const useSetting = (
-  settingsManager: typeof SettingValues,
-  path: string,
-  defaultValue?: string,
-  options?: { clearable?: boolean },
+
+export const useSetting = <
+  T extends Record<string, Types.Jsonifiable>,
+  D extends keyof T,
+  K extends Extract<keyof T, string>,
+  F extends Types.NestedType<T, P> | T[K] | undefined,
+  P extends `${K}.${string}` | K,
+>(
+  settings: settings.SettingsManager<T, D>,
+  key: P,
+  fallback?: F,
 ): {
-  value: string;
-  onChange: (newValue: string | { value: string }) => void;
-  onClear: () => void;
+  value: Types.NestedType<T, P> | F;
+  onChange: (newValue: Types.ValType<Types.NestedType<T, P> | F>) => void;
 } => {
-  const { clearable = false } = options ?? {};
-  const [key, ...realPath] = path.split(".");
-  const realPathJoined = realPath.join(".");
-  const setting = settingsManager.get(key as keyof Types.Settings);
-  const initial = realPath.length
-    ? lodash.get(setting, realPathJoined, defaultValue)
-    : (setting as unknown as string);
-  const [value, setValue] = React.useState(initial);
+  const [initialKey, ...pathArray] = Object.keys(settings.all()).includes(key)
+    ? ([key] as [K])
+    : (key.split(".") as [K, ...string[]]);
+  const path = pathArray.join(".");
+  const initial = settings.get(initialKey, path.length ? ({} as T[K]) : (fallback as T[K]));
+  const [value, setValue] = React.useState<Types.NestedType<T, P>>(
+    path.length
+      ? (lodash.get(initial, path, fallback) as Types.NestedType<T, P>)
+      : (initial as Types.NestedType<T, P>),
+  );
 
   return {
     value,
-    onClear: clearable
-      ? () => {
-          setValue("");
-          const changed = realPath.length
-            ? lodash.set(setting as object, realPathJoined, "")
-            : ("" as never);
-          settingsManager.set(key as keyof Types.Settings, changed);
-        }
-      : () => null,
-    onChange: (newValue) => {
-      if (typeof newValue == "object" && Object.hasOwnProperty.call(newValue, "value"))
-        newValue = newValue.value;
-      setValue(newValue as unknown as string);
-      const changed = realPath.length
-        ? lodash.set(setting as object, realPathJoined, newValue)
-        : (newValue as never);
-      settingsManager.set(key as keyof Types.Settings, changed);
+    onChange: (newValue: Types.ValType<Types.NestedType<T, P> | F>) => {
+      const isObj = newValue && typeof newValue === "object";
+      const value = isObj && "value" in newValue ? newValue.value : newValue;
+      const checked = isObj && "checked" in newValue ? newValue.checked : undefined;
+      const target =
+        isObj && "target" in newValue && newValue.target && typeof newValue.target === "object"
+          ? newValue.target
+          : undefined;
+      const targetValue = target && "value" in target ? target.value : undefined;
+      const targetChecked = target && "checked" in target ? target.checked : undefined;
+      const finalValue = checked ?? targetChecked ?? targetValue ?? value ?? newValue;
+
+      setValue(finalValue as Types.NestedType<T, P>);
+      settings.set(
+        initialKey,
+        path.length ? (lodash.set(initial, path, finalValue) as T[K]) : (finalValue as T[K]),
+      );
     },
   };
 };
@@ -150,7 +158,10 @@ export const sortChannels = (category: Types.ChannelListCategory): void => {
 export const getHiddenChannels = (guildId: string): Types.HiddenChannels => {
   if (!guildId) return { channels: [], amount: 0 };
 
-  const guildChannels = ChannelStore.getMutableGuildChannelsForGuild(guildId);
+  const guildChannels = ChannelStore.getMutableGuildChannelsForGuild(guildId) as Record<
+    string,
+    Types.Channel
+  >;
   const hiddenChannels = Object.values(guildChannels).filter(
     (m) => m.isHidden() && m.type !== DiscordConstants.ChanneTypes.GUILD_CATEGORY,
   );

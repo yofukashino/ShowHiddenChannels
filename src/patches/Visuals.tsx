@@ -17,35 +17,12 @@ import {
 } from "../lib/requiredModules";
 import HiddenChannelIcon from "../Components/HiddenChannelIcon";
 import { Lockscreen } from "../Components/Lockscreen";
-import { LoadingBoundary } from "../Components/LoadingBoundary";
 import { defaultSettings } from "../lib/consts";
 import * as Utils from "../lib/utils";
 import * as Types from "../types";
-const { Tooltip } = components;
-export const makeChannelBrowerLockIcon = ({ channel, originalIcon }) => {
-  if (
-    !channel?.isHidden() ||
-    SettingValues.get("hiddenChannelIcon", defaultSettings.hiddenChannelIcon) === "false"
-  )
-    return originalIcon;
-  return (
-    <Tooltip
-      {...{
-        text: "Hidden Channel",
-        className: `${IconClasses.iconItem}`,
-        style: {
-          display: "block",
-        },
-      }}>
-      <HiddenChannelIcon {...{ className: `shc-size-increase ${IconClasses.actionIcon}` }} />
-    </Tooltip>
-  );
-};
+const { Tooltip, ErrorBoundary } = components;
 export const patchChannelItem = (): void => {
-  const FunctionKey = webpack.getFunctionKeyBySource(
-    ChannelItem,
-    /\.unread,.*\.canHaveDot.*\.mentionCount.*\.relevant/,
-  ) as string;
+  const FunctionKey = webpack.getFunctionKeyBySource(ChannelItem, ".subtitleColor") as string;
   PluginInjector.after(
     ChannelItem,
     FunctionKey,
@@ -53,7 +30,12 @@ export const patchChannelItem = (): void => {
       if (!props.channel?.isHidden?.()) return res;
       const item = res.props?.children?.props;
       if (item?.className)
-        item.className += ` shc-hidden-channel shc-hidden-channel-type-${props.channel.type}`;
+        item.className += ` ${
+          SettingValues.get("faded", defaultSettings.faded) &&
+          !item.className.includes(ChannelItemClasses.modeMuted)
+            ? `${ChannelItemClasses.modeMuted} `
+            : ""
+        }shc-hidden-channel shc-hidden-channel-type-${props.channel.type}`;
       const children = Utils.findInReactTree(
         res,
         (m: Types.ReactElement) =>
@@ -125,7 +107,46 @@ export const patchChannelItemUtil = (): void => {
     },
   );
 };
-
+export const patchChannelBrowerLockIcon = () => {
+  const FunctionKey = webpack.getFunctionKeyBySource(ChannelItem, ".locked") as string;
+  PluginInjector.after(
+    ChannelItem,
+    FunctionKey,
+    (
+      [props]: [{ channel: Types.Channel; guild: Types.Guild; className?: string }],
+      res: Types.ReactElement,
+    ) => {
+      if (
+        !props.channel?.isHidden() ||
+        SettingValues.get("hiddenChannelIcon", defaultSettings.hiddenChannelIcon) === "false"
+      )
+        return res;
+      return (
+        <Tooltip
+          {...{
+            text: "Hidden Channel",
+            className: `${IconClasses.iconItem}`,
+            style: {
+              display: "block",
+            },
+          }}>
+          <HiddenChannelIcon
+            {...{
+              className: `shc-size-increase ${props.className ?? IconClasses.actionIcon}`,
+              style: props.className
+                ? { marginRight: "6px" }
+                : {
+                    height: "20px",
+                    width: "20px",
+                    marginRight: "6px",
+                  },
+            }}
+          />
+        </Tooltip>
+      );
+    },
+  );
+};
 export const patchUserGuildSettingsStore = (): void => {
   PluginInjector.after(
     UserGuildSettingsStore,
@@ -158,14 +179,14 @@ export const patchRoute = (): void => {
     const channel = ChannelStore?.getChannel(channelId);
     if (guildId && channel?.isHidden?.() && channel?.id !== Voice.getChannelId())
       args[0].render = () => (
-        <LoadingBoundary>
+        <ErrorBoundary>
           <Lockscreen
             {...{
               channel,
               guild: GuildStore.getGuild(guildId),
             }}
           />
-        </LoadingBoundary>
+        </ErrorBoundary>
       );
     return args;
   });
@@ -179,20 +200,21 @@ export const patchSidebarChatContent = (): void => {
     )
       return res;
     return (
-      <LoadingBoundary>
+      <ErrorBoundary>
         <Lockscreen
           {...{
             channel,
             guild: GuildStore.getGuild(guild.id),
           }}
         />
-      </LoadingBoundary>
+      </ErrorBoundary>
     );
   });
 };
 export const patchVisuals = (): void => {
   patchChannelItem();
   patchChannelItemUtil();
+  patchChannelBrowerLockIcon();
   patchUserGuildSettingsStore();
   patchRoute();
   patchSidebarChatContent();
