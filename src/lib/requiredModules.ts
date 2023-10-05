@@ -1,7 +1,7 @@
 import { webpack } from "replugged";
 import * as Types from "../types";
 export const DiscordConstantsModule =
-  webpack.getBySource<Types.DefaultTypes.ObjectExports>(/command:"giphy"/);
+  webpack.getBySource<Types.DefaultTypes.ObjectExports>(".MFA_WARNING=");
 export const DiscordConstants = {
   Permissions: webpack.getExportsForProps<Types.Permissions>(DiscordConstantsModule, [
     "ADMINISTRATOR",
