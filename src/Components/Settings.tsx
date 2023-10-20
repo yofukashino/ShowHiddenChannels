@@ -1,11 +1,11 @@
-import { components, util } from "replugged";
+import { util } from "replugged";
+import { ButtonItem, Category, RadioItem, SwitchItem } from "replugged/components";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
 
 import SearchableGuilds from "./SearchableGuilds";
-import * as Utils from "../lib/utils";
-import * as Types from "../types";
-const { ButtonItem, Category, SwitchItem, RadioItem } = components;
+import Utils from "../lib/utils";
+import Types from "../types";
 export const registerSettings = (): void => {
   for (const key in defaultSettings) {
     if (SettingValues.has(key as keyof Types.Settings)) return;

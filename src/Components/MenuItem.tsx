@@ -1,12 +1,12 @@
 import { components, util } from "replugged";
 import { SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
-import * as Types from "../types";
+import Types from "../types";
 const {
   ContextMenu: { MenuCheckboxItem },
 } = components;
 
-export default (guild: Types.Guild, menuID: string): Types.ReactElement => {
+export default (guild: Types.Guild, menuID: string): React.ReactElement => {
   const blacklistedGuilds = SettingValues.get(
     "blacklistedGuilds",
     defaultSettings.blacklistedGuilds,

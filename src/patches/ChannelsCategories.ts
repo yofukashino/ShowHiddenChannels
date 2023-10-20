@@ -8,10 +8,10 @@ import {
   GuildChannelStore,
 } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
-import * as Utils from "../lib/utils";
-import * as Types from "../types";
+import Utils from "../lib/utils";
+import Types from "../types";
 
-export const patchChannelCategories = (): void => {
+export default (): void => {
   PluginInjector.after(CategoryStore, "isCollapsed", (args, res) => {
     if (
       !args[0]?.endsWith("hidden") ||

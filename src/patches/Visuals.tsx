@@ -1,4 +1,5 @@
-import { components, webpack } from "replugged";
+import { webpack } from "replugged";
+import { ErrorBoundary, Tooltip } from "replugged/components";
 import { PluginInjector, SettingValues } from "../index";
 import {
   ChannelButtonClasses,
@@ -18,15 +19,14 @@ import {
 import HiddenChannelIcon from "../Components/HiddenChannelIcon";
 import { Lockscreen } from "../Components/Lockscreen";
 import { defaultSettings } from "../lib/consts";
-import * as Utils from "../lib/utils";
-import * as Types from "../types";
-const { Tooltip, ErrorBoundary } = components;
+import Utils from "../lib/utils";
+import Types from "../types";
 export const patchChannelItem = (): void => {
   const FunctionKey = webpack.getFunctionKeyBySource(ChannelItem, ".subtitleColor") as string;
   PluginInjector.after(
     ChannelItem,
     FunctionKey,
-    ([props]: [{ channel: Types.Channel; connected: boolean }], res: Types.ReactElement) => {
+    ([props]: [{ channel: Types.Channel; connected: boolean }], res: React.ReactElement) => {
       if (!props.channel?.isHidden?.()) return res;
       const item = res.props?.children?.props;
       if (item?.className)
@@ -38,9 +38,9 @@ export const patchChannelItem = (): void => {
         }shc-hidden-channel shc-hidden-channel-type-${props.channel.type}`;
       const children = Utils.findInReactTree(
         res,
-        (m: Types.ReactElement) =>
+        (m: React.ReactElement) =>
           m?.props?.onClick?.toString().includes("stopPropagation") && m.type === "div",
-      ) as Types.ReactElement;
+      ) as React.ReactElement;
       if (children?.props?.children)
         children.props.children = [
           <Tooltip
@@ -65,18 +65,18 @@ export const patchChannelItem = (): void => {
         ];
 
       if (props.channel.type === DiscordConstants.ChanneTypes.GUILD_VOICE && !props.connected) {
-        const wrapper = Utils.findInReactTree(res, (n: Types.ReactElement) =>
+        const wrapper = Utils.findInReactTree(res, (n: React.ReactElement) =>
           n?.props?.className?.includes(ChannelItemClasses.wrapper),
-        ) as Types.ReactElement;
+        ) as React.ReactElement;
 
         if (wrapper?.props) {
           wrapper.props.onMouseDown = () => {};
           wrapper.props.onMouseUp = () => {};
         }
 
-        const button = Utils.findInReactTree(res, (n: Types.ReactElement) =>
+        const button = Utils.findInReactTree(res, (n: React.ReactElement) =>
           n?.props?.className?.includes(ChannelButtonClasses.link),
-        ) as Types.ReactElement;
+        ) as React.ReactElement;
 
         if (button?.props) {
           button.props.href = `/channels/${props.channel.guild_id}/${props.channel.id}`;
@@ -94,7 +94,7 @@ export const patchChannelItemUtil = (): void => {
   //* Remove lock icon from hidden voice channels
   const FunctionKey = webpack.getFunctionKeyBySource(
     ChannelItemUtil,
-    /\.locked,.*\.video.*\.hasActiveThreads.*\.textFocused/,
+    ".rulesChannelId))",
   ) as string;
   PluginInjector.before(
     ChannelItemUtil,
@@ -108,13 +108,13 @@ export const patchChannelItemUtil = (): void => {
   );
 };
 export const patchChannelBrowerLockIcon = () => {
-  const FunctionKey = webpack.getFunctionKeyBySource(ChannelItem, ".locked") as string;
+  const FunctionKey = webpack.getFunctionKeyBySource(ChannelItem, "().iconContainer") as string;
   PluginInjector.after(
     ChannelItem,
     FunctionKey,
     (
       [props]: [{ channel: Types.Channel; guild: Types.Guild; className?: string }],
-      res: Types.ReactElement,
+      res: React.ReactElement,
     ) => {
       if (
         !props.channel?.isHidden() ||
@@ -171,7 +171,7 @@ export const patchUserGuildSettingsStore = (): void => {
 export const patchRoute = (): void => {
   const FunctionKey = webpack.getFunctionKeyBySource(
     Route,
-    /\.impressionName.*\.impressionProperties.*\.disableTrack.*\.PAGE/,
+    '"impressionName","impressionProperties"',
   ) as string;
   PluginInjector.before(Route, FunctionKey, (args: [Types.RouteArgs]) => {
     const channelId = args[0]?.computedMatch?.params?.channelId;
@@ -211,7 +211,7 @@ export const patchSidebarChatContent = (): void => {
     );
   });
 };
-export const patchVisuals = (): void => {
+export default (): void => {
   patchChannelItem();
   patchChannelItemUtil();
   patchChannelBrowerLockIcon();

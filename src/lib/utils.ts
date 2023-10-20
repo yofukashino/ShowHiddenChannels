@@ -1,5 +1,6 @@
 /* eslint-disable no-undefined */
-import { common, settings, util } from "replugged";
+import { settings, util } from "replugged";
+import { React, lodash } from "replugged/common";
 import { PluginInjector, PluginLogger } from "../index";
 import {
   ChannelListClasses,
@@ -9,8 +10,7 @@ import {
   LocaleManager,
   PermissionStore,
 } from "./requiredModules";
-import * as Types from "../types";
-const { React, lodash } = common;
+import Types from "../types";
 export const findInTree = (
   tree: object,
   searchFilter: Types.DefaultTypes.AnyFunction,
@@ -42,9 +42,9 @@ export const findInTree = (
 };
 
 export const findInReactTree = (
-  tree: Types.ReactElement,
+  tree: React.ReactElement,
   searchFilter: Types.DefaultTypes.AnyFunction,
-): unknown | Types.ReactElement => {
+): unknown | React.ReactElement => {
   return findInTree(tree, searchFilter, { walkable: ["props", "children", "child", "sibling"] });
 };
 
@@ -53,9 +53,9 @@ export const isObject = (testMaterial: unknown): boolean =>
 
 export const capitalizeFirst = (string: string): string =>
   `${string.charAt(0).toUpperCase()}${string.substring(1).toLowerCase()}`;
+
 export const randomNo = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1) + min);
-export const NOOP = (): null => null;
 
 export const convertToHMS = (seconds: string | number): string => {
   seconds = Number(seconds);
@@ -81,11 +81,6 @@ export const getDateFromSnowflake = (number: string): string => {
     PluginLogger.error(error);
     return "(Failed to get date)";
   }
-};
-
-export const getParameterCaseInsensitive = (object: object, key: string): unknown => {
-  const asLowercase = key.toLowerCase();
-  return object[Object.keys(object).find((k) => k.toLowerCase() === asLowercase)];
 };
 
 export const useSetting = <
@@ -225,4 +220,20 @@ export const rerenderChannels = (): void => {
   ChannelListStore.initialize();
 
   forceRerenderElement(`.${ChannelListClasses.container}`);
+};
+
+export default {
+  findInTree,
+  findInReactTree,
+  capitalizeFirst,
+  randomNo,
+  convertToHMS,
+  getDateFromSnowflake,
+  useSetting,
+  patchEmptyCategoryFunction,
+  sortChannels,
+  getHiddenChannels,
+  getHiddenChannelRecord,
+  forceRerenderElement,
+  rerenderChannels,
 };

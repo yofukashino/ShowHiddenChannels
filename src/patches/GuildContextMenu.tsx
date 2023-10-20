@@ -1,11 +1,11 @@
 import { PluginInjectorUtils } from "../index";
 import shcContextMenuEntry from "../Components/MenuItem";
-import * as Types from "../types";
-export const patchGuildContextMenu = (): void => {
+import Types from "../types";
+export default (): void => {
   PluginInjectorUtils.addMenuItem(
     Types.DefaultTypes.ContextMenuTypes.GuildContext,
     (data, menu) => {
-      const ItemGroup = (menu.children as Types.ReactElement[]).find((element) =>
+      const ItemGroup = (menu.children as React.ReactElement[]).find((element) =>
         element?.props?.children?.some?.((item) => item?.props?.id === "hide-muted-channels"),
       );
       const HideMutedIndex =
@@ -25,7 +25,7 @@ export const patchGuildContextMenu = (): void => {
   PluginInjectorUtils.addMenuItem(
     Types.DefaultTypes.ContextMenuTypes.GuildHeaderPopout,
     (data, menu) => {
-      const ItemGroup = (menu.children as Types.ReactElement[]).find((element) =>
+      const ItemGroup = (menu.children as React.ReactElement[]).find((element) =>
         element?.props?.children?.some?.((item) => item?.props?.id === "hide-muted-channels"),
       );
       const HideMutedIndex =

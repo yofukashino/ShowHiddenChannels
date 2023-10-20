@@ -1,4 +1,4 @@
-import * as Types from "./types";
+import Types from "./types";
 export default [
   {
     find: "GROUP_DM:return null",
@@ -15,12 +15,9 @@ export default [
       {
         match:
           /((\w+)\s*=\s*\w+\s*\.\s*memo\s*\(\s*\(\s*function\s*\(\s*\w+\s*\)\s*{\s*var\s*\w+\s*=\s*\w+\s*\.\s*colorRoleId[^]*?\)\s*\)\s*;\s*)(function)/,
-        replace:
-          `$1replugged.webpack.waitForModule(replugged.webpack.filters.bySource("isThreadSidebarFloating"),{raw:true, timeout: 10000}).then((mod)=>Object.defineProperty(mod.exports,"MemberRow",{` +
-          `get:()=>$2,` +
-          `set:(value)=>value===mod.exports.MemberRow?null:mod.exports.MemberRow=$2,` +
-          `configurable:true,` +
-          `}));$3`,
+        replace: (_orig: string, prefix: string, fn: string, suffix: string): string =>
+          `${prefix}replugged.util.waitFor('link[href^="replugged://quickcss"]').then(()=>{` + // wait for ignition to be finished
+          `${fn}=replugged.plugins.getExports("dev.tharki.ShowHiddenChannels")?._assignMemberRow(${fn})??${fn}});${suffix}`,
       },
     ],
   },

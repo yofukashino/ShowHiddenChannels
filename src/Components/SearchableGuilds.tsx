@@ -1,9 +1,9 @@
-import { common, settings } from "replugged";
+import { settings } from "replugged";
+import { React } from "replugged/common";
 import { DiscordComponents, GuildStore, IconUtils } from "../lib/requiredModules";
 import IconSwitch from "./IconSwitch";
-import * as Utils from "../lib/utils";
-import * as Types from "../types";
-const { React } = common;
+import Utils from "../lib/utils";
+import Types from "../types";
 const {
   PopoutList: { SearchBar, Divider },
 } = DiscordComponents;

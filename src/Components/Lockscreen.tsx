@@ -1,7 +1,7 @@
-import { common } from "replugged";
+import { React, users as UltimateUserStore } from "replugged/common";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
-import * as Types from "../types";
+import Types from "../types";
 
 import {
   BigIntUtils,
@@ -11,30 +11,29 @@ import {
   DiscordConstants,
   ForumTags,
   GuildMemberStore,
+  MemberMemos,
   PermissionUtils,
+  PresenceStore,
   ProfileActions,
   RolePill,
   RolePillClasses,
   ScrollerClasses,
   TextElement,
   UserMentions,
-  PresenceStore,
-  MemberMemos,
 } from "../lib/requiredModules";
-import * as Utils from "../lib/utils";
-const { React, users: UltimateUserStore } = common;
+import Utils from "../lib/utils";
 
-const { AdvancedScrollerAuto } = DiscordComponents;
-const { MemberRow } = MemberMemos;
 export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
+  const { AdvancedScrollerAuto } = DiscordComponents;
+  const { MemberRow } = MemberMemos;
   if (SettingValues.get("debugMode", defaultSettings.debugMode))
     PluginLogger.log("LockScreen Props", props);
   const [channelSpecificRoles, setChannelSpecificRoles] = React.useState<
-    Types.ReactElement[] | string[]
+    React.ReactElement[] | string[]
   >([]);
-  const [adminRoles, setAdminRoles] = React.useState<Types.ReactElement[] | string[]>([]);
+  const [adminRoles, setAdminRoles] = React.useState<React.ReactElement[] | string[]>([]);
   const [userMentionComponents, setUserMentionComponents] = React.useState<
-    Types.ReactElement[] | string[]
+    React.ReactElement[] | string[]
   >([]);
 
   const mapChannelRoles = (): void => {
@@ -63,7 +62,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
           className: `${RolePillClasses.rolePill} shc-rolePill`,
           disableBorderColor: true,
           guildId: props.guild.id,
-          onRemove: Utils.NOOP,
+          onRemove: () => null,
           role: props.guild.roles[m.id],
         }}
       />
@@ -91,7 +90,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
           className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
           disableBorderColor: true,
           guildId: props.guild.id,
-          onRemove: Utils.NOOP,
+          onRemove: () => null,
           role: m,
         }}
       />
@@ -153,7 +152,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
             userId: m.id,
             channelId: props.channel.id,
           },
-          Utils.NOOP,
+          () => null,
           {
             noStyleAndInteraction: false,
           },

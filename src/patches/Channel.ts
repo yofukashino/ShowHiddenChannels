@@ -1,9 +1,8 @@
 import { PluginInjector, originalCan } from "../index";
 import { Channel, DiscordConstants } from "../lib/requiredModules";
-import * as Utils from "../lib/utils";
-import * as Types from "../types";
-export const patchChannel = (): void => {
-  if (!Channel.prototype.isHidden) Channel.prototype.isHidden = Utils.NOOP;
+import Types from "../types";
+export default (): void => {
+  Channel.prototype.isHidden ??= () => null;
   PluginInjector.instead(
     Channel.prototype,
     "isHidden",

@@ -1,5 +1,5 @@
 import { webpack } from "replugged";
-import * as Types from "../types";
+import Types from "../types";
 export const DiscordConstantsModule =
   webpack.getBySource<Types.DefaultTypes.ObjectExports>(".MFA_WARNING=");
 export const DiscordConstants = {
@@ -14,16 +14,16 @@ export const DiscordConstants = {
 };
 export const ChatClasses = webpack.getByProps<Types.ChatClasses>("chat", "chatContent");
 export const { exports: Route } = webpack.getBySource<Types.RouteExports>(
-  /\.impressionName.*\.impressionProperties.*\.disableTrack.*\.PAGE/,
-  { raw: true },
+  '"impressionName","impressionProperties"',
+  {
+    raw: true,
+  },
 );
 export const ChatContent = webpack.getBySource<Types.ChatContent>(
   "showAutomodUserProfileChatBlocker",
 );
 export const ChannelItem = webpack.getBySource<Types.genericObjectExport>(".subtitleColor");
-export const ChannelItemUtil = webpack.getBySource<Types.genericObjectExport>(
-  /\.locked,.*\.video.*\.hasActiveThreads.*\.textFocused/,
-);
+export const ChannelItemUtil = webpack.getBySource<Types.genericObjectExport>(".rulesChannelId))");
 export const RolePillClasses = webpack.getByProps<Types.RolePillClasses>(
   "rolePill",
   "rolePillBorder",
@@ -101,7 +101,7 @@ export const ChannelUtils = {
 export const ForumTagsModule = webpack.getBySource<Types.DefaultTypes.ObjectExports>(
   ".Messages.FORUM_TAG_A11Y_FILTER_BY_TAG.",
 );
-export const ForumTags = webpack.getFunctionBySource<Types.ComponentClass>(
+export const ForumTags = webpack.getFunctionBySource<React.ComponentClass>(
   ForumTagsModule,
   ".Messages.FORUM_TAG_A11Y_FILTER_BY_TAG.",
 );
@@ -110,7 +110,7 @@ export const DiscordComponents = webpack.getByProps<Types.DiscordComponents>(
   "AdvancedScrollerAuto",
 );
 
-export const { exports: MemberMemos } = webpack.getBySource<{ MemberRow: Types.ComponentClass }>(
+export const { exports: MemberMemos } = webpack.getBySource<{ MemberRow: React.ComponentClass }>(
   "isThreadSidebarFloating",
   { raw: true },
 );
@@ -130,4 +130,52 @@ export const ProfileActions = {
     ProfileActionsModule,
     ".apply(",
   ),
+};
+
+export default {
+  DiscordConstantsModule,
+  DiscordConstants,
+  ChatClasses,
+  Route,
+  ChatContent,
+  ChannelItem,
+  ChannelItemUtil,
+  RolePillClasses,
+  ChannelItemClasses,
+  ChannelButtonClasses,
+  PermissionStore,
+  PermissionUtils,
+  ChannelListClasses,
+  LocaleManager,
+  ChannelsModule,
+  Channel,
+  ChannelListStore,
+  UserGuildSettingsStore,
+  IconUtils,
+  IconClasses,
+  ReadStateStore,
+  Voice,
+  GuildStore,
+  RolePillModule,
+  RolePill,
+  MessageActions,
+  UserMentions,
+  GuildChannelStore,
+  TextElement,
+  CategoryStore,
+  PresenceStore,
+  GuildMemberStore,
+  ChannelStore,
+  BigIntUtils,
+  TransitionUtilModule,
+  TransitionUtil,
+  ChannelUtilsModule,
+  ChannelUtils,
+  ForumTagsModule,
+  ForumTags,
+  DiscordComponents,
+  MemberMemos,
+  ScrollerClasses,
+  ProfileActionsModule,
+  ProfileActions,
 };

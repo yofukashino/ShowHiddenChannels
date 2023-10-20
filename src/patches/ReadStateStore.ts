@@ -2,7 +2,7 @@ import { PluginInjector, SettingValues } from "../index";
 import { ChannelStore, ReadStateStore } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 
-export const patchReadStateStore = (): void => {
+export default (): void => {
   PluginInjector.after(ReadStateStore, "getGuildChannelUnreadState", (args, res) => {
     return args[0]?.isHidden?.() &&
       !SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)

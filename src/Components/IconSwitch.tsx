@@ -1,7 +1,5 @@
-import { common, components } from "replugged";
-import * as Types from "../types";
-const { React } = common;
-const { Divider, Flex, Switch, Text } = components;
+import { Divider, Flex, Switch, Text } from "replugged/components";
+import Types from "../types";
 
 export default (props: Types.IconSwitch) => {
   return (

@@ -1,7 +1,7 @@
 import { types as DefaultTypes } from "replugged";
 export { types as DefaultTypes } from "replugged";
-export type { ReactElement, ComponentClass } from "react";
-import type { ComponentClass, ReactElement } from "react";
+import type { Guild, Channel as OriginalChannel } from "discord-types/general";
+export type { Guild, User } from "discord-types/general";
 import type { Store } from "replugged/dist/renderer/modules/common/flux";
 export interface ReadStateStore extends Store {
   ackMessageId: DefaultTypes.AnyFunction;
@@ -42,46 +42,7 @@ export interface PresenceStore extends Store {
   isMobileOnline: DefaultTypes.AnyFunction;
   setCurrentUserOnConnectionOpen: DefaultTypes.AnyFunction;
 }
-export interface Channel {
-  defaultAutoArchiveDuration: undefined | number;
-  defaultThreadRateLimitPerUser: undefined | number;
-  flags_: number;
-  id: string;
-  lastMessageId: string;
-  lastPinTimestamp: string;
-  memberListId: undefined | string;
-  name: string;
-  nsfw_: boolean;
-  permissionOverwrites_: {
-    [key: string | number]: {
-      allow: bigint;
-      deny: bigint;
-      id: string;
-      type: number;
-    };
-  };
-  guild_id: string;
-  position_: number;
-  rateLimitPerUser_: number;
-  topic_: string;
-  type: number;
-  version: undefined | number;
-  accessPermissions: bigint;
-  bitrate: number;
-  flags: number;
-  nsfw: boolean;
-  permissionOverwrites: {
-    [key: string | number]: {
-      allow: bigint;
-      deny: bigint;
-      id: string;
-      type: number;
-    };
-  };
-  position: number;
-  rateLimitPerUser: number;
-  topic: undefined | string;
-  userLimit: number;
+export interface Channel extends OriginalChannel {
   availableTags: Array<{
     name: string;
     id: string;
@@ -89,7 +50,7 @@ export interface Channel {
   isHidden: () => boolean;
   isGuildVocal: () => boolean;
 }
-export interface RolePill extends ComponentClass {
+export interface RolePill extends React.ComponentClass {
   $$typeof: symbol;
   render: DefaultTypes.AnyFunction;
 }
@@ -218,7 +179,7 @@ export interface ChatContentArgs {
 export interface ChatContent {
   $$typeof: symbol;
   compare: null;
-  type: (ChatContentArgs: ChatContentArgs) => ReactElement;
+  type: (ChatContentArgs: ChatContentArgs) => React.ReactElement;
 }
 export interface RouteArgs {
   computedMatch: {
@@ -291,7 +252,7 @@ export interface GuildStore extends Store {
   isLoaded: DefaultTypes.AnyFunction;
 }
 export interface ChannelUtils {
-  channelTopic: (channel: Channel, guild: Guild) => ReactElement;
+  channelTopic: (channel: Channel, guild: Guild) => React.ReactElement;
 }
 export interface GuildMemberStore extends Store {
   getCommunicationDisabledUserMap: DefaultTypes.AnyFunction;
@@ -322,38 +283,7 @@ export interface UserMentions {
     styles: {
       noStyleAndInteraction: boolean;
     },
-  ) => ReactElement;
-}
-export interface User {
-  avatar: string;
-  avatarDecoration: undefined | string;
-  bot: boolean;
-  desktop: boolean;
-  discriminator: string;
-  email: null | string;
-  flags: number;
-  guildMemberAvatars: {
-    [key: number]: string;
-  };
-  hasBouncedEmail: boolean;
-  hasFlag: DefaultTypes.AnyFunction;
-  id: string;
-  isStaff: DefaultTypes.AnyFunction;
-  isStaffPersonal: DefaultTypes.AnyFunction;
-  mfaEnabled: boolean;
-  mobile: boolean;
-  nsfwAllowed: undefined | boolean;
-  personalConnectionId: null | string;
-  phone: null | string;
-  premiumType: undefined | number;
-  premiumUsageFlags: number;
-  publicFlags: number;
-  purchasedFlags: number;
-  system: boolean;
-  username: string;
-  verified: boolean;
-  createdAt: Date;
-  tag: string;
+  ) => React.ReactElement;
 }
 export interface permissionOverwrite {
   allow: bigint;
@@ -803,7 +733,7 @@ export interface LoadingBoundaryProps {
 export interface LoadingBoundaryState {
   loaded: boolean;
 }
-export interface TextElement extends ComponentClass {
+export interface TextElement extends React.ComponentClass {
   Colors: {
     ALWAYS_WHITE: string;
     BRAND: string;
@@ -848,63 +778,6 @@ export interface Role {
   };
   unicodeEmoji: null | string;
 }
-export interface Guild {
-  afkChannelId: null | string;
-  afkTimeout: number;
-  applicationCommandCounts: {
-    [key: number]: number;
-  };
-  application_id: null | string;
-  banner: string;
-  defaultMessageNotifications: number;
-  description: string;
-  discoverySplash: null | boolean;
-  explicitContentFilter: number;
-  features: Set<string>;
-  homeHeader: null | string;
-  hubType: null | number;
-  icon: string;
-  id: string;
-  joinedAt: Date;
-  latestOnboardingQuestionId: null | string;
-  maxMembers: number;
-  maxStageVideoChannelUsers: number;
-  maxVideoChannelUsers: number;
-  mfaLevel: number;
-  name: string;
-  nsfwLevel: number;
-  ownerId: string;
-  preferredLocale: string;
-  premiumProgressBarEnabled: boolean;
-  premiumSubscriberCount: number;
-  premiumTier: number;
-  publicUpdatesChannelId: string;
-  roles: {
-    [key: string]: Role;
-  };
-  rulesChannelId: string;
-  safetyAlertsChannelId: null | string;
-  splash: null | string;
-  systemChannelFlags: number;
-  systemChannelId: string;
-  vanityURLCode: string;
-  verificationLevel: number;
-  acronym: string;
-  getApplicationId: DefaultTypes.AnyFunction;
-  getIconSource: DefaultTypes.AnyFunction;
-  getIconURL: DefaultTypes.AnyFunction;
-  getMaxEmojiSlots: DefaultTypes.AnyFunction;
-  getMaxRoleSubscriptionEmojiSlots: DefaultTypes.AnyFunction;
-  getRole: DefaultTypes.AnyFunction;
-  hasCommunityInfoSubheader: DefaultTypes.AnyFunction;
-  hasFeature: DefaultTypes.AnyFunction;
-  hasVerificationGate: DefaultTypes.AnyFunction;
-  isLurker: DefaultTypes.AnyFunction;
-  isNew: DefaultTypes.AnyFunction;
-  isOwner: DefaultTypes.AnyFunction;
-  isOwnerWithRequiredMfaLevel: DefaultTypes.AnyFunction;
-  toString: DefaultTypes.AnyFunction;
-}
 export interface LockscreenProps {
   channel: Channel;
   guild: Guild;
@@ -920,7 +793,7 @@ export interface IconSwitch {
   hideBorder?: boolean;
   style?: React.CSSProperties;
   className?: string;
-  children?: ReactElement;
+  children?: React.ReactElement;
 }
 export interface IconUtils {
   getAnimatableSourceWithFallback: DefaultTypes.AnyFunction;
@@ -976,22 +849,22 @@ export interface ScrollerClasses {
   listWrapper: string;
   scroller: string;
 }
-export interface PopoutList extends ComponentClass {
-  Divider: ComponentClass;
-  Empty: ComponentClass;
-  Item: ComponentClass;
-  SearchBar: ComponentClass;
+export interface PopoutList extends React.ComponentClass {
+  Divider: React.ComponentClass;
+  Empty: React.ComponentClass;
+  Item: React.ComponentClass;
+  SearchBar: React.ComponentClass;
 }
 export interface DiscordComponents {
-  AdvancedScroller: ComponentClass;
-  AdvancedScrollerAuto: ComponentClass;
-  AdvancedScrollerNone: ComponentClass;
-  AdvancedScrollerThin: ComponentClass;
+  AdvancedScroller: React.ComponentClass;
+  AdvancedScrollerAuto: React.ComponentClass;
+  AdvancedScrollerNone: React.ComponentClass;
+  AdvancedScrollerThin: React.ComponentClass;
   PopoutList: PopoutList;
-  Scroller: ComponentClass;
-  ScrollerAuto: ComponentClass;
-  ScrollerNone: ComponentClass;
-  ScrollerThin: ComponentClass;
+  Scroller: React.ComponentClass;
+  ScrollerAuto: React.ComponentClass;
+  ScrollerNone: React.ComponentClass;
+  ScrollerThin: React.ComponentClass;
 }
 export type Jsonifiable =
   | null
@@ -1045,3 +918,5 @@ export interface Settings {
   blacklistedGuilds: Record<string, boolean>;
   collapsed: Record<string, boolean>;
 }
+
+export * as default from "./types";
