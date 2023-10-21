@@ -110,11 +110,6 @@ export const DiscordComponents = webpack.getByProps<Types.DiscordComponents>(
   "AdvancedScrollerAuto",
 );
 
-export const { exports: MemberMemos } = webpack.getBySource<{ MemberRow: React.ComponentClass }>(
-  "isThreadSidebarFloating",
-  { raw: true },
-);
-
 export const ScrollerClasses = webpack.getByProps<Types.ScrollerClasses>("listWrapper", "scroller");
 
 export const ProfileActionsModule = webpack.getBySource<Types.DefaultTypes.ObjectExports>(
@@ -174,7 +169,6 @@ export default {
   ForumTagsModule,
   ForumTags,
   DiscordComponents,
-  MemberMemos,
   ScrollerClasses,
   ProfileActionsModule,
   ProfileActions,

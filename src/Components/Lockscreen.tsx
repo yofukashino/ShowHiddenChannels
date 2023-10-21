@@ -11,7 +11,6 @@ import {
   DiscordConstants,
   ForumTags,
   GuildMemberStore,
-  MemberMemos,
   PermissionUtils,
   PresenceStore,
   ProfileActions,
@@ -25,7 +24,7 @@ import Utils from "../lib/utils";
 
 export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
   const { AdvancedScrollerAuto } = DiscordComponents;
-  const { MemberRow } = MemberMemos;
+  const MemberRow = window[Symbol.for("dev.tharki.ShowHiddenChannels")] as React.ComponentClass;
   if (SettingValues.get("debugMode", defaultSettings.debugMode))
     PluginLogger.log("LockScreen Props", props);
   const [channelSpecificRoles, setChannelSpecificRoles] = React.useState<

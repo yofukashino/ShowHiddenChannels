@@ -22,5 +22,4 @@ export const stop = (): void => {
   Utils.rerenderChannels();
 };
 
-export { _assignMemberRow } from "./plaintextFunctions";
 export { Settings } from "./Components/Settings";
