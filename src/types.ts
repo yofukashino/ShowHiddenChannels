@@ -3,6 +3,7 @@ export { types as DefaultTypes } from "replugged";
 import type { Guild, Channel as OriginalChannel } from "discord-types/general";
 export type { Guild, User } from "discord-types/general";
 import type { Store } from "replugged/dist/renderer/modules/common/flux";
+export type { Tree } from "replugged/util";
 export interface ReadStateStore extends Store {
   ackMessageId: DefaultTypes.AnyFunction;
   getAllReadStates: DefaultTypes.AnyFunction;

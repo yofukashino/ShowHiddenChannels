@@ -26,7 +26,10 @@ export const patchChannelItem = (): void => {
   PluginInjector.after(
     ChannelItem,
     FunctionKey,
-    ([props]: [{ channel: Types.Channel; connected: boolean }], res: React.ReactElement) => {
+    (
+      [props]: [{ channel: Types.Channel; connected: boolean }],
+      res: React.ReactElement & Types.Tree,
+    ) => {
       if (!props.channel?.isHidden?.()) return res;
       const item = res.props?.children?.props;
       if (item?.className)
@@ -38,9 +41,9 @@ export const patchChannelItem = (): void => {
         }shc-hidden-channel shc-hidden-channel-type-${props.channel.type}`;
       const children = Utils.findInReactTree(
         res,
-        (m: React.ReactElement) =>
+        (m: React.ReactElement & Types.Tree) =>
           m?.props?.onClick?.toString().includes("stopPropagation") && m.type === "div",
-      ) as React.ReactElement;
+      ) as React.ReactElement & Types.Tree;
       if (children?.props?.children)
         children.props.children = [
           <Tooltip
@@ -65,18 +68,18 @@ export const patchChannelItem = (): void => {
         ];
 
       if (props.channel.type === DiscordConstants.ChanneTypes.GUILD_VOICE && !props.connected) {
-        const wrapper = Utils.findInReactTree(res, (n: React.ReactElement) =>
+        const wrapper = Utils.findInReactTree(res, (n: React.ReactElement & Types.Tree) =>
           n?.props?.className?.includes(ChannelItemClasses.wrapper),
-        ) as React.ReactElement;
+        ) as React.ReactElement & Types.Tree;
 
         if (wrapper?.props) {
           wrapper.props.onMouseDown = () => {};
           wrapper.props.onMouseUp = () => {};
         }
 
-        const button = Utils.findInReactTree(res, (n: React.ReactElement) =>
+        const button = Utils.findInReactTree(res, (n: React.ReactElement & Types.Tree) =>
           n?.props?.className?.includes(ChannelButtonClasses.link),
-        ) as React.ReactElement;
+        ) as React.ReactElement & Types.Tree;
 
         if (button?.props) {
           button.props.href = `/channels/${props.channel.guild_id}/${props.channel.id}`;
