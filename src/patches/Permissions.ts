@@ -11,7 +11,7 @@ export default (): void => {
           args[1].guild_id
         ] &&
         SettingValues.get("channels", defaultSettings.channels)[
-          DiscordConstants.ChanneTypes[args[1].type]
+          DiscordConstants.ChannelTypes[args[1].type]
         ]
       );
     if (args[0] == DiscordConstants.Permissions.CONNECT) return false;

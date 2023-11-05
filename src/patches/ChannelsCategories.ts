@@ -1,16 +1,16 @@
 import { PluginInjector, PluginLogger, SettingValues } from "../index";
 import {
   CategoryStore,
-  Channel,
   ChannelListStore,
   ChannelStore,
+  Channels,
   DiscordConstants,
   GuildChannelStore,
 } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 import Utils from "../lib/utils";
 import Types from "../types";
-
+const collapsedMap = new Map<string, boolean>();
 export default (): void => {
   PluginInjector.after(CategoryStore, "isCollapsed", (args, res) => {
     if (
@@ -22,7 +22,7 @@ export default (): void => {
   });
 
   PluginInjector.after(GuildChannelStore, "getChannels", (args: [string], res) => {
-    const GuildCategories = res[DiscordConstants.ChanneTypes.GUILD_CATEGORY];
+    const GuildCategories = res[DiscordConstants.ChannelTypes.GUILD_CATEGORY];
     const hiddenId = `${args[0]}_hidden`;
     const hiddenCategory = GuildCategories?.find(
       (m: Types.GuildChannel) => m.channel.id == hiddenId,
@@ -57,11 +57,11 @@ export default (): void => {
       !args[0]?.endsWith("_hidden")
     )
       return res;
-    const HiddenCategoryChannel = new Channel({
+    const HiddenCategoryChannel = new Channels.ChannelRecordBase({
       guild_id: args[0]?.replace("_hidden", ""),
       id: args[0],
       name: "Hidden Channels",
-      type: DiscordConstants.ChanneTypes.GUILD_CATEGORY,
+      type: DiscordConstants.ChannelTypes.GUILD_CATEGORY,
     });
     return HiddenCategoryChannel;
   });
@@ -73,14 +73,14 @@ export default (): void => {
     )
       return res;
     const hiddenId = `${args[0]}_hidden`;
-    const HiddenCategoryChannel = new Channel({
+    const HiddenCategoryChannel = new Channels.ChannelRecordBase({
       guild_id: args[0],
       id: hiddenId,
       name: "Hidden Channels",
-      type: DiscordConstants.ChanneTypes.GUILD_CATEGORY,
+      type: DiscordConstants.ChannelTypes.GUILD_CATEGORY,
     });
     const GuildCategories = GuildChannelStore.getChannels(args[0])[
-      DiscordConstants.ChanneTypes.GUILD_CATEGORY
+      DiscordConstants.ChannelTypes.GUILD_CATEGORY
     ] as Array<{ channel: Types.Channel; comparator: number }>;
     Object.defineProperty(HiddenCategoryChannel, "position", {
       value:
@@ -134,7 +134,21 @@ export default (): void => {
             },
           ),
         );
-        HiddenCategory.isCollapsed = Boolean(res.guildChannels.collapsedCategoryIds[hiddenId]);
+        HiddenCategory.isCollapsed = collapsedMap.get(args[0])
+          ? Boolean(
+              res.guildChannels.collapsedCategoryIds[hiddenId] ??
+                CategoryStore.isCollapsed(hiddenId),
+            )
+          : SettingValues.get("alwaysCollapse", defaultSettings.alwaysCollapse);
+        if (HiddenCategory.isCollapsed) res.guildChannels.collapsedCategoryIds[hiddenId] = true;
+        if (!collapsedMap.get(args[0])) {
+          collapsedMap.set(args[0], true);
+          for (const guildId of collapsedMap.keys()) {
+            if (guildId === args[0]) continue;
+            collapsedMap.set(guildId, false);
+          }
+        }
+
         HiddenCategory.shownChannelIds =
           res.guildChannels.collapsedCategoryIds[hiddenId] || HiddenCategory.isCollapsed
             ? []

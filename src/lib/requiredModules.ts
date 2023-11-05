@@ -1,29 +1,22 @@
 import { webpack } from "replugged";
 import Types from "../types";
-export const DiscordConstantsModule =
-  webpack.getBySource<Types.DefaultTypes.ObjectExports>(".MFA_WARNING=");
-export const DiscordConstants = {
-  Permissions: webpack.getExportsForProps<Types.Permissions>(DiscordConstantsModule, [
-    "ADMINISTRATOR",
-    "MANAGE_GUILD",
-  ]),
-  ChanneTypes: webpack.getExportsForProps<Types.ChannelTypes>(DiscordConstantsModule, [
-    "GUILD_TEXT",
-    "GUILD_VOICE",
-  ]),
-};
-export const ChatClasses = webpack.getByProps<Types.ChatClasses>("chat", "chatContent");
-export const { exports: Route } = webpack.getBySource<Types.RouteExports>(
-  '"impressionName","impressionProperties"',
-  {
-    raw: true,
-  },
+export const DiscordConstants = webpack.getByProps<Types.DiscordConstants>(
+  "Permissions",
+  "ChannelTypes",
 );
+export const ChatClasses = webpack.getByProps<Types.ChatClasses>("chat", "chatContent");
+export const { exports: Route } = webpack.getBySource(".Route,{...", {
+  raw: true,
+});
 export const ChatContent = webpack.getBySource<Types.ChatContent>(
   "showAutomodUserProfileChatBlocker",
 );
-export const ChannelItem = webpack.getBySource<Types.genericObjectExport>(".subtitleColor");
-export const ChannelItemUtil = webpack.getBySource<Types.genericObjectExport>(".rulesChannelId))");
+export const ChannelItem = webpack.getByProps<Types.ChannelItem>("ChannelItemIcon");
+export const ChannelItemUtil = webpack.getByProps<Types.ChannelItemUtil>(
+  "getChannelIconComponent",
+  "getChannelIconTooltipText",
+  "getSimpleChannelIconComponent",
+);
 export const RolePillClasses = webpack.getByProps<Types.RolePillClasses>(
   "rolePill",
   "rolePillBorder",
@@ -47,11 +40,7 @@ export const ChannelListClasses = webpack.getByProps<Types.ChannelListClasses>(
   "hubContainer",
 );
 export const LocaleManager = webpack.getByProps<Types.LocaleManager>("Messages", "_chosenLocale");
-export const ChannelsModule = webpack.getBySource<Types.DefaultTypes.ObjectExports>(/key:"nsfw"/);
-export const Channel = webpack.getFunctionBySource<Types.ChannelConstructor>(
-  ChannelsModule,
-  /function.*\(\)\{.*\.apply\(this,arguments\)\}/,
-);
+export const Channels = webpack.getByProps<Types.Channels>("ChannelRecordBase");
 export const ChannelListStore = webpack.getByStoreName<Types.ChannelListStore>("ChannelListStore");
 export const UserGuildSettingsStore =
   webpack.getByStoreName<Types.UserGuildSettingsStore>("UserGuildSettingsStore");
@@ -60,22 +49,15 @@ export const IconClasses = webpack.getByProps<Types.IconClasses>("iconItem");
 export const ReadStateStore = webpack.getByStoreName<Types.ReadStateStore>("ReadStateStore");
 export const Voice = webpack.getByProps<Types.Voice>("getVoiceStateStats");
 export const GuildStore = webpack.getByStoreName<Types.GuildStore>("GuildStore");
-export const RolePillModule =
-  webpack.getBySource<Types.DefaultTypes.ObjectExports>(/\.disableBorderColor,/);
-export const RolePill = webpack.getExportsForProps<Types.RolePill>(RolePillModule, [
-  "$$typeof",
-  "render",
-]);
+export const RolePill = webpack.getByProps<Types.RolePill>("MemberRole");
 export const MessageActions = webpack.getByProps<Types.MessageActions>(
   "jumpToMessage",
   "_sendMessage",
 );
-export const UserMentions = webpack.getBySource<Types.UserMentions>(
-  /inlinePreview:[A-Za-z]\.formatInline/,
-);
+export const UserMentions = webpack.getByProps<Types.UserMentions>("handleUserContextMenu");
 export const GuildChannelStore =
   webpack.getByStoreName<Types.GuildChannelStore>("GuildChannelStore");
-export const TextElement = webpack.getBySource<Types.TextElement>(/\.selectable,.*\.strong/);
+export const TextElement = webpack.getBySource<Types.TextElement>("CUSTOM:null");
 export const CategoryStore = webpack.getByProps<Types.CategoryStore>(
   "isCollapsed",
   "getCollapsedCategories",
@@ -84,27 +66,18 @@ export const PresenceStore = webpack.getByStoreName<Types.PresenceStore>("Presen
 export const GuildMemberStore = webpack.getByStoreName<Types.GuildMemberStore>("GuildMemberStore");
 export const ChannelStore = webpack.getByStoreName<Types.ChannelStore>("ChannelStore");
 export const BigIntUtils = webpack.getByProps<Types.BigIntUtils>("deserialize", "invert", "has");
-export const TransitionUtilModule = webpack.getBySource<Types.DefaultTypes.ObjectExports>(
-  "transitionTo - Transitioning to ",
+export const TransitionUtil = webpack.getByProps<Types.TransitionUtil>(
+  "transitionTo",
+  "transitionToGuild",
 );
-export const TransitionUtil = {
-  transitionToChannel: webpack.getFunctionBySource<Types.DefaultTypes.AnyFunction>(
-    TransitionUtilModule,
-    "transitionTo - Transitioning to ",
-  ),
-};
-export const ChannelUtilsModule =
-  webpack.getBySource<Types.DefaultTypes.ObjectExports>("GROUP_DM:return null");
-export const ChannelUtils = {
-  channelTopic: webpack.getFunctionBySource(ChannelUtilsModule, /function \w+\(\w+,\w+\)/),
-} as Types.ChannelUtils;
-export const ForumTagsModule = webpack.getBySource<Types.DefaultTypes.ObjectExports>(
-  ".Messages.FORUM_TAG_A11Y_FILTER_BY_TAG.",
+export const ChannelUtils = webpack.getByProps<Types.ChannelUtils>(
+  "renderTopic",
+  "HeaderGuildBreadcrumb",
+  "ChannelEmoji",
+  "renderTitle",
 );
-export const ForumTags = webpack.getFunctionBySource<React.ComponentClass>(
-  ForumTagsModule,
-  ".Messages.FORUM_TAG_A11Y_FILTER_BY_TAG.",
-);
+
+export const ForumTags = webpack.getBySource<Types.ForumTags>("IncreasedActivityForumTagPill");
 export const DiscordComponents = webpack.getByProps<Types.DiscordComponents>(
   "PopoutList",
   "AdvancedScrollerAuto",
@@ -112,23 +85,9 @@ export const DiscordComponents = webpack.getByProps<Types.DiscordComponents>(
 
 export const ScrollerClasses = webpack.getByProps<Types.ScrollerClasses>("listWrapper", "scroller");
 
-export const ProfileActionsModule = webpack.getBySource<Types.DefaultTypes.ObjectExports>(
-  "setFlag: user cannot be undefined",
-);
-
-export const ProfileActions = {
-  getUser: webpack.getFunctionBySource<Types.DefaultTypes.AnyFunction>(
-    ProfileActionsModule,
-    '"USER_UPDATE"',
-  ),
-  fetchProfile: webpack.getFunctionBySource<Types.DefaultTypes.AnyFunction>(
-    ProfileActionsModule,
-    ".apply(",
-  ),
-};
+export const ProfileActions = webpack.getByProps<Types.ProfileActions>("getUser", "fetchProfile");
 
 export default {
-  DiscordConstantsModule,
   DiscordConstants,
   ChatClasses,
   Route,
@@ -142,8 +101,6 @@ export default {
   PermissionUtils,
   ChannelListClasses,
   LocaleManager,
-  ChannelsModule,
-  Channel,
   ChannelListStore,
   UserGuildSettingsStore,
   IconUtils,
@@ -151,7 +108,6 @@ export default {
   ReadStateStore,
   Voice,
   GuildStore,
-  RolePillModule,
   RolePill,
   MessageActions,
   UserMentions,
@@ -162,14 +118,10 @@ export default {
   GuildMemberStore,
   ChannelStore,
   BigIntUtils,
-  TransitionUtilModule,
   TransitionUtil,
-  ChannelUtilsModule,
   ChannelUtils,
-  ForumTagsModule,
   ForumTags,
   DiscordComponents,
   ScrollerClasses,
-  ProfileActionsModule,
   ProfileActions,
 };

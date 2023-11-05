@@ -22,7 +22,7 @@ import {
 } from "../lib/requiredModules";
 import Utils from "../lib/utils";
 
-export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
+export default React.memo((props: Types.LockscreenProps) => {
   const { AdvancedScrollerAuto } = DiscordComponents;
   const MemberRow = window[Symbol.for("dev.tharki.ShowHiddenChannels")] as React.ComponentClass;
   if (SettingValues.get("debugMode", defaultSettings.debugMode))
@@ -55,7 +55,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
 
     if (!channelRoleOverwrites?.length) return setChannelSpecificRoles(["None"]);
     const roleComponentArray = channelRoleOverwrites.map((m) => (
-      <RolePill
+      <RolePill.MemberRole
         {...{
           canRemove: false,
           className: `${RolePillClasses.rolePill} shc-rolePill`,
@@ -83,7 +83,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
     if (!adminRoles?.length) return setAdminRoles(["None"]);
 
     const roleComponentArray = adminRoles.map((m) => (
-      <RolePill
+      <RolePill.MemberRole
         {...{
           canRemove: false,
           className: `${RolePillClasses.rolePill} shc-rolePill`, //${rolePillBorder}
@@ -218,7 +218,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
             </TextElement>
             {props.channel.topic &&
               props.guild &&
-              ChannelUtils?.channelTopic(props.channel, props.guild)}
+              ChannelUtils?.renderTopic(props.channel, props.guild)}
             {props.channel.lastMessageId && (
               <TextElement
                 {...{
@@ -353,7 +353,7 @@ export const Lockscreen = React.memo((props: Types.LockscreenProps) => {
                 {props.channel.availableTags &&
                   props.channel.availableTags.length > 0 &&
                   props.channel.availableTags.map((tag) => (
-                    <ForumTags
+                    <ForumTags.IncreasedActivityForumTagPill
                       {...{
                         key: tag.id,
                         className: "tag-3T_qsl",

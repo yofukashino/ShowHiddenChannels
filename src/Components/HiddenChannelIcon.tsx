@@ -1,7 +1,8 @@
+import { React } from "replugged/common";
 import { SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
 
-export default (props: object): React.ReactElement | null => {
+export default React.memo((props: object): React.ReactElement | null => {
   if (SettingValues.get("hiddenChannelIcon", defaultSettings.hiddenChannelIcon) === "lock")
     return (
       <svg {...{ ...props, viewBox: "0 0 24 24" }}>
@@ -29,4 +30,4 @@ export default (props: object): React.ReactElement | null => {
       </svg>
     );
   return null;
-};
+});

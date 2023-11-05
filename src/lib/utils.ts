@@ -122,7 +122,7 @@ export const getHiddenChannels = (guildId: string): Types.HiddenChannels => {
     Types.Channel
   >;
   const hiddenChannels = Object.values(guildChannels).filter(
-    (m) => m.isHidden() && m.type !== DiscordConstants.ChanneTypes.GUILD_CATEGORY,
+    (m) => m.isHidden() && m.type !== DiscordConstants.ChannelTypes.GUILD_CATEGORY,
   );
 
   return { channels: hiddenChannels, amount: hiddenChannels.length };

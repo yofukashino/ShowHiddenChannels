@@ -63,8 +63,8 @@ export default <
             title: Guild.name,
             note: Guild.description,
             icon:
-              IconUtils.getGuildIconURL(Guild) ??
-              IconUtils.getDefaultAvatarURL(Utils.randomNo(0, 69)),
+              IconUtils.default.getGuildIconURL(Guild) ??
+              IconUtils.default.getDefaultAvatarURL(Utils.randomNo(0, 69)),
             ...state,
           }}
         />

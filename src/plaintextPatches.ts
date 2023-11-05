@@ -4,39 +4,54 @@ export default [
     find: "GROUP_DM:return null",
     replacements: [
       {
-        match: /(case (\w+.[\w$_]+).GROUP_DM:return null!=\w+\?)/,
-        replace: `case $2.GUILD_FORUM:$1!arguments[0]?.isHidden?.()&&arguments[0].type==$2.GUILD_FORUM?null:`,
+        match: /case (\w+)\.ChannelTypes\.GROUP_DM:return null!=\w+\?/,
+        replace: (match: string, discordConstants: string) =>
+          `case ${discordConstants}.GUILD_FORUM:${match}!arguments[0]?.isHidden?.()&&arguments[0].type==${discordConstants}.ChannelTypes.GUILD_FORUM?null:`,
       },
     ],
   },
   {
-    find: "isThreadSidebarFloating",
+    find: "this.trackMemberListViewed()",
     replacements: [
       {
-        match:
-          /(\w+)(\s*=\s*\w+\s*\.\s*memo\s*\(\s*\(\s*function\s*\(\s*\w+\s*\)\s*{\s*var\s*\w+\s*=\s*\w+\s*\.\s*colorRoleId)/,
-        replace: (_orig: string, fn: string, suffix: string): string =>
+        match: /(\w+)(=\w+\.memo\(\w+=>{let{colorRoleId:)/,
+        replace: (_: string, fn: string, suffix: string): string =>
           `${fn}=window[Symbol.for("dev.tharki.ShowHiddenChannels")]${suffix}`,
       },
     ],
   },
   {
-    find: /\.displayName="PermissionStore"/,
+    find: '.displayName="PermissionStore"',
     replacements: [
       {
         match:
-          /(function\s*\w+\s*\(\s*\)\s*{\s*(\w+)\s*=\s*{\s*}\s*;\s*(\w+)\s*=\s*{\s*}\s*;\s*for\s*\(\s*var\s*\w+\s*in\s*(\w+)\s*\)\s*\w+\s*\[\s*\w+\s*\]\s*\+=\s*1\s*;\s*(\w+)\s*\+=\s*1\s*}[^]*)((\w+)\s*\.\s*getChannelsVersion\s*=\s*function\s*\(\)\s*{)/,
-        replace: `$1$7.clearVars=function(){$2={};$3={};$4={};$5=0;};$6`,
+          /(function \w+\(\){for\(let \w+ in (\w+)={},(\w+)={},(\w+)\)\w+\[\w+\]\+=1;(\w+)\+=1}.{3700,4000})(getChannelsVersion\(\){)/,
+        replace: (
+          _: string,
+          prefix: string,
+          var1: string,
+          var2: string,
+          var3: string,
+          var4: string,
+          suffix: string,
+        ): string => `${prefix}clearVars(){${var1}={};${var2}={};${var3}={};${var4}=0;};${suffix}`,
       },
     ],
   },
   {
-    find: /\.displayName="ChannelListStore"/,
+    find: '.displayName="ChannelListStore"',
     replacements: [
       {
         match:
-          /(var\s*(\w+)\s*=\s*null\s*,\s*(\w+)\s*=\s*null\s*,\s*(\w)\s*=\s*new\s*\w+\s*\.\s*\w+\s*;\s*function[^]*)((\w+)\s*\.\s*recentsChannelCount)/,
-        replace: `$1$6.clearVars=function(){$2=null;$3=null;$4.clear();};$5`,
+          /(function \w+\(\){let \w+=\w+\.default\.getChannelId\(\),\w+=\w+\.default\.getVoiceChannelId\(\);return (\w+)=\w+,(\w+)=\w+,(\w+)\.clear\(\)}.{1300,1500})(recentsChannelCount\()/,
+        replace: (
+          _: string,
+          prefix: string,
+          var1: string,
+          var2: string,
+          var3: string,
+          suffix: string,
+        ) => `${prefix}clearVars(){${var1}=null;${var2}=null;${var3}.clear();};${suffix}`,
       },
     ],
   },

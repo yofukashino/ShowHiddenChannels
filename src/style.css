@@ -31,7 +31,7 @@
   background-color: var(--background-primary);
 }
 
-.shc-size-increase .actionIcon-2sw4Sl {
+.shc-size-increase [class*="actionIcon"] {
   width: 20px;
   height: 20px;
   display: block;

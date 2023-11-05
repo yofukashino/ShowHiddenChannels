@@ -1,7 +1,7 @@
 import { types as DefaultTypes } from "replugged";
 export { types as DefaultTypes } from "replugged";
 import type { Guild, Channel as OriginalChannel } from "discord-types/general";
-export type { Guild, User } from "discord-types/general";
+export type { Guild, User, Role } from "discord-types/general";
 import type { Store } from "replugged/dist/renderer/modules/common/flux";
 export type { Tree } from "replugged/util";
 export interface ReadStateStore extends Store {
@@ -253,7 +253,24 @@ export interface GuildStore extends Store {
   isLoaded: DefaultTypes.AnyFunction;
 }
 export interface ChannelUtils {
-  channelTopic: (channel: Channel, guild: Guild) => React.ReactElement;
+  renderTopic: (channel: Channel, guild: Guild) => React.ReactElement;
+  HeaderGuildBreadcrumb: DefaultTypes.AnyFunction;
+  ChannelEmoji: DefaultTypes.AnyFunction;
+  renderTitle: DefaultTypes.AnyFunction;
+}
+export interface RolePill {
+  MemberRole: React.ComponentClass;
+}
+export interface ForumTags {
+  IncreasedActivityForumTagPill: React.ComponentClass;
+}
+export interface ProfileActions {
+  acceptAgreements: DefaultTypes.AnyFunction;
+  fetchCurrentUser: DefaultTypes.AnyFunction;
+  fetchMutualFriends: DefaultTypes.AnyFunction;
+  fetchProfile: DefaultTypes.AnyFunction;
+  getUser: DefaultTypes.AnyFunction;
+  setFlag: DefaultTypes.AnyFunction;
 }
 export interface GuildMemberStore extends Store {
   getCommunicationDisabledUserMap: DefaultTypes.AnyFunction;
@@ -392,21 +409,97 @@ export interface CategoryStore extends Store {
   initialize: DefaultTypes.AnyFunction;
   isCollapsed: DefaultTypes.AnyFunction;
 }
-export interface ChannelTypes {
-  ANNOUNCEMENT_THREAD: number;
-  DM: number;
-  GROUP_DM: number;
-  GUILD_ANNOUNCEMENT: number;
-  GUILD_CATEGORY: number;
-  GUILD_DIRECTORY: number;
-  GUILD_FORUM: number;
-  GUILD_STAGE_VOICE: number;
-  GUILD_STORE: number;
-  GUILD_TEXT: number;
-  GUILD_VOICE: number;
-  PRIVATE_THREAD: number;
-  PUBLIC_THREAD: number;
-  UNKNOWN: number;
+export interface DiscordConstants {
+  Permissions: {
+    ADD_REACTIONS: bigint;
+    ADMINISTRATOR: bigint;
+    ATTACH_FILES: bigint;
+    BAN_MEMBERS: bigint;
+    CHANGE_NICKNAME: bigint;
+    CONNECT: bigint;
+    CREATE_EVENTS: bigint;
+    CREATE_GUILD_EXPRESSIONS: bigint;
+    CREATE_INSTANT_INVITE: bigint;
+    CREATE_PRIVATE_THREADS: bigint;
+    CREATE_PUBLIC_THREADS: bigint;
+    DEAFEN_MEMBERS: bigint;
+    EMBED_LINKS: bigint;
+    KICK_MEMBERS: bigint;
+    MANAGE_CHANNELS: bigint;
+    MANAGE_EVENTS: bigint;
+    MANAGE_GUILD: bigint;
+    MANAGE_GUILD_EXPRESSIONS: bigint;
+    MANAGE_MESSAGES: bigint;
+    MANAGE_NICKNAMES: bigint;
+    MANAGE_ROLES: bigint;
+    MANAGE_THREADS: bigint;
+    MANAGE_WEBHOOKS: bigint;
+    MENTION_EVERYONE: bigint;
+    MODERATE_MEMBERS: bigint;
+    MOVE_MEMBERS: bigint;
+    MUTE_MEMBERS: bigint;
+    PRIORITY_SPEAKER: bigint;
+    READ_MESSAGE_HISTORY: bigint;
+    REQUEST_TO_SPEAK: bigint;
+    SEND_MESSAGES: bigint;
+    SEND_MESSAGES_IN_THREADS: bigint;
+    SEND_TTS_MESSAGES: bigint;
+    SEND_VOICE_MESSAGES: bigint;
+    SPEAK: bigint;
+    STREAM: bigint;
+    USE_APPLICATION_COMMANDS: bigint;
+    USE_EMBEDDED_ACTIVITIES: bigint;
+    USE_EXTERNAL_EMOJIS: bigint;
+    USE_EXTERNAL_SOUNDS: bigint;
+    USE_EXTERNAL_STICKERS: bigint;
+    USE_SOUNDBOARD: bigint;
+    USE_VAD: bigint;
+    VIEW_AUDIT_LOG: bigint;
+    VIEW_CHANNEL: bigint;
+    VIEW_CREATOR_MONETIZATION_ANALYTICS: bigint;
+    VIEW_GUILD_ANALYTICS: bigint;
+  };
+  ChannelTypes: {
+    ANNOUNCEMENT_THREAD: number;
+    DM: number;
+    GROUP_DM: number;
+    GUILD_ANNOUNCEMENT: number;
+    GUILD_CATEGORY: number;
+    GUILD_DIRECTORY: number;
+    GUILD_FORUM: number;
+    GUILD_STAGE_VOICE: number;
+    GUILD_STORE: number;
+    GUILD_TEXT: number;
+    GUILD_VOICE: number;
+    PRIVATE_THREAD: number;
+    PUBLIC_THREAD: number;
+    UNKNOWN: number;
+  };
+}
+export interface ChannelItem {
+  ChannelItemIcon: DefaultTypes.AnyFunction;
+  default: DefaultTypes.AnyFunction;
+}
+export interface ChannelItemUtil {
+  getChannelIconComponent: DefaultTypes.AnyFunction;
+  getChannelIconTooltipText: DefaultTypes.AnyFunction;
+  getSimpleChannelIconComponent: DefaultTypes.AnyFunction;
+}
+export interface Channels {
+  ChannelRecordBase: (...props: unknown[]) => void;
+}
+export interface TransitionUtil {
+  back: DefaultTypes.AnyFunction;
+  forward: DefaultTypes.AnyFunction;
+  getFingerprintLocation: DefaultTypes.AnyFunction;
+  getHistory: DefaultTypes.AnyFunction;
+  getLastRouteChangeSource: DefaultTypes.AnyFunction;
+  getLastRouteChangeSourceLocationStack: DefaultTypes.AnyFunction;
+  hasNavigated: DefaultTypes.AnyFunction;
+  isValidFingerprintRoute: DefaultTypes.AnyFunction;
+  replaceWith: DefaultTypes.AnyFunction;
+  transitionTo: DefaultTypes.AnyFunction;
+  transitionToGuild: DefaultTypes.AnyFunction;
 }
 export interface GuildChannelStore extends Store {
   getAllGuilds: DefaultTypes.AnyFunction;
@@ -678,55 +771,7 @@ export interface LocaleManager {
   _provider: DefaultTypes.ObjectExports;
   _requestedLocale: string;
 }
-export interface Permissions {
-  ADD_REACTIONS: bigint;
-  ADMINISTRATOR: bigint;
-  ATTACH_FILES: bigint;
-  BAN_MEMBERS: bigint;
-  CHANGE_NICKNAME: bigint;
-  CONNECT: bigint;
-  CREATE_EVENTS: bigint;
-  CREATE_GUILD_EXPRESSIONS: bigint;
-  CREATE_INSTANT_INVITE: bigint;
-  CREATE_PRIVATE_THREADS: bigint;
-  CREATE_PUBLIC_THREADS: bigint;
-  DEAFEN_MEMBERS: bigint;
-  EMBED_LINKS: bigint;
-  KICK_MEMBERS: bigint;
-  MANAGE_CHANNELS: bigint;
-  MANAGE_EVENTS: bigint;
-  MANAGE_GUILD: bigint;
-  MANAGE_GUILD_EXPRESSIONS: bigint;
-  MANAGE_MESSAGES: bigint;
-  MANAGE_NICKNAMES: bigint;
-  MANAGE_ROLES: bigint;
-  MANAGE_THREADS: bigint;
-  MANAGE_WEBHOOKS: bigint;
-  MENTION_EVERYONE: bigint;
-  MODERATE_MEMBERS: bigint;
-  MOVE_MEMBERS: bigint;
-  MUTE_MEMBERS: bigint;
-  PRIORITY_SPEAKER: bigint;
-  READ_MESSAGE_HISTORY: bigint;
-  REQUEST_TO_SPEAK: bigint;
-  SEND_MESSAGES: bigint;
-  SEND_MESSAGES_IN_THREADS: bigint;
-  SEND_TTS_MESSAGES: bigint;
-  SEND_VOICE_MESSAGES: bigint;
-  SPEAK: bigint;
-  STREAM: bigint;
-  USE_APPLICATION_COMMANDS: bigint;
-  USE_EMBEDDED_ACTIVITIES: bigint;
-  USE_EXTERNAL_EMOJIS: bigint;
-  USE_EXTERNAL_SOUNDS: bigint;
-  USE_EXTERNAL_STICKERS: bigint;
-  USE_SOUNDBOARD: bigint;
-  USE_VAD: bigint;
-  VIEW_AUDIT_LOG: bigint;
-  VIEW_CHANNEL: bigint;
-  VIEW_CREATOR_MONETIZATION_ANALYTICS: bigint;
-  VIEW_GUILD_ANALYTICS: bigint;
-}
+
 export interface LoadingBoundaryProps {
   children: React.ReactNode;
 }
@@ -761,24 +806,6 @@ export interface TextElement extends React.ComponentClass {
     SIZE_32: string;
   };
 }
-export interface Role {
-  color: number;
-  colorString: null | string;
-  flags: number;
-  hoist: boolean;
-  icon: null | string;
-  id: string;
-  managed: boolean;
-  mentionable: boolean;
-  name: string;
-  originalPosition: number;
-  permissions: bigint;
-  position: number;
-  tags: {
-    bot_id?: string;
-  };
-  unicodeEmoji: null | string;
-}
 export interface LockscreenProps {
   channel: Channel;
   guild: Guild;
@@ -797,40 +824,55 @@ export interface IconSwitch {
   children?: React.ReactElement;
 }
 export interface IconUtils {
-  getAnimatableSourceWithFallback: DefaultTypes.AnyFunction;
-  getApplicationIconSource: DefaultTypes.AnyFunction;
-  getApplicationIconURL: DefaultTypes.AnyFunction;
+  DEFAULT_AVATARS: string[];
+  SUPPORTS_WEBP: boolean;
+  default: {
+    getAnimatableSourceWithFallback: DefaultTypes.AnyFunction;
+    getApplicationIconSource: DefaultTypes.AnyFunction;
+    getApplicationIconURL: DefaultTypes.AnyFunction;
+    getAvatarDecorationURL: DefaultTypes.AnyFunction;
+    getChannelIconSource: DefaultTypes.AnyFunction;
+    getChannelIconURL: DefaultTypes.AnyFunction;
+    getDefaultAvatarURL: (number: number) => string;
+    getEmojiURL: DefaultTypes.AnyFunction;
+    getGameAssetSource: DefaultTypes.AnyFunction;
+    getGameAssetURL: DefaultTypes.AnyFunction;
+    getGuildBannerSource: DefaultTypes.AnyFunction;
+    getGuildBannerURL: DefaultTypes.AnyFunction;
+    getGuildDiscoverySplashSource: DefaultTypes.AnyFunction;
+    getGuildDiscoverySplashURL: DefaultTypes.AnyFunction;
+    getGuildHomeHeaderSource: DefaultTypes.AnyFunction;
+    getGuildHomeHeaderURL: DefaultTypes.AnyFunction;
+    getGuildIconSource: DefaultTypes.AnyFunction;
+    getGuildIconURL: (Guild: Guild) => string;
+    getGuildMemberAvatarSource: DefaultTypes.AnyFunction;
+    getGuildMemberAvatarURL: DefaultTypes.AnyFunction;
+    getGuildMemberAvatarURLSimple: DefaultTypes.AnyFunction;
+    getGuildMemberBannerURL: DefaultTypes.AnyFunction;
+    getGuildSplashSource: DefaultTypes.AnyFunction;
+    getGuildSplashURL: DefaultTypes.AnyFunction;
+    getGuildTemplateIconSource: DefaultTypes.AnyFunction;
+    getGuildTemplateIconURL: DefaultTypes.AnyFunction;
+    getUserAvatarColor: DefaultTypes.AnyFunction;
+    getUserAvatarSource: DefaultTypes.AnyFunction;
+    getUserAvatarURL: DefaultTypes.AnyFunction;
+    getUserBannerURL: DefaultTypes.AnyFunction;
+    getVideoFilterAssetURL: DefaultTypes.AnyFunction;
+    hasAnimatedGuildIcon: DefaultTypes.AnyFunction;
+    isAnimatedIconHash: DefaultTypes.AnyFunction;
+    makeSource: DefaultTypes.AnyFunction;
+  };
   getAvatarDecorationURL: DefaultTypes.AnyFunction;
-  getChannelIconSource: DefaultTypes.AnyFunction;
-  getChannelIconURL: DefaultTypes.AnyFunction;
-  getDefaultAvatarURL: (number: number) => string;
   getEmojiURL: DefaultTypes.AnyFunction;
-  getGameAssetSource: DefaultTypes.AnyFunction;
-  getGameAssetURL: DefaultTypes.AnyFunction;
-  getGuildBannerSource: DefaultTypes.AnyFunction;
-  getGuildBannerURL: DefaultTypes.AnyFunction;
-  getGuildDiscoverySplashSource: DefaultTypes.AnyFunction;
-  getGuildDiscoverySplashURL: DefaultTypes.AnyFunction;
-  getGuildHomeHeaderSource: DefaultTypes.AnyFunction;
-  getGuildHomeHeaderURL: DefaultTypes.AnyFunction;
-  getGuildIconSource: DefaultTypes.AnyFunction;
-  getGuildIconURL: (Guild: Guild) => string;
-  getGuildMemberAvatarSource: DefaultTypes.AnyFunction;
   getGuildMemberAvatarURL: DefaultTypes.AnyFunction;
   getGuildMemberAvatarURLSimple: DefaultTypes.AnyFunction;
   getGuildMemberBannerURL: DefaultTypes.AnyFunction;
-  getGuildSplashSource: DefaultTypes.AnyFunction;
-  getGuildSplashURL: DefaultTypes.AnyFunction;
-  getGuildTemplateIconSource: DefaultTypes.AnyFunction;
-  getGuildTemplateIconURL: DefaultTypes.AnyFunction;
-  getUserAvatarColor: DefaultTypes.AnyFunction;
-  getUserAvatarSource: DefaultTypes.AnyFunction;
   getUserAvatarURL: DefaultTypes.AnyFunction;
   getUserBannerURL: DefaultTypes.AnyFunction;
   getVideoFilterAssetURL: DefaultTypes.AnyFunction;
-  hasAnimatedGuildIcon: DefaultTypes.AnyFunction;
   isAnimatedIconHash: DefaultTypes.AnyFunction;
-  makeSource: DefaultTypes.AnyFunction;
+  isAnimatedImageURL: DefaultTypes.AnyFunction;
+  isVideoAssetHash: DefaultTypes.AnyFunction;
 }
 export interface BigIntUtils {
   add: DefaultTypes.AnyFunction;

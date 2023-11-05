@@ -1,6 +1,6 @@
-import { webpack } from "replugged";
 import { ErrorBoundary, Tooltip } from "replugged/components";
 import { PluginInjector, SettingValues } from "../index";
+import { defaultSettings } from "../lib/consts";
 import {
   ChannelButtonClasses,
   ChannelItem,
@@ -17,15 +17,13 @@ import {
   Voice,
 } from "../lib/requiredModules";
 import HiddenChannelIcon from "../Components/HiddenChannelIcon";
-import { Lockscreen } from "../Components/Lockscreen";
-import { defaultSettings } from "../lib/consts";
+import Lockscreen from "../Components/Lockscreen";
 import Utils from "../lib/utils";
 import Types from "../types";
 export const patchChannelItem = (): void => {
-  const FunctionKey = webpack.getFunctionKeyBySource(ChannelItem, ".subtitleColor") as string;
   PluginInjector.after(
     ChannelItem,
-    FunctionKey,
+    "default",
     (
       [props]: [{ channel: Types.Channel; connected: boolean }],
       res: React.ReactElement & Types.Tree,
@@ -67,7 +65,7 @@ export const patchChannelItem = (): void => {
           </Tooltip>,
         ];
 
-      if (props.channel.type === DiscordConstants.ChanneTypes.GUILD_VOICE && !props.connected) {
+      if (props.channel.type === DiscordConstants.ChannelTypes.GUILD_VOICE && !props.connected) {
         const wrapper = Utils.findInReactTree(res, (n: React.ReactElement & Types.Tree) =>
           n?.props?.className?.includes(ChannelItemClasses.wrapper),
         ) as React.ReactElement & Types.Tree;
@@ -84,7 +82,7 @@ export const patchChannelItem = (): void => {
         if (button?.props) {
           button.props.href = `/channels/${props.channel.guild_id}/${props.channel.id}`;
           button.props.onClick = () =>
-            props.channel.isGuildVocal() && TransitionUtil.transitionToChannel(button.props.href);
+            props.channel.isGuildVocal() && TransitionUtil.transitionTo(button.props.href);
         }
       }
 
@@ -95,13 +93,9 @@ export const patchChannelItem = (): void => {
 
 export const patchChannelItemUtil = (): void => {
   //* Remove lock icon from hidden voice channels
-  const FunctionKey = webpack.getFunctionKeyBySource(
-    ChannelItemUtil,
-    ".rulesChannelId))",
-  ) as string;
   PluginInjector.before(
     ChannelItemUtil,
-    FunctionKey,
+    "getChannelIconComponent",
     (args: [Types.Channel, undefined, Types.ChannelIconArgs2]) => {
       if (!args[2]) return;
       if (args[0]?.isHidden?.() && args[2].locked) {
@@ -111,10 +105,9 @@ export const patchChannelItemUtil = (): void => {
   );
 };
 export const patchChannelBrowerLockIcon = () => {
-  const FunctionKey = webpack.getFunctionKeyBySource(ChannelItem, "().iconContainer") as string;
   PluginInjector.after(
     ChannelItem,
-    FunctionKey,
+    "ChannelItemIcon",
     (
       [props]: [{ channel: Types.Channel; guild: Types.Guild; className?: string }],
       res: React.ReactElement,
@@ -172,11 +165,7 @@ export const patchUserGuildSettingsStore = (): void => {
 };
 
 export const patchRoute = (): void => {
-  const FunctionKey = webpack.getFunctionKeyBySource(
-    Route,
-    '"impressionName","impressionProperties"',
-  ) as string;
-  PluginInjector.before(Route, FunctionKey, (args: [Types.RouteArgs]) => {
+  PluginInjector.before(Route, "default", (args: [Types.RouteArgs]) => {
     const channelId = args[0]?.computedMatch?.params?.channelId;
     const guildId = args[0]?.computedMatch?.params?.guildId;
     const channel = ChannelStore?.getChannel(channelId);

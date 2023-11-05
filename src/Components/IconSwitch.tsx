@@ -1,7 +1,8 @@
+import { React } from "replugged/common";
 import { Divider, Flex, Switch, Text } from "replugged/components";
 import Types from "../types";
 
-export default (props: Types.IconSwitch) => {
+export default React.memo((props: Types.IconSwitch) => {
   return (
     <div
       {...{
@@ -82,4 +83,4 @@ export default (props: Types.IconSwitch) => {
       />
     </div>
   );
-};
+});
