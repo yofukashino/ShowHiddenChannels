@@ -24,18 +24,6 @@ export default (): void => {
       : res;
   });
 
-  PluginInjector.after(ReadStateStore, "hasNotableUnread", (args, res) => {
-    return SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)
-      ? res
-      : res && !ChannelStore.getChannel(args[0])?.isHidden?.();
-  });
-
-  PluginInjector.after(ReadStateStore, "hasRelevantUnread", (args, res) => {
-    return SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)
-      ? res
-      : res && !args[0].isHidden?.();
-  });
-
   PluginInjector.after(ReadStateStore, "hasTrackedUnread", (args, res) => {
     return SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)
       ? res

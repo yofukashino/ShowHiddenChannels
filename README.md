@@ -4,7 +4,7 @@ Displays all hidden channels which can't be accessed,.
 
 This won't allow you to read them.
 
-Direct Download Link: [dev.tharki.ShowHiddenChannels.asar](https://github.com/Tharki-God/ShowHiddenChannels/releases/latest/download/dev.tharki.ShowHiddenChannels.asar)
+Direct Download Link: [dev.tharki.ShowHiddenChannels.asar](https://github.com/TharkiDev/ShowHiddenChannels/releases/latest/download/dev.tharki.ShowHiddenChannels.asar)
 
 Install Link:
 
