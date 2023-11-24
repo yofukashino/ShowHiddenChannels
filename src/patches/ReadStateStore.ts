@@ -6,7 +6,7 @@ export default (): void => {
   PluginInjector.after(ReadStateStore, "getGuildChannelUnreadState", (args, res) => {
     return args[0]?.isHidden?.() &&
       !SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)
-      ? { mentionCount: 0, hasNotableUnread: false }
+      ? { mentionCount: 0, unread: false }
       : res;
   });
 
