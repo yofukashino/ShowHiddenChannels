@@ -190,7 +190,7 @@ export default React.memo((props: Types.LockscreenProps) => {
                 style: {
                   maxHeight: 128,
                 },
-                src: "https://TharkiDev.github.io/files-random-host/unknown%20copy.png",
+                src: "https://tharki-god.github.io/files-random-host/unknown%20copy.png",
               }}
             />
             <TextElement
