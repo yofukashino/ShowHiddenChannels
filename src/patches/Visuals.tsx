@@ -3,6 +3,7 @@ import { PluginInjector, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
 import {
   ChannelButtonClasses,
+  ChannelIconLocked,
   ChannelItem,
   ChannelItemUtil,
   ChannelStore,
@@ -73,20 +74,24 @@ export const patchChannelItem = (): void => {
   );
 };
 
+export const patchChannelIconLocked = (): void => {
+  PluginInjector.after(ChannelIconLocked, "default", ([channel]: [Types.Channel], res) => {
+    return !(channel.isHidden() || !res);
+  });
+};
 export const patchChannelItemUtil = (): void => {
-  //* Remove lock icon from hidden voice channels
   PluginInjector.before(
     ChannelItemUtil,
     "getChannelIconComponent",
-    (args: [Types.Channel, undefined, Types.ChannelIconArgs2]) => {
-      if (!args[2]) return;
-      if (args[0]?.isHidden?.() && args[2].locked) {
-        args[2].locked = false;
+    ([channel, , props]: [Types.Channel, undefined, Types.ChannelIconArgs2]) => {
+      if (!props) return;
+      if (channel?.isHidden?.() && props.locked) {
+        props.locked = false;
       }
     },
   );
 };
-export const patchChannelBrowerLockIcon = () => {
+export const patchChannelBrowerLockedIcon = () => {
   PluginInjector.after(
     ChannelItem,
     "ChannelItemIcon",
@@ -175,8 +180,9 @@ export const patchSidebarChatContent = (): void => {
 };
 export default (): void => {
   patchChannelItem();
+  patchChannelIconLocked();
   patchChannelItemUtil();
-  patchChannelBrowerLockIcon();
+  patchChannelBrowerLockedIcon();
   patchUserGuildSettingsStore();
   patchRoute();
   patchSidebarChatContent();

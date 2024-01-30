@@ -8,6 +8,9 @@ export const ChatClasses = webpack.getByProps<Types.ChatClasses>("chat", "chatCo
 export const { exports: Route } = webpack.getBySource(".Route,{...", {
   raw: true,
 });
+export const { exports: ChannelIconLocked } = webpack.getBySource(/guild_id\|\|!.\./, {
+  raw: true,
+});
 export const ChatContent = webpack.getBySource<Types.ChatContent>(
   "showAutomodUserProfileChatBlocker",
 );
