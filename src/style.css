@@ -1,10 +1,3 @@
-.shc-hidden-chat-content {
-  max-width: 90%;
-  padding-top: 12.5%;
-  padding-bottom: 5%;
-  padding: auto;
-}
-
 .shc-hidden-notice {
   display: flex;
   flex-direction: column;
@@ -12,10 +5,30 @@
   align-items: center;
   margin: auto;
   text-align: center;
-  padding-left: 15%;
 }
 .shc-hidden-notice > div[class^="divider"] {
   display: none;
+}
+.shc-generalDetails {
+  flex-direction: column;
+  justify-content: left;
+}
+.shc-detailFlex {
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  text-align: center;
+  flex-wrap: wrap;
+}
+.shc-details-header [class*="close"] {
+  width: 32px;
+  height: 32px;
+  right: 2%;
+  bottom: 20%;
+  position: absolute;
+}
+.shc-details-header {
+  margin-bottom: 10px;
 }
 .shc-hidden-notice > div[class^="topic"] {
   background-color: var(--background-secondary);
@@ -24,6 +37,23 @@
   text-overflow: ellipsis;
   border-radius: 5px;
   margin: 10px auto;
+}
+
+.shc-muted * {
+  color: var(--interactive-muted) !important;
+}
+.shc-noIcon {
+  font-weight: 500;
+  line-height: 1.2em;
+  white-space: nowrap;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color.15s ease-out, color.15s ease-out;
+  background-color: rgb(var(--accentcolor2));
+  color: var(--interactive-hover);
 }
 
 .shc-rolePill {

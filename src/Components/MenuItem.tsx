@@ -1,34 +1,23 @@
-import { components, util } from "replugged";
+import { components } from "replugged";
 import { SettingValues } from "../index";
-import { defaultSettings } from "../lib/consts";
+import Utils from "../lib/utils";
 import Types from "../types";
 const {
   ContextMenu: { MenuCheckboxItem },
 } = components;
 
-export default (guild: Types.Guild, menuID: string): React.ReactElement => {
-  const blacklistedGuilds = SettingValues.get(
-    "blacklistedGuilds",
-    defaultSettings.blacklistedGuilds,
+export default (guild: Types.Guild): React.ReactElement => {
+  const { value, onChange } = Utils.useSetting(
+    SettingValues,
+    `blacklistedGuilds.${guild.id}`,
+    false,
   );
-  const state = {
-    value: blacklistedGuilds[guild.id],
-    forceUpdate: () => util.forceUpdateElement(`[id="${menuID}"]`),
-  };
-  const onChange = (value: boolean): void => {
-    state.value = value;
-    blacklistedGuilds[guild.id] = value;
-    SettingValues.set("blacklistedGuilds", blacklistedGuilds);
-    state.forceUpdate();
-  };
   return (
     <MenuCheckboxItem
-      {...{
-        id: "hidden-channel-toggle",
-        label: "Hide Hidden Channels",
-        checked: state.value,
-        action: () => onChange(!state.value),
-      }}
+      id="hidden-channel-toggle"
+      label="Hide Hidden Channels"
+      checked={value}
+      action={() => onChange(!value)}
     />
   );
 };

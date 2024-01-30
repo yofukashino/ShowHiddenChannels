@@ -23,6 +23,7 @@ export const randomNo = (min: number, max: number): number =>
 
 export const convertToHMS = (seconds: string | number): string => {
   seconds = Number(seconds);
+  if (!seconds) return "0 seconds";
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor((seconds % 3600) % 60);
@@ -46,6 +47,23 @@ export const getDateFromSnowflake = (number: string): string => {
     return "(Failed to get date)";
   }
 };
+
+export const isTextSvgHtml = (content: string): boolean => {
+  const trimmedContent = content.trim();
+  return (
+    trimmedContent.startsWith("<svg") ||
+    trimmedContent.startsWith("<?xml") ||
+    trimmedContent.startsWith("<!DOCTYPE svg")
+  );
+};
+
+export const getAcronym = (string: string): string =>
+  string != null
+    ? string
+        .replace(/'s /g, " ")
+        .replace(/\w+/g, (string) => string[0])
+        .replace(/\s/g, "")
+    : "";
 
 export const useSetting = <
   T extends Record<string, Types.Jsonifiable>,
@@ -192,6 +210,8 @@ export default {
   randomNo,
   convertToHMS,
   getDateFromSnowflake,
+  isTextSvgHtml,
+  getAcronym,
   useSetting,
   patchEmptyCategoryFunction,
   sortChannels,

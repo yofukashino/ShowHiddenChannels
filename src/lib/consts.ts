@@ -1,5 +1,8 @@
 export const defaultSettings = {
   hiddenChannelIcon: "lock",
+  customHiddenChannelIcon: "",
+  hiddenChannelImg: "eye",
+  customHiddenChannelImg: "",
   faded: false,
   sort: "native",
   showPerms: true,

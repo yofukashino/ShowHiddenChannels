@@ -43,30 +43,22 @@ export default <
     .sort((a, b) => a.Guild.name.localeCompare(b.Guild.name));
 
   return (
-    <div
-      {...{
-        className: `shc-guild-search`,
-      }}>
+    <div className={`shc-guild-search`}>
       <SearchBar
-        {...{
-          autoFocus: true,
-          placeholder: "Search Guilds",
-          query: searchValue.join(" ") || "",
-          onChange: (query) => setSearchValue(query.split(" ")),
-          onClear: () => setSearchValue([]),
-        }}
+        autoFocus={true}
+        placeholder="Search Guilds"
+        query={searchValue.join(" ") || ""}
+        onChange={(query) => setSearchValue(query.split(" "))}
+        onClear={() => setSearchValue([])}
       />
       <Divider />
-      {...filteredGuildsWithState.map(({ Guild, ...state }) => (
+      {filteredGuildsWithState.map(({ Guild, ...state }) => (
         <IconSwitch
-          {...{
-            title: Guild.name,
-            note: Guild.description,
-            icon:
-              IconUtils.default.getGuildIconURL(Guild) ??
-              IconUtils.default.getDefaultAvatarURL(Utils.randomNo(0, 69)),
-            ...state,
-          }}
+          key={Guild.id} // Don't forget to add a unique key
+          title={Guild.name}
+          note={Guild.description}
+          icon={IconUtils.default.getGuildIconURL(Guild) ?? Utils.getAcronym(Guild.name)}
+          {...state}
         />
       ))}
     </div>

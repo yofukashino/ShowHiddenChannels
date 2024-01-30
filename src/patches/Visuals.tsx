@@ -4,7 +4,6 @@ import { defaultSettings } from "../lib/consts";
 import {
   ChannelButtonClasses,
   ChannelItem,
-  ChannelItemClasses,
   ChannelItemUtil,
   ChannelStore,
   ChatContent,
@@ -32,9 +31,8 @@ export const patchChannelItem = (): void => {
       const item = res.props?.children?.props;
       if (item?.className)
         item.className += ` ${
-          SettingValues.get("faded", defaultSettings.faded) &&
-          !item.className.includes(ChannelItemClasses.modeMuted)
-            ? `${ChannelItemClasses.modeMuted} `
+          SettingValues.get("faded", defaultSettings.faded) && !item.className.includes("shc-muted")
+            ? "shc-muted "
             : ""
         }shc-hidden-channel shc-hidden-channel-type-${props.channel.type}`;
       const children = Utils.findInReactTree(
@@ -45,36 +43,20 @@ export const patchChannelItem = (): void => {
       if (children?.props?.children)
         children.props.children = [
           <Tooltip
-            {...{
-              text: "Hidden Channel",
-              className: `${IconClasses.iconItem}`,
-              style: {
-                display: "block",
-              },
+            text="Hidden Channel"
+            className={`${IconClasses.iconItem}`}
+            style={{
+              display: "block",
             }}>
             <HiddenChannelIcon
-              {...{
-                className: IconClasses.actionIcon,
-                style: SettingValues.get("faded", defaultSettings.faded)
-                  ? {
-                      color: "var(--interactive-muted)",
-                    }
-                  : {},
-              }}
+              className={`${IconClasses.actionIcon}${
+                SettingValues.get("faded", defaultSettings.faded) ? " shc-muted" : ""
+              }`}
             />
           </Tooltip>,
         ];
 
       if (props.channel.type === DiscordConstants.ChannelTypes.GUILD_VOICE && !props.connected) {
-        const wrapper = Utils.findInReactTree(res, (n: React.ReactElement & Types.Tree) =>
-          n?.props?.className?.includes(ChannelItemClasses.wrapper),
-        ) as React.ReactElement & Types.Tree;
-
-        if (wrapper?.props) {
-          wrapper.props.onMouseDown = () => {};
-          wrapper.props.onMouseUp = () => {};
-        }
-
         const button = Utils.findInReactTree(res, (n: React.ReactElement & Types.Tree) =>
           n?.props?.className?.includes(ChannelButtonClasses.link),
         ) as React.ReactElement & Types.Tree;
@@ -119,24 +101,22 @@ export const patchChannelBrowerLockIcon = () => {
         return res;
       return (
         <Tooltip
-          {...{
-            text: "Hidden Channel",
-            className: `${IconClasses.iconItem}`,
-            style: {
-              display: "block",
-            },
+          text="Hidden Channel"
+          className={`${IconClasses.iconItem}`}
+          style={{
+            display: "block",
           }}>
           <HiddenChannelIcon
-            {...{
-              className: `shc-size-increase ${props.className ?? IconClasses.actionIcon}`,
-              style: props.className
+            className={`shc-size-increase ${props.className ?? IconClasses.actionIcon}`}
+            style={
+              props.className
                 ? { marginRight: "6px" }
                 : {
                     height: "20px",
                     width: "20px",
                     marginRight: "6px",
-                  },
-            }}
+                  }
+            }
           />
         </Tooltip>
       );
@@ -172,12 +152,7 @@ export const patchRoute = (): void => {
     if (guildId && channel?.isHidden?.() && channel?.id !== Voice.getChannelId())
       args[0].render = () => (
         <ErrorBoundary>
-          <Lockscreen
-            {...{
-              channel,
-              guild: GuildStore.getGuild(guildId),
-            }}
-          />
+          <Lockscreen channel={channel} guild={GuildStore.getGuild(guildId)} />
         </ErrorBoundary>
       );
     return args;
@@ -193,12 +168,7 @@ export const patchSidebarChatContent = (): void => {
       return res;
     return (
       <ErrorBoundary>
-        <Lockscreen
-          {...{
-            channel,
-            guild: GuildStore.getGuild(guild.id),
-          }}
-        />
+        <Lockscreen channel={channel} guild={GuildStore.getGuild(guild.id)} />
       </ErrorBoundary>
     );
   });

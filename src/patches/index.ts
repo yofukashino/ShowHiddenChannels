@@ -23,3 +23,5 @@ export const applyInjections = (): void => {
   patchGuildContextMenu();
   patchSettingSetter();
 };
+
+export default { applyInjections };

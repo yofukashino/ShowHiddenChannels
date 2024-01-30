@@ -4,83 +4,51 @@ import Types from "../types";
 
 export default React.memo((props: Types.IconSwitch) => {
   return (
-    <div
-      {...{
-        style: {
-          marginTop: "12.5px",
-        },
-      }}>
+    <div style={{ marginTop: "12.5px" }}>
       <Flex>
-        <Flex>
-          <div
-            {...{
-              style: {
-                display: "inline",
-                position: "relative",
-              },
-            }}>
-            {props.icon && (
+        <div style={{ display: "flex", maxWidth: "100%", flexDirection: "column", flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
+            {props.icon && props.icon.includes("https://") ? (
               <img
-                {...{
-                  src: props.icon,
-                  width: 52,
-                  height: 52,
-                  style: {
-                    borderRadius: "360px",
-                  },
-                }}
+                src={props.icon}
+                width={52}
+                height={52}
+                style={{ borderRadius: "50%", marginRight: "10px" }}
+                alt="Icon"
               />
+            ) : (
+              <div
+                className="shc-noIcon"
+                style={{ borderRadius: "50%", marginRight: "10px", width: "52px", height: "52px" }}>
+                {props.icon}
+              </div>
             )}
             <Text.H2
-              {...{
-                style: props.icon
-                  ? {
-                      display: "inline",
-                      position: "relative",
-                      bottom: "20.5px",
-                      left: "3.5px",
-                    }
-                  : {},
+              style={{
+                marginBottom: "5px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                maxWidth: "80%",
               }}>
               {props.title || props.children}
             </Text.H2>
-            <Text.Normal
-              {...{
-                style: {
-                  display: "block",
-                  position: "relative",
-                  bottom: "15px",
-                  left: "55.5px",
-                },
+            <div
+              style={{
+                marginLeft: "auto",
+                marginRight: "10px",
+                flexShrink: 0,
+                alignItems: "center",
               }}>
-              {props.note}
-            </Text.Normal>
+              <Switch checked={props.value} onChange={props.onChange} disabled={props.disabled} />
+            </div>
           </div>
-        </Flex>
-        <div
-          {...{
-            style: {
-              marginTop: "15px",
-              minWidth: "16px",
-              maxWidth: "16px",
-            },
-          }}>
-          <Switch
-            {...{
-              checked: props.value,
-              onChange: props.onChange,
-              disabled: props.disabled,
-            }}
-          />
+          <Text.Normal style={{ marginTop: "7.5px", textAlign: "center" }}>
+            {props.note}
+          </Text.Normal>
         </div>
       </Flex>
-      <Divider
-        {...{
-          style: {
-            marginTop: "2.5px",
-          },
-        }}
-      />
+      <Divider style={{ marginTop: "12.5px" }} />
     </div>
   );
 });

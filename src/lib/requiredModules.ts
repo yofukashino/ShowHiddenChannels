@@ -21,11 +21,6 @@ export const RolePillClasses = webpack.getByProps<Types.RolePillClasses>(
   "rolePill",
   "rolePillBorder",
 );
-export const ChannelItemClasses = Object.assign(
-  {},
-  webpack.getByProps("wrapper", "mainContent"),
-  webpack.getByProps("modeUnread", "modeMuted", "modeSelected"),
-) as Types.ChannelItemClasses;
 export const ChannelButtonClasses = webpack.getByProps<Types.ChannelButtonClasses>(
   "channelEmoji",
   "linkBottom",
@@ -83,8 +78,6 @@ export const DiscordComponents = webpack.getByProps<Types.DiscordComponents>(
   "AdvancedScrollerAuto",
 );
 
-export const ScrollerClasses = webpack.getByProps<Types.ScrollerClasses>("listWrapper", "scroller");
-
 export const ProfileActions = webpack.getByProps<Types.ProfileActions>("getUser", "fetchProfile");
 
 export default {
@@ -95,7 +88,6 @@ export default {
   ChannelItem,
   ChannelItemUtil,
   RolePillClasses,
-  ChannelItemClasses,
   ChannelButtonClasses,
   PermissionStore,
   PermissionUtils,
@@ -122,6 +114,5 @@ export default {
   ChannelUtils,
   ForumTags,
   DiscordComponents,
-  ScrollerClasses,
   ProfileActions,
 };
