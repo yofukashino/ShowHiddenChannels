@@ -59,7 +59,7 @@ export const patchChannelItem = (): void => {
 
       if (props.channel.type === DiscordConstants.ChannelTypes.GUILD_VOICE && !props.connected) {
         const button = Utils.findInReactTree(res, (n: React.ReactElement & Types.Tree) =>
-          n?.props?.className?.includes(ChannelButtonClasses.link),
+          n?.props?.className?.includes(ChannelButtonClasses?.link),
         ) as React.ReactElement & Types.Tree;
 
         if (button?.props) {

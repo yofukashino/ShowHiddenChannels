@@ -25,7 +25,7 @@ export const RolePillClasses = webpack.getByProps<Types.RolePillClasses>(
   "rolePillBorder",
 );
 export const ChannelButtonClasses = webpack.getByProps<Types.ChannelButtonClasses>(
-  "channelEmoji",
+  "modeMuted",
   "linkBottom",
 );
 export const PermissionStore = webpack.getByStoreName<Types.PermissionStore>("PermissionStore");
