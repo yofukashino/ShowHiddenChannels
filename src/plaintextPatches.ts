@@ -25,7 +25,7 @@ export default [
     replacements: [
       {
         match:
-          /(function \w+\(\){for\(let \w+ in (\w+)={},(\w+)={},(\w+)\)\w+\[\w+\]\+=1;(\w+)\+=1}.{3700,4000})(getChannelsVersion\(\){)/,
+          /(function \w+\(\){for\(let \w+ in (\w+)={},(\w+)={},(\w+)\)\w+\[\w+\]\+=1;(\w+)\+=1}.{3700,4100})(getChannelsVersion\(\){)/,
         replace: (
           _: string,
           prefix: string,
