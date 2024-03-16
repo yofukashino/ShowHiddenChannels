@@ -19,7 +19,7 @@
     "lint:fix": "pnpm run prettier:fix && pnpm run eslint:fix"
   },
   "keywords": [],
-  "author": "Ahlawat",
+  "author": "Nanakusa",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^18.18.6",
