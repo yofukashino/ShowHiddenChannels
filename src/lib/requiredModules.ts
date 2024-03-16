@@ -52,7 +52,6 @@ export const MessageActions = webpack.getByProps<Types.MessageActions>(
   "jumpToMessage",
   "_sendMessage",
 );
-export const UserMentions = webpack.getByProps<Types.UserMentions>("handleUserContextMenu");
 export const GuildChannelStore =
   webpack.getByStoreName<Types.GuildChannelStore>("GuildChannelStore");
 export const TextElement = webpack.getBySource<Types.TextElement>("CUSTOM:null");
@@ -60,7 +59,6 @@ export const CategoryStore = webpack.getByProps<Types.CategoryStore>(
   "isCollapsed",
   "getCollapsedCategories",
 );
-export const PresenceStore = webpack.getByStoreName<Types.PresenceStore>("PresenceStore");
 export const GuildMemberStore = webpack.getByStoreName<Types.GuildMemberStore>("GuildMemberStore");
 export const ChannelStore = webpack.getByStoreName<Types.ChannelStore>("ChannelStore");
 export const BigIntUtils = webpack.getByProps<Types.BigIntUtils>("deserialize", "invert", "has");
@@ -82,6 +80,10 @@ export const DiscordComponents = webpack.getByProps<Types.DiscordComponents>(
 );
 
 export const ProfileActions = webpack.getByProps<Types.ProfileActions>("getUser", "fetchProfile");
+
+export const UserProfile = webpack.getBySource<Types.UserProfile>(
+  "UserPopoutUpsellSource.USER_POPOUT",
+);
 
 export default {
   DiscordConstants,
@@ -105,11 +107,9 @@ export default {
   GuildStore,
   RolePill,
   MessageActions,
-  UserMentions,
   GuildChannelStore,
   TextElement,
   CategoryStore,
-  PresenceStore,
   GuildMemberStore,
   ChannelStore,
   BigIntUtils,
@@ -118,4 +118,5 @@ export default {
   ForumTags,
   DiscordComponents,
   ProfileActions,
+  UserProfile,
 };

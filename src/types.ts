@@ -12,7 +12,55 @@ export namespace Types {
   export type OriginalChannel = GeneralDiscordTypes.Channel;
   export type Guild = GeneralDiscordTypes.Guild;
   export type Role = GeneralDiscordTypes.Role;
-  export type User = GeneralDiscordTypes.User;
+  export type User = GeneralDiscordTypes.User & { globalName?: string };
+  export type UserProfile = React.MemoExoticComponent<
+    React.ComponentType<{ user: User; channelId?: string; guildId?: string }>
+  >;
+  export interface TabBarProps extends React.HTMLAttributes<HTMLDivElement> {
+    type: string;
+    look?: string;
+    selectedItem: string;
+    onItemSelect: (newItem: string) => void;
+  }
+
+  export interface TabBarItemProps extends React.HTMLAttributes<HTMLDivElement> {
+    id: string;
+    key: string;
+  }
+
+  export interface TabBar {
+    (props: TabBarProps): JSX.Element;
+    Item: (props: TabBarItemProps) => JSX.Element;
+  }
+
+  export interface Popout
+    extends React.ComponentClass<{
+      align?: string;
+      renderPopout: DefaultTypes.AnyFunction;
+      children: DefaultTypes.AnyFunction;
+      animation?: string;
+      autoInvert?: boolean;
+      nudgeAlignIntoViewport?: boolean;
+      position?: string;
+      positionKey?: string;
+      spacing?: number;
+    }> {
+    Animation: {
+      FADE: string;
+      NONE: string;
+      SCALE: string;
+      TRANSLATE: string;
+    };
+
+    defaultProps: {
+      animation: string;
+      autoInvert: boolean;
+      nudgeAlignIntoViewport: boolean;
+      position: string;
+      positionKey?: string;
+      spacing: number;
+    };
+  }
   export interface ReadStateStore extends Store {
     ackMessageId: DefaultTypes.AnyFunction;
     getAllReadStates: DefaultTypes.AnyFunction;
@@ -37,20 +85,6 @@ export namespace Types {
     isNewForumThread: DefaultTypes.AnyFunction;
     lastMessageId: DefaultTypes.AnyFunction;
     lastPinTimestamp: DefaultTypes.AnyFunction;
-  }
-  export interface PresenceStore extends Store {
-    findActivity: DefaultTypes.AnyFunction;
-    getActivities: DefaultTypes.AnyFunction;
-    getActivityMetadata: DefaultTypes.AnyFunction;
-    getAllApplicationActivities: DefaultTypes.AnyFunction;
-    getApplicationActivity: DefaultTypes.AnyFunction;
-    getPrimaryActivity: DefaultTypes.AnyFunction;
-    getState: DefaultTypes.AnyFunction;
-    getStatus: DefaultTypes.AnyFunction;
-    getUserIds: DefaultTypes.AnyFunction;
-    initialize: DefaultTypes.AnyFunction;
-    isMobileOnline: DefaultTypes.AnyFunction;
-    setCurrentUserOnConnectionOpen: DefaultTypes.AnyFunction;
   }
   export interface Channel extends OriginalChannel {
     availableTags: Array<{
@@ -274,6 +308,8 @@ export namespace Types {
     getGuild: (guildId: string) => Guild;
     getGuildCount: DefaultTypes.AnyFunction;
     getGuilds: DefaultTypes.AnyFunction;
+    getRole: (guildId: string, roleId: string) => Role;
+    getRoles: (guildId: string) => Role[];
     isLoaded: DefaultTypes.AnyFunction;
   }
   export interface ChannelUtils {
@@ -327,19 +363,6 @@ export namespace Types {
     initialize: DefaultTypes.AnyFunction;
     isMember: DefaultTypes.AnyFunction;
     memberOf: DefaultTypes.AnyFunction;
-  }
-  export interface UserMentions {
-    handleUserContextMenu: DefaultTypes.AnyFunction;
-    react: (
-      info: {
-        userId: string;
-        channelId: string;
-      },
-      AnyFunction: DefaultTypes.AnyFunction,
-      styles: {
-        noStyleAndInteraction: boolean;
-      },
-    ) => React.ReactElement;
   }
   export interface permissionOverwrite {
     allow: bigint;
@@ -857,10 +880,10 @@ export namespace Types {
     guild: Guild;
   }
   export interface DetailsPopoutProps extends LockscreenProps {
-    NoneElement: React.ReactElement;
-    channelSpecificRoles: React.ReactElement[] | string[];
-    adminRoles: React.ReactElement[] | string[];
-    userMentionComponents: React.ReactElement[] | string[];
+    None: () => React.ReactElement;
+    ChannelSpecificRoles: () => React.ReactElement[] | string[];
+    AdminRoles: () => React.ReactElement[] | string[];
+    Users: () => React.ReactElement[] | string[];
     onClose?: DefaultTypes.AnyFunction;
   }
   export interface IconSwitch {

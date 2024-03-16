@@ -11,16 +11,6 @@ export default [
     ],
   },
   {
-    find: "this.trackMemberListViewed()",
-    replacements: [
-      {
-        match: /(\w+)(=\w+\.memo\(\w+=>{let{colorRoleId:)/,
-        replace: (_: string, fn: string, suffix: string): string =>
-          `${fn}=window[Symbol.for("dev.tharki.ShowHiddenChannels")]${suffix}`,
-      },
-    ],
-  },
-  {
     find: '.displayName="PermissionStore"',
     replacements: [
       {

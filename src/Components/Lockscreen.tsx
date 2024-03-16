@@ -1,5 +1,5 @@
 import { modal as ModalActions, React, users as UltimateUserStore } from "replugged/common";
-import { Button } from "replugged/components";
+import { Button, Flex, Text } from "replugged/components";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
 import Types from "../types";
@@ -9,16 +9,16 @@ import {
   ChannelUtils,
   DiscordConstants,
   GuildMemberStore,
+  GuildStore,
   PermissionUtils,
-  PresenceStore,
   ProfileActions,
   RolePill,
   RolePillClasses,
   TextElement,
-  UserMentions,
 } from "../lib/requiredModules";
 import Utils from "../lib/utils";
 import DetailsPopout from "./DetailsPopout";
+import User from "./User";
 
 export default React.memo((props: Types.LockscreenProps) => {
   if (SettingValues.get("debugMode", defaultSettings.debugMode)) {
@@ -29,22 +29,13 @@ export default React.memo((props: Types.LockscreenProps) => {
     React.ReactElement[] | string[]
   >([]);
   const [adminRoles, setAdminRoles] = React.useState<React.ReactElement[] | string[]>([]);
-  const [userMentionComponents, setUserMentionComponents] = React.useState<
-    React.ReactElement[] | string[]
-  >([]);
+  const [users, setUsers] = React.useState<React.ReactElement[] | string[]>([]);
   const [imgSrc, setImgSrc] = React.useState<string>("");
-  const NoneElement: React.ReactElement = (
-    <TextElement
-      color={TextElement.Colors.HEADER_PRIMARY}
-      size={TextElement.Sizes.SIZE_16}
-      style={{
-        marginTop: 10,
-        textAlign: "center",
-        fontWeight: "bold",
-        justifyContent: "center",
-      }}>
-      None
-    </TextElement>
+  const None: React.ReactElement = (
+    <Flex direction={Flex.Direction.VERTICAL} className="shc-detailFlex shc-nothing-but-waumpus">
+      <img src="/assets/532f1d4582d881960783.svg" className="shc-nothing-but-waumpus-img" />
+      <Text.Normal className="shc-nothing-but-waumpus-text">Nothing But wumpus Here</Text.Normal>
+    </Flex>
   );
   const mapChannelRoles = (): void => {
     const channelRoleOverwrites = Object.values(props.channel.permissionOverwrites).filter(
@@ -53,18 +44,18 @@ export default React.memo((props: Types.LockscreenProps) => {
         role?.type === 0 &&
         ((SettingValues.get("showAdmin", defaultSettings.showAdmin) !== "false" &&
           BigIntUtils.has(
-            props.guild.roles[role.id].permissions,
+            GuildStore.getRole(props.guild.id, role.id).permissions,
             DiscordConstants.Permissions.ADMINISTRATOR,
           )) ||
           BigIntUtils.has(role.allow, DiscordConstants.Permissions.VIEW_CHANNEL) ||
           (BigIntUtils.has(
-            props.guild.roles[role.id].permissions,
+            GuildStore.getRole(props.guild.id, role.id).permissions,
             DiscordConstants.Permissions.VIEW_CHANNEL,
           ) &&
             !BigIntUtils.has(role.deny, DiscordConstants.Permissions.VIEW_CHANNEL))),
     );
 
-    if (!channelRoleOverwrites?.length) return setChannelSpecificRoles([NoneElement]);
+    if (!channelRoleOverwrites?.length) return setChannelSpecificRoles([None]);
 
     const roleComponentArray = channelRoleOverwrites.map((m) => (
       <RolePill.MemberRole
@@ -74,7 +65,7 @@ export default React.memo((props: Types.LockscreenProps) => {
         disableBorderColor={true}
         guildId={props.guild.id}
         onRemove={() => null}
-        role={props.guild.roles[m.id]}
+        role={GuildStore.getRole(props.guild.id, m.id)}
       />
     ));
 
@@ -83,10 +74,10 @@ export default React.memo((props: Types.LockscreenProps) => {
 
   const mapAdminRoles = (): void => {
     if (SettingValues.get("showAdmin", defaultSettings.showAdmin) === "false") {
-      return setAdminRoles([NoneElement]);
+      return setAdminRoles([None]);
     }
 
-    const adminRoles = Object.values(props.guild.roles).filter(
+    const adminRoles = Object.values(GuildStore.getRoles(props.guild.id)).filter(
       (role) =>
         BigIntUtils.has(role.permissions, DiscordConstants.Permissions.ADMINISTRATOR) &&
         (SettingValues.get("showAdmin", defaultSettings.showAdmin) === "include" ||
@@ -94,7 +85,7 @@ export default React.memo((props: Types.LockscreenProps) => {
             !role.tags?.bot_id)),
     );
 
-    if (!adminRoles?.length) return setAdminRoles([NoneElement]);
+    if (!adminRoles?.length) return setAdminRoles([None]);
 
     const roleComponentArray = adminRoles.map((m) => (
       <RolePill.MemberRole
@@ -112,10 +103,6 @@ export default React.memo((props: Types.LockscreenProps) => {
   };
 
   const fetchMemberAndMap = async (): Promise<void> => {
-    const MemberRow = window[
-      Symbol.for("dev.tharki.ShowHiddenChannels")
-    ] as React.ComponentClass<Types.MemberRow>;
-
     const allUserOverwrites = Object.values(props.channel.permissionOverwrites).filter(
       (user: Types.permissionOverwrite): boolean => Boolean(user && user?.type === 1),
     );
@@ -138,47 +125,15 @@ export default React.memo((props: Types.LockscreenProps) => {
         ),
     );
 
-    if (!filteredUserOverwrites?.length) return setUserMentionComponents([NoneElement]);
+    if (!filteredUserOverwrites?.length) return setUsers([None]);
 
     const mentionArray = filteredUserOverwrites.map((m: Types.permissionOverwrite) => {
-      const GuildMember = GuildMemberStore.getMember(props.guild.id, m.id) as {
-        colorString: string;
-        colorRoleId: string;
-        premiumSince: string;
-        nick: string;
-      };
+      const user = UltimateUserStore.getUser(m.id);
 
-      return MemberRow ? (
-        <MemberRow
-          key={m.id}
-          user={UltimateUserStore.getUser(m.id)}
-          colorString={GuildMember.colorString}
-          colorRoleId={GuildMember.colorRoleId}
-          nick={GuildMember.nick}
-          premiumSince={GuildMember.premiumSince}
-          status={PresenceStore.getStatus(m.id)}
-          isMobileOnline={PresenceStore.isMobileOnline(m.id)}
-          activities={PresenceStore.getActivities(m.id)}
-          isOwner={false}
-          applicationStream={null}
-          channel={props.channel}
-          guildId={props.guild.id}
-        />
-      ) : (
-        UserMentions.react(
-          {
-            userId: m.id,
-            channelId: props.channel.id,
-          },
-          () => null,
-          {
-            noStyleAndInteraction: false,
-          },
-        )
-      );
+      return <User user={user} guildId={props.guild.id} channelId={props.channel.id} />;
     });
 
-    return setUserMentionComponents(mentionArray);
+    return setUsers(mentionArray);
   };
 
   const setImgSrcFromSettings = (): void => {
@@ -258,10 +213,10 @@ export default React.memo((props: Types.LockscreenProps) => {
             <DetailsPopout
               {...props}
               {...modal}
-              NoneElement={NoneElement}
-              channelSpecificRoles={channelSpecificRoles}
-              adminRoles={adminRoles}
-              userMentionComponents={userMentionComponents}
+              None={() => None}
+              ChannelSpecificRoles={() => channelSpecificRoles}
+              AdminRoles={() => adminRoles}
+              Users={() => users}
             />
           ))
         }>

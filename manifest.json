@@ -3,11 +3,11 @@
   "name": "ShowHiddenChannels",
   "description": "A replugged plugin which displays all hidden Channels, which can't be accessed due to Role Restrictions, this won't allow you to read them (impossible).",
   "image": "https://i.imgur.com/pE1sQz5.png",
-  "source": "https://github.com/Yofukashi-No/ShowHiddenChannels",
+  "source": "https://github.com/YofukashiNo/ShowHiddenChannels",
   "author": {
     "name": "Ahlawat",
     "discordID": "1121961711080050780",
-    "github": "Yofukashi-No"
+    "github": "YofukashiNo"
   },
   "version": "1.3.3",
   "updater": {
