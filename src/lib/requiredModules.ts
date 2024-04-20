@@ -3,12 +3,6 @@ import Types from "../types";
 export const Modules: Types.Modules = {};
 
 Modules.loadModules = async (): Promise<void> => {
-  Modules.PermissionStore ??= webpack.getByStoreName<Types.PermissionStore>("PermissionStore");
-  Modules.ChannelListStore ??= webpack.getByStoreName<Types.ChannelListStore>("ChannelListStore");
-  Modules.ReadStateStore ??= webpack.getByStoreName<Types.ReadStateStore>("ReadStateStore");
-  Modules.GuildStore ??= webpack.getByStoreName<Types.GuildStore>("GuildStore");
-  Modules.GuildMemberStore ??= webpack.getByStoreName<Types.GuildMemberStore>("GuildMemberStore");
-  Modules.ChannelStore ??= webpack.getByStoreName<Types.ChannelStore>("ChannelStore");
   Modules.UserGuildSettingsStore ??=
     webpack.getByStoreName<Types.UserGuildSettingsStore>("UserGuildSettingsStore");
   Modules.GuildChannelStore ??=
@@ -110,6 +104,12 @@ Modules.loadModules = async (): Promise<void> => {
   Modules.UserProfile ??= await webpack.waitForModule<Types.UserProfile>(
     webpack.filters.bySource("UserPopoutUpsellSource.USER_POPOUT"),
   );
+  Modules.PermissionStore ??= webpack.getByStoreName<Types.PermissionStore>("PermissionStore");
+  Modules.ChannelListStore ??= webpack.getByStoreName<Types.ChannelListStore>("ChannelListStore");
+  Modules.ReadStateStore ??= webpack.getByStoreName<Types.ReadStateStore>("ReadStateStore");
+  Modules.GuildStore ??= webpack.getByStoreName<Types.GuildStore>("GuildStore");
+  Modules.GuildMemberStore ??= webpack.getByStoreName<Types.GuildMemberStore>("GuildMemberStore");
+  Modules.ChannelStore ??= webpack.getByStoreName<Types.ChannelStore>("ChannelStore");
 };
 
 export default Modules;

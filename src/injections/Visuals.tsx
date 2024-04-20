@@ -64,7 +64,6 @@ export const injectChannelItem = (): void => {
 
 export const injectChannelIconLocked = (): void => {
   const { ChannelIconLocked } = Modules;
-  console.log(ChannelIconLocked);
   PluginInjector.after(ChannelIconLocked, "default", ([channel]: [Types.Channel], res) => {
     return !(channel.isHidden() || !res);
   });
