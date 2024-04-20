@@ -2,29 +2,28 @@ import { modal as ModalActions, React, users as UltimateUserStore } from "replug
 import { Button, Flex, Text } from "replugged/components";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
-import Types from "../types";
-
-import {
-  BigIntUtils,
-  ChannelUtils,
-  DiscordConstants,
-  GuildMemberStore,
-  GuildStore,
-  PermissionUtils,
-  ProfileActions,
-  RolePill,
-  RolePillClasses,
-  TextElement,
-} from "../lib/requiredModules";
-import Utils from "../lib/utils";
 import DetailsPopout from "./DetailsPopout";
 import User from "./User";
+import Modules from "../lib/requiredModules";
+import Utils from "../lib/utils";
+import Types from "../types";
 
 export default React.memo((props: Types.LockscreenProps) => {
   if (SettingValues.get("debugMode", defaultSettings.debugMode)) {
     PluginLogger.log("LockScreen Props", props);
   }
-
+  const {
+    BigIntUtils,
+    ChannelUtils,
+    DiscordConstants,
+    GuildMemberStore,
+    GuildStore,
+    PermissionUtils,
+    ProfileActions,
+    RolePill,
+    RolePillClasses,
+    TextElement,
+  } = Modules;
   const [channelSpecificRoles, setChannelSpecificRoles] = React.useState<
     React.ReactElement[] | string[]
   >([]);

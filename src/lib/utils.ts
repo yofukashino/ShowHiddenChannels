@@ -2,14 +2,7 @@
 import { settings, util } from "replugged";
 import { React, lodash } from "replugged/common";
 import { PluginInjector, PluginLogger } from "../index";
-import {
-  ChannelListClasses,
-  ChannelListStore,
-  ChannelStore,
-  DiscordConstants,
-  LocaleManager,
-  PermissionStore,
-} from "./requiredModules";
+import Modules from "./requiredModules";
 import Types from "../types";
 
 export const isObject = (testMaterial: unknown): boolean =>
@@ -41,7 +34,7 @@ export const getDateFromSnowflake = (number: string): string => {
     const excerpt = binary.substring(0, 42);
     const decimal = parseInt(excerpt, 2);
     const unix = decimal + 1420070400000;
-    return new Date(unix).toLocaleString(LocaleManager._chosenLocale);
+    return new Date(unix).toLocaleString(Modules.LocaleManager._chosenLocale);
   } catch (error) {
     PluginLogger.error(error);
     return "(Failed to get date)";
@@ -70,29 +63,28 @@ export const useSetting = <
   D extends keyof T,
   K extends Extract<keyof T, string>,
   F extends Types.NestedType<T, P> | T[K] | undefined,
-  P extends `${K}.${string}` | K,
+  P extends `${K}.${string}` | `${K}/${string}` | `${K}-${string}` | K,
+  V extends P extends `${K}.${string}` | `${K}/${string}` | `${K}-${string}`
+    ? NonNullable<Types.NestedType<T, P>>
+    : P extends D
+    ? NonNullable<T[P]>
+    : F extends null | undefined
+    ? T[P] | undefined
+    : NonNullable<T[P]> | F,
 >(
   settings: settings.SettingsManager<T, D>,
   key: P,
   fallback?: F,
 ): {
-  value: Types.NestedType<T, P> | F;
-  onChange: (newValue: Types.ValType<Types.NestedType<T, P> | F>) => void;
+  value: V;
+  onChange: (newValue: Types.ValType<Types.NestedType<T, P>> | Types.ValType<T[K]>) => void;
 } => {
-  const [initialKey, ...pathArray] = Object.keys(settings.all()).includes(key)
-    ? ([key] as [K])
-    : (key.split(".") as [K, ...string[]]);
-  const path = pathArray.join(".");
-  const initial = settings.get(initialKey, path.length ? ({} as T[K]) : (fallback as T[K]));
-  const [value, setValue] = React.useState<Types.NestedType<T, P>>(
-    path.length
-      ? (lodash.get(initial, path, fallback) as Types.NestedType<T, P>)
-      : (initial as Types.NestedType<T, P>),
-  );
+  const initial = settings.get(key as K) ?? lodash.get(settings.all(), key) ?? fallback;
+  const [value, setValue] = React.useState(initial as V);
 
   return {
     value,
-    onChange: (newValue: Types.ValType<Types.NestedType<T, P> | F>) => {
+    onChange: (newValue: Types.ValType<Types.NestedType<T, P>> | Types.ValType<T[K]>) => {
       const isObj = newValue && typeof newValue === "object";
       const value = isObj && "value" in newValue ? newValue.value : newValue;
       const checked = isObj && "checked" in newValue ? newValue.checked : undefined;
@@ -102,15 +94,42 @@ export const useSetting = <
           : undefined;
       const targetValue = target && "value" in target ? target.value : undefined;
       const targetChecked = target && "checked" in target ? target.checked : undefined;
-      const finalValue = checked ?? targetChecked ?? targetValue ?? value ?? newValue;
+      const finalValue = (checked ?? targetChecked ?? targetValue ?? value ?? newValue) as T[K];
 
-      setValue(finalValue as Types.NestedType<T, P>);
-      settings.set(
-        initialKey,
-        path.length ? (lodash.set(initial, path, finalValue) as T[K]) : (finalValue as T[K]),
-      );
+      setValue(finalValue as V);
+
+      if (settings.get(key as K)) {
+        settings.set(key as K, finalValue);
+      } else {
+        const [rootKey] = key.split(/[-/.]/);
+        const setting = lodash.set(settings.all(), key, finalValue)[rootKey as K];
+        settings.set(rootKey as K, setting);
+      }
     },
   };
+};
+
+export const useSettingArray = <
+  T extends Record<string, Types.Jsonifiable>,
+  D extends keyof T,
+  K extends Extract<keyof T, string>,
+  F extends Types.NestedType<T, P> | T[K] | undefined,
+  P extends `${K}.${string}` | `${K}/${string}` | `${K}-${string}` | K,
+  V extends P extends `${K}.${string}` | `${K}/${string}` | `${K}-${string}`
+    ? NonNullable<Types.NestedType<T, P>>
+    : P extends D
+    ? NonNullable<T[P]>
+    : F extends null | undefined
+    ? T[P] | undefined
+    : NonNullable<T[P]> | F,
+>(
+  settings: settings.SettingsManager<T, D>,
+  key: P,
+  fallback?: F,
+): [V, (newValue: Types.ValType<Types.NestedType<T, P>> | Types.ValType<T[K]>) => void] => {
+  const { value, onChange } = useSetting(settings, key, fallback);
+
+  return [value as V, onChange];
 };
 
 export const patchEmptyCategoryFunction = (categories: Types.ChannelListCategory[]): void => {
@@ -135,12 +154,12 @@ export const sortChannels = (category: Types.ChannelListCategory): void => {
 export const getHiddenChannels = (guildId: string): Types.HiddenChannels => {
   if (!guildId) return { channels: [], amount: 0 };
 
-  const guildChannels = ChannelStore.getMutableGuildChannelsForGuild(guildId) as Record<
+  const guildChannels = Modules.ChannelStore.getMutableGuildChannelsForGuild(guildId) as Record<
     string,
     Types.Channel
   >;
   const hiddenChannels = Object.values(guildChannels).filter(
-    (m) => m.isHidden() && m.type !== DiscordConstants.ChannelTypes.GUILD_CATEGORY,
+    (m) => m.isHidden() && m.type !== Modules.DiscordConstants.ChannelTypes.GUILD_CATEGORY,
   );
 
   return { channels: hiddenChannels, amount: hiddenChannels.length };
@@ -193,15 +212,15 @@ export const forceRerenderElement = (selector: string): void => {
 };
 
 export const rerenderChannels = (): void => {
-  PermissionStore.clearVars();
+  Modules.PermissionStore.clearVars();
 
-  PermissionStore.initialize();
+  Modules.PermissionStore.initialize();
 
-  ChannelListStore.clearVars();
+  Modules.ChannelListStore.clearVars();
 
-  ChannelListStore.initialize();
+  Modules.ChannelListStore.initialize();
 
-  forceRerenderElement(`.${ChannelListClasses.container}`);
+  forceRerenderElement(`.${Modules.ChannelListClasses.container}`);
 };
 
 export default {
@@ -213,6 +232,7 @@ export default {
   isTextSvgHtml,
   getAcronym,
   useSetting,
+  useSettingArray,
   patchEmptyCategoryFunction,
   sortChannels,
   getHiddenChannels,

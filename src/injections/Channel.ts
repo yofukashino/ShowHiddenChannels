@@ -1,7 +1,8 @@
 import { PluginInjector } from "../index";
-import { Channels, DiscordConstants, PermissionStore } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import Types from "../types";
 export default (): void => {
+  const { Channels, DiscordConstants, PermissionStore } = Modules;
   Channels.ChannelRecordBase.prototype.isHidden ??= () => null;
   PluginInjector.instead(
     Channels.ChannelRecordBase.prototype,

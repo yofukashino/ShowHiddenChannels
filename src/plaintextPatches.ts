@@ -5,8 +5,8 @@ export default [
     replacements: [
       {
         match: /case (\w+)\.ChannelTypes\.GROUP_DM:return null!=\w+\?/,
-        replace: (match: string, discordConstants: string) =>
-          `case ${discordConstants}.GUILD_FORUM:${match}!arguments[0]?.isHidden?.()&&arguments[0].type==${discordConstants}.ChannelTypes.GUILD_FORUM?null:`,
+        replace: (match: string, DiscordConstants: string) =>
+          `case ${DiscordConstants}.GUILD_FORUM:${match}!arguments[0]?.isHidden?.()&&arguments[0].type==${DiscordConstants}.ChannelTypes.GUILD_FORUM?null:`,
       },
     ],
   },

@@ -8,7 +8,6 @@ import {
 } from "replugged/components";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
-
 import SearchableGuilds from "./SearchableGuilds";
 import Utils from "../lib/utils";
 import Types from "../types";

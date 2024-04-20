@@ -1,6 +1,6 @@
-import { React, components } from "replugged/common";
+import { React } from "replugged/common";
 import { Clickable, Tooltip } from "replugged/components";
-import { UserProfile } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import Types from "../types";
 
 export default React.memo(
@@ -13,12 +13,14 @@ export default React.memo(
     channelId: string;
     guildId: string;
   }): React.ReactElement => {
-    const { Popout } = components as typeof components & { Popout: Types.Popout };
-
+    const {
+      UserProfile,
+      DiscordComponents: { Popout },
+    } = Modules;
     return (
       <Popout
         renderPopout={(props) =>
-          user ? (
+          user && UserProfile ? (
             <UserProfile {...props} user={user} channelId={channelId} guildId={guildId} />
           ) : (
             <></>

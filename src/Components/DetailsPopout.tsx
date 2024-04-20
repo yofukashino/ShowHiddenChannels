@@ -1,13 +1,16 @@
-import { React, channels as UltimateChannelStore, components } from "replugged/common";
+import { React, channels as UltimateChannelStore } from "replugged/common";
 import { ErrorBoundary, Flex, FormItem, Modal, Text } from "replugged/components";
 import { SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
-import { DiscordConstants, ForumTags, LocaleManager } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import Utils from "../lib/utils";
 import Types from "../types";
 
 export const getTabBarItems = ({ channel }: { channel: Types.Channel }): React.ReactElement[] => {
-  const { TabBar } = components as typeof components & { TabBar: Types.TabBar };
+  const {
+    DiscordConstants,
+    DiscordComponents: { TabBar },
+  } = Modules;
   const items = [];
   items.push(
     <TabBar.Item id="general" className={`shc-details-tabbar-item`} key="general">
@@ -45,7 +48,11 @@ export const getTabBarItems = ({ channel }: { channel: Types.Channel }): React.R
   return items;
 };
 export default React.memo((props: Types.DetailsPopoutProps) => {
-  const { TabBar } = components as typeof components & { TabBar: Types.TabBar };
+  const {
+    ForumTags,
+    LocaleManager,
+    DiscordComponents: { TabBar },
+  } = Modules;
   const [open, setOpen] = React.useState<string>("general");
   const { AdminRoles, ChannelSpecificRoles, None, Users } = props;
   return (

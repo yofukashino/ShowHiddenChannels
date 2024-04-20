@@ -1,17 +1,11 @@
 import { PluginInjector, PluginLogger, SettingValues } from "../index";
-import {
-  CategoryStore,
-  ChannelListStore,
-  ChannelStore,
-  Channels,
-  DiscordConstants,
-  GuildChannelStore,
-} from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 import Utils from "../lib/utils";
 import Types from "../types";
 const collapsedMap = new Map<string, boolean>();
-export default (): void => {
+export const injectCategoryStore = (): void => {
+  const { CategoryStore } = Modules;
   PluginInjector.after(CategoryStore, "isCollapsed", (args, res) => {
     if (
       !args[0]?.endsWith("hidden") ||
@@ -20,7 +14,10 @@ export default (): void => {
       return res;
     return SettingValues.get("alwaysCollapse", defaultSettings.alwaysCollapse) && res;
   });
+};
 
+export const injectGuildChannelStore = (): void => {
+  const { DiscordConstants, GuildChannelStore } = Modules;
   PluginInjector.after(GuildChannelStore, "getChannels", (args: [string], res) => {
     const GuildCategories = res[DiscordConstants.ChannelTypes.GUILD_CATEGORY];
     const hiddenId = `${args[0]}_hidden`;
@@ -47,7 +44,10 @@ export default (): void => {
     });
     return res;
   });
+};
 
+export const injectChannelStore = (): void => {
+  const { ChannelStore, Channels, DiscordConstants, GuildChannelStore } = Modules;
   PluginInjector.after(ChannelStore, "getChannel", (args, res) => {
     if (
       SettingValues.get("sort", defaultSettings.sort) !== "extra" ||
@@ -94,6 +94,10 @@ export default (): void => {
     if (!res[hiddenId]) res[hiddenId] = HiddenCategoryChannel;
     return res;
   });
+};
+
+export const injectChannelListStore = (): void => {
+  const { CategoryStore, ChannelListStore } = Modules;
 
   //* Custom category or sorting order
   PluginInjector.after(ChannelListStore, "getGuild", (args: [string], res: Types.ChannelList) => {
@@ -173,4 +177,11 @@ export default (): void => {
 
     return res;
   });
+};
+
+export default (): void => {
+  injectCategoryStore();
+  injectGuildChannelStore();
+  injectChannelStore();
+  injectChannelListStore();
 };

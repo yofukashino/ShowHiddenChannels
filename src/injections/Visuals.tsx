@@ -1,26 +1,14 @@
 import { ErrorBoundary, Tooltip } from "replugged/components";
 import { PluginInjector, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
-import {
-  ChannelButtonClasses,
-  ChannelIconLocked,
-  ChannelItem,
-  ChannelItemUtil,
-  ChannelStore,
-  ChatContent,
-  DiscordConstants,
-  GuildStore,
-  IconClasses,
-  Route,
-  TransitionUtil,
-  UserGuildSettingsStore,
-  Voice,
-} from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import HiddenChannelIcon from "../Components/HiddenChannelIcon";
 import Lockscreen from "../Components/Lockscreen";
 import Utils from "../lib/utils";
 import Types from "../types";
-export const patchChannelItem = (): void => {
+export const injectChannelItem = (): void => {
+  const { ChannelButtonClasses, ChannelItem, DiscordConstants, IconClasses, TransitionUtil } =
+    Modules;
   PluginInjector.after(
     ChannelItem,
     "default",
@@ -74,12 +62,15 @@ export const patchChannelItem = (): void => {
   );
 };
 
-export const patchChannelIconLocked = (): void => {
+export const injectChannelIconLocked = (): void => {
+  const { ChannelIconLocked } = Modules;
+  console.log(ChannelIconLocked);
   PluginInjector.after(ChannelIconLocked, "default", ([channel]: [Types.Channel], res) => {
     return !(channel.isHidden() || !res);
   });
 };
-export const patchChannelItemUtil = (): void => {
+export const injectChannelItemUtil = (): void => {
+  const { ChannelItemUtil } = Modules;
   PluginInjector.before(
     ChannelItemUtil,
     "getChannelIconComponent",
@@ -91,7 +82,8 @@ export const patchChannelItemUtil = (): void => {
     },
   );
 };
-export const patchChannelBrowerLockedIcon = () => {
+export const injectChannelBrowerLockedIcon = () => {
+  const { ChannelItem, IconClasses } = Modules;
   PluginInjector.after(
     ChannelItem,
     "ChannelItemIcon",
@@ -128,7 +120,8 @@ export const patchChannelBrowerLockedIcon = () => {
     },
   );
 };
-export const patchUserGuildSettingsStore = (): void => {
+export const injectUserGuildSettingsStore = (): void => {
+  const { ChannelStore, UserGuildSettingsStore } = Modules;
   PluginInjector.after(
     UserGuildSettingsStore,
     "getMutedChannels",
@@ -149,7 +142,8 @@ export const patchUserGuildSettingsStore = (): void => {
   );
 };
 
-export const patchRoute = (): void => {
+export const injectRoute = (): void => {
+  const { ChannelStore, GuildStore, Route, Voice } = Modules;
   PluginInjector.before(Route, "default", (args: [Types.RouteArgs]) => {
     const channelId = args[0]?.computedMatch?.params?.channelId;
     const guildId = args[0]?.computedMatch?.params?.guildId;
@@ -163,7 +157,8 @@ export const patchRoute = (): void => {
     return args;
   });
 };
-export const patchSidebarChatContent = (): void => {
+export const injectSidebarChatContent = (): void => {
+  const { ChatContent, GuildStore, Voice } = Modules;
   PluginInjector.after(ChatContent, "type", ([{ channel, chatInputType, guild }], res) => {
     if (
       !channel?.isHidden() ||
@@ -179,11 +174,11 @@ export const patchSidebarChatContent = (): void => {
   });
 };
 export default (): void => {
-  patchChannelItem();
-  patchChannelIconLocked();
-  patchChannelItemUtil();
-  patchChannelBrowerLockedIcon();
-  patchUserGuildSettingsStore();
-  patchRoute();
-  patchSidebarChatContent();
+  injectChannelItem();
+  injectChannelIconLocked();
+  injectChannelItemUtil();
+  injectChannelBrowerLockedIcon();
+  injectUserGuildSettingsStore();
+  injectRoute();
+  injectSidebarChatContent();
 };

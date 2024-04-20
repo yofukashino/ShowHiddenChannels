@@ -1,12 +1,10 @@
 import { settings } from "replugged";
 import { React } from "replugged/common";
-import { DiscordComponents, GuildStore, IconUtils } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import IconSwitch from "./IconSwitch";
 import Utils from "../lib/utils";
 import Types from "../types";
-const {
-  PopoutList: { SearchBar, Divider },
-} = DiscordComponents;
+
 export default <
   T extends Record<string, Types.Jsonifiable>,
   D extends keyof T,
@@ -18,6 +16,13 @@ export default <
   SettingManager: settings.SettingsManager<T, D>;
   path: `${K}.${string}` | K;
 }) => {
+  const {
+    DiscordComponents: {
+      PopoutList: { SearchBar, Divider },
+    },
+    GuildStore,
+    IconUtils,
+  } = Modules;
   const [searchValue, setSearchValue] = React.useState([]);
   const filteredGuildsWithState = Object.values(GuildStore.getGuilds())
     .map((Guild: Types.Guild) => ({

@@ -13,6 +13,14 @@ export namespace Types {
   export type Guild = GeneralDiscordTypes.Guild;
   export type Role = GeneralDiscordTypes.Role;
   export type User = GeneralDiscordTypes.User & { globalName?: string };
+  export type GenericModule = Record<string, DefaultTypes.AnyFunction> & {
+    default: DefaultTypes.AnyFunction;
+  };
+  export interface GenericExport {
+    exports?: GenericModule;
+    id: string;
+    loaded: boolean;
+  }
   export type UserProfile = React.MemoExoticComponent<
     React.ComponentType<{ user: User; channelId?: string; guildId?: string }>
   >;
@@ -203,9 +211,7 @@ export namespace Types {
     _tryFetchMessagesCached: DefaultTypes.AnyFunction;
   }
   export interface RouteExports {
-    exports: {
-      [key: string]: DefaultTypes.AnyFunction;
-    };
+    exports: Record<string, DefaultTypes.AnyFunction>;
   }
   export interface ChatContentArgs {
     channel: Channel;
@@ -981,6 +987,8 @@ export namespace Types {
     }>;
   }
   export interface DiscordComponents {
+    Popout: Types.Popout;
+    TabBar: TabBar;
     AdvancedScroller: React.ComponentClass;
     AdvancedScrollerAuto: React.ComponentClass;
     AdvancedScrollerNone: React.ComponentClass;
@@ -990,6 +998,44 @@ export namespace Types {
     ScrollerAuto: React.ComponentClass;
     ScrollerNone: React.ComponentClass;
     ScrollerThin: React.ComponentClass;
+  }
+  export interface Modules {
+    loadModules?: () => Promise<void>;
+    DiscordConstants?: DiscordConstants;
+    ChatClasses?: ChatClasses;
+    Route?: GenericModule;
+    ChannelIconLocked?: GenericModule;
+    ChatContent?: ChatContent;
+    ChannelItem?: ChannelItem;
+    ChannelItemUtil?: ChannelItemUtil;
+    RolePillClasses?: RolePillClasses;
+    ChannelButtonClasses?: ChannelButtonClasses;
+    PermissionStore?: PermissionStore;
+    PermissionUtils?: PermissionUtils;
+    ChannelListClasses?: ChannelListClasses;
+    LocaleManager?: LocaleManager;
+    Channels?: Channels;
+    ChannelListStore?: ChannelListStore;
+    UserGuildSettingsStore?: UserGuildSettingsStore;
+    IconUtils?: IconUtils;
+    IconClasses?: IconClasses;
+    ReadStateStore?: ReadStateStore;
+    Voice?: Voice;
+    GuildStore?: GuildStore;
+    RolePill?: RolePill;
+    MessageActions?: MessageActions;
+    GuildChannelStore?: GuildChannelStore;
+    TextElement?: TextElement;
+    CategoryStore?: CategoryStore;
+    GuildMemberStore?: GuildMemberStore;
+    ChannelStore?: ChannelStore;
+    BigIntUtils?: BigIntUtils;
+    TransitionUtil?: TransitionUtil;
+    ChannelUtils?: ChannelUtils;
+    ForumTags?: ForumTags;
+    DiscordComponents?: DiscordComponents;
+    ProfileActions?: ProfileActions;
+    UserProfile?: UserProfile;
   }
   export type Jsonifiable =
     | null
@@ -1004,7 +1050,10 @@ export namespace Types {
     | React.ChangeEvent<HTMLInputElement>
     | (Record<string, unknown> & { value?: T; checked?: T });
 
-  export type NestedType<T, P> = P extends `${infer Left}.${infer Right}`
+  export type NestedType<T, P> = P extends
+    | `${infer Left}.${infer Right}`
+    | `${infer Left}/${infer Right}`
+    | `${infer Left}-${infer Right}`
     ? Left extends keyof T
       ? NestedType<T[Left], Right>
       : Left extends `${infer FieldKey}[${infer IndexKey}]`
