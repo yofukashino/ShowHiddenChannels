@@ -7,6 +7,7 @@ export default (
   { guild }: Record<string, unknown> & { guild: Types.Guild },
   menu: Types.MenuProps,
 ): void => {
+  if (!guild) return;
   const [value, onChange] = Utils.useSettingArray(
     SettingValues,
     `blacklistedGuilds.${guild.id}`,
