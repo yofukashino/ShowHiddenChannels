@@ -69,6 +69,7 @@ Modules.loadModules = async (): Promise<void> => {
   Modules.TextElement ??= await webpack.waitForModule<Types.TextElement>(
     webpack.filters.bySource("CUSTOM:null"),
   );
+
   Modules.CategoryStore ??= await webpack.waitForProps<Types.CategoryStore>(
     "isCollapsed",
     "getCollapsedCategories",
@@ -78,6 +79,7 @@ Modules.loadModules = async (): Promise<void> => {
     "invert",
     "has",
   );
+
   Modules.TransitionUtil ??= await webpack.waitForProps<Types.TransitionUtil>(
     "transitionTo",
     "transitionToGuild",
@@ -88,9 +90,8 @@ Modules.loadModules = async (): Promise<void> => {
     "renderTitle",
   );
 
-  Modules.ForumTags ??= await webpack.waitForModule<Types.ForumTags>(
-    webpack.filters.bySource("IncreasedActivityForumTagPill"),
-  );
+  Modules.ForumTags ??= await webpack.waitForProps<Types.ForumTags>("ForumTagOverflow");
+  console.log("g");
   Modules.DiscordComponents ??= await webpack.waitForProps<Types.DiscordComponents>(
     "PopoutList",
     "AdvancedScrollerAuto",

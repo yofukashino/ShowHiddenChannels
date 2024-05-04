@@ -212,15 +212,15 @@ export const forceRerenderElement = (selector: string): void => {
 };
 
 export const rerenderChannels = (): void => {
-  Modules.PermissionStore.clearVars();
+  Modules.PermissionStore?.clearVars();
 
-  Modules.PermissionStore.initialize();
+  Modules.PermissionStore?.initialize();
 
-  Modules.ChannelListStore.clearVars();
+  Modules.ChannelListStore?.clearVars();
 
-  Modules.ChannelListStore.initialize();
+  Modules.ChannelListStore?.initialize();
 
-  forceRerenderElement(`.${Modules.ChannelListClasses.container}`);
+  forceRerenderElement(`.${Modules.ChannelListClasses?.container}`);
 };
 
 export default {

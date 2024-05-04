@@ -150,11 +150,7 @@ export default React.memo((props: Types.DetailsPopoutProps) => {
                 <Flex className="shc-detailFlex">
                   {props?.channel?.availableTags.length ? (
                     props?.channel?.availableTags?.map?.((tag) => (
-                      <ForumTags.IncreasedActivityForumTagPill
-                        key={tag.id}
-                        selected={false}
-                        tag={tag}
-                      />
+                      <ForumTags.default key={tag.id} selected={false} tag={tag} />
                     ))
                   ) : (
                     <None />

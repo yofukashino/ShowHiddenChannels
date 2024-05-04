@@ -336,7 +336,8 @@ export namespace Types {
     }>;
   }
   export interface ForumTags {
-    IncreasedActivityForumTagPill: React.ComponentClass<{
+    ForumTagOverflow: React.ComponentType<unknown>;
+    default: React.ComponentType<{
       key?: string;
       className?: string;
       onClick?: DefaultTypes.AnyFunction;
