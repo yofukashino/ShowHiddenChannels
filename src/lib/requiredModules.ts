@@ -91,7 +91,7 @@ Modules.loadModules = async (): Promise<void> => {
   );
 
   Modules.ForumTags ??= await webpack.waitForProps<Types.ForumTags>("ForumTagOverflow");
-  console.log("g");
+
   Modules.DiscordComponents ??= await webpack.waitForProps<Types.DiscordComponents>(
     "PopoutList",
     "AdvancedScrollerAuto",
