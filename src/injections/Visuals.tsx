@@ -87,10 +87,13 @@ export const injectChannelBrowerLockedIcon = () => {
     ChannelItem,
     "ChannelItemIcon",
     (
-      [props]: [{ channel: Types.Channel; guild: Types.Guild; className?: string }],
+      [props]: [
+        { channel: Types.Channel; guild: Types.Guild; className?: string; original: boolean },
+      ],
       res: React.ReactElement,
     ) => {
       if (
+        props.original ||
         !props.channel?.isHidden() ||
         SettingValues.get("hiddenChannelIcon", defaultSettings.hiddenChannelIcon) === "false"
       )

@@ -14,6 +14,10 @@
   gap: 10px;
   padding-top: 15px;
 }
+.shc-detailFlex.shc-generalDetails {
+  padding-top: 10px;
+}
+
 .shc-detailFlex:not(.shc-generalDetails) {
   justify-content: center;
   align-items: center;
@@ -29,16 +33,18 @@
   padding-right: 10%;
   flex-wrap: wrap;
 }
-.shc-details-header [class*="close"] {
-  width: 32px;
-  height: 32px;
-  right: 2%;
-  bottom: 12%;
-  position: absolute;
-}
+
 .shc-details-header {
+  margin-left: 5px;
   margin-bottom: 10px;
   padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 10px;
+  box-shadow: none !important;
+}
+.shc-details-header .shc-details-channelIcon {
+  color: var(--header-primary);
 }
 .shc-hidden-notice > div[class^="topic"] {
   background-color: var(--background-secondary);
@@ -69,6 +75,18 @@
 .shc-rolePill {
   margin-right: 0px !important;
   background-color: var(--background-primary);
+  font-size: 18px;
+  height: 32px;
+}
+.shc-rolePill [class^="roleCircle"] {
+  width: 18px;
+  height: 18px;
+}
+
+.shc-rolePill [class*="roleNameOverflow"] {
+  font-size: 18px;
+  line-height: 2.3333333333333333;
+  font-weight: 100;
 }
 
 .shc-size-increase [class*="actionIcon"] {
@@ -117,6 +135,8 @@ shc-detailFlex:not(.shc-generalDetails):not(.shc-nothing-but-waumpus) {
 .shc-details-content-header {
   text-align: center;
   padding-top: 15px;
+  min-height: 315px;
+  max-height: 315px;
 }
 
 .shc-nothing-but-waumpus-img {
@@ -129,6 +149,30 @@ shc-detailFlex:not(.shc-generalDetails):not(.shc-nothing-but-waumpus) {
   text-align: center;
   color: var(--text-muted) !important;
 }
+
 .shc-details-content-header:has(.shc-nothing-but-waumpus) h2 {
   display: none;
+}
+
+.shc-details-content-header > h2 {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #00000095;
+  width: fit-content;
+  text-align: center;
+  margin: auto;
+  padding: 10px;
+  border-radius: 50px;
+}
+
+.shc-details-content-header .shc-generalDetails h2 {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #00000050;
+  width: fit-content;
+  text-align: center;
+  padding: 5px 10px 5px 10px;
+  border-radius: 50px;
 }

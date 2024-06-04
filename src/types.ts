@@ -545,7 +545,15 @@ export namespace Types {
     };
   }
   export interface ChannelItem {
-    ChannelItemIcon: DefaultTypes.AnyFunction;
+    ChannelItemIcon:
+      | React.ComponentType<{
+          channel: Channel;
+          guild: Guild;
+          original: boolean;
+          hasActiveThreads: boolean;
+          locked: boolean;
+        }> &
+          DefaultTypes.AnyFunction;
     default: DefaultTypes.AnyFunction;
   }
   export interface ChannelItemUtil {
@@ -887,10 +895,6 @@ export namespace Types {
     guild: Guild;
   }
   export interface DetailsPopoutProps extends LockscreenProps {
-    None: () => React.ReactElement;
-    ChannelSpecificRoles: () => React.ReactElement[] | string[];
-    AdminRoles: () => React.ReactElement[] | string[];
-    Users: () => React.ReactElement[] | string[];
     onClose?: DefaultTypes.AnyFunction;
   }
   export interface IconSwitch {

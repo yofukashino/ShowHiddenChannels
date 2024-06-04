@@ -1,9 +1,8 @@
-import { modal as ModalActions, React, users as UltimateUserStore } from "replugged/common";
-import { Button, Flex, Text } from "replugged/components";
+import { modal as ModalActions, React } from "replugged/common";
+import { Button } from "replugged/components";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
 import DetailsPopout from "./DetailsPopout";
-import User from "./User";
 import Modules from "../lib/requiredModules";
 import Utils from "../lib/utils";
 import Types from "../types";
@@ -12,128 +11,8 @@ export default React.memo((props: Types.LockscreenProps) => {
   if (SettingValues.get("debugMode", defaultSettings.debugMode)) {
     PluginLogger.log("LockScreen Props", props);
   }
-  const {
-    BigIntUtils,
-    ChannelUtils,
-    DiscordConstants,
-    GuildMemberStore,
-    GuildStore,
-    PermissionUtils,
-    ProfileActions,
-    RolePill,
-    RolePillClasses,
-    TextElement,
-  } = Modules;
-  const [channelSpecificRoles, setChannelSpecificRoles] = React.useState<
-    React.ReactElement[] | string[]
-  >([]);
-  const [adminRoles, setAdminRoles] = React.useState<React.ReactElement[] | string[]>([]);
-  const [users, setUsers] = React.useState<React.ReactElement[] | string[]>([]);
+  const { ChannelUtils, TextElement } = Modules;
   const [imgSrc, setImgSrc] = React.useState<string>("");
-  const None: React.ReactElement = (
-    <Flex direction={Flex.Direction.VERTICAL} className="shc-detailFlex shc-nothing-but-waumpus">
-      <img src="/assets/532f1d4582d881960783.svg" className="shc-nothing-but-waumpus-img" />
-      <Text.Normal className="shc-nothing-but-waumpus-text">Nothing But wumpus Here</Text.Normal>
-    </Flex>
-  );
-  const mapChannelRoles = (): void => {
-    const channelRoleOverwrites = Object.values(props.channel.permissionOverwrites).filter(
-      (role: Types.permissionOverwrite) =>
-        role &&
-        role?.type === 0 &&
-        ((SettingValues.get("showAdmin", defaultSettings.showAdmin) !== "false" &&
-          BigIntUtils.has(
-            GuildStore.getRole(props.guild.id, role.id).permissions,
-            DiscordConstants.Permissions.ADMINISTRATOR,
-          )) ||
-          BigIntUtils.has(role.allow, DiscordConstants.Permissions.VIEW_CHANNEL) ||
-          (BigIntUtils.has(
-            GuildStore.getRole(props.guild.id, role.id).permissions,
-            DiscordConstants.Permissions.VIEW_CHANNEL,
-          ) &&
-            !BigIntUtils.has(role.deny, DiscordConstants.Permissions.VIEW_CHANNEL))),
-    );
-
-    if (!channelRoleOverwrites?.length) return setChannelSpecificRoles([None]);
-
-    const roleComponentArray = channelRoleOverwrites.map((m) => (
-      <RolePill.MemberRole
-        key={m.id}
-        canRemove={false}
-        className={`${RolePillClasses.rolePill} shc-rolePill`}
-        disableBorderColor={true}
-        guildId={props.guild.id}
-        onRemove={() => null}
-        role={GuildStore.getRole(props.guild.id, m.id)}
-      />
-    ));
-
-    return setChannelSpecificRoles(roleComponentArray);
-  };
-
-  const mapAdminRoles = (): void => {
-    if (SettingValues.get("showAdmin", defaultSettings.showAdmin) === "false") {
-      return setAdminRoles([None]);
-    }
-
-    const adminRoles = Object.values(GuildStore.getRoles(props.guild.id)).filter(
-      (role) =>
-        BigIntUtils.has(role.permissions, DiscordConstants.Permissions.ADMINISTRATOR) &&
-        (SettingValues.get("showAdmin", defaultSettings.showAdmin) === "include" ||
-          (SettingValues.get("showAdmin", defaultSettings.showAdmin) === "exclude" &&
-            !role.tags?.bot_id)),
-    );
-
-    if (!adminRoles?.length) return setAdminRoles([None]);
-
-    const roleComponentArray = adminRoles.map((m) => (
-      <RolePill.MemberRole
-        key={m.id}
-        canRemove={false}
-        className={`${RolePillClasses.rolePill} shc-rolePill`}
-        disableBorderColor={true}
-        guildId={props.guild.id}
-        onRemove={() => null}
-        role={m}
-      />
-    ));
-
-    return setAdminRoles(roleComponentArray);
-  };
-
-  const fetchMemberAndMap = async (): Promise<void> => {
-    const allUserOverwrites = Object.values(props.channel.permissionOverwrites).filter(
-      (user: Types.permissionOverwrite): boolean => Boolean(user && user?.type === 1),
-    );
-
-    for (const user of allUserOverwrites) {
-      await ProfileActions.fetchProfile(user.id, {
-        guildId: props.guild.id,
-        withMutualGuilds: false,
-      });
-    }
-
-    const filteredUserOverwrites = Object.values(props.channel.permissionOverwrites).filter(
-      (user: Types.permissionOverwrite): boolean =>
-        Boolean(
-          PermissionUtils.can({
-            permission: DiscordConstants.Permissions.VIEW_CHANNEL,
-            user: UltimateUserStore.getUser(user.id),
-            context: props.channel,
-          }) && GuildMemberStore.isMember(props.guild.id, user.id),
-        ),
-    );
-
-    if (!filteredUserOverwrites?.length) return setUsers([None]);
-
-    const mentionArray = filteredUserOverwrites.map((m: Types.permissionOverwrite) => {
-      const user = UltimateUserStore.getUser(m.id);
-
-      return <User user={user} guildId={props.guild.id} channelId={props.channel.id} />;
-    });
-
-    return setUsers(mentionArray);
-  };
 
   const setImgSrcFromSettings = (): void => {
     switch (SettingValues.get("hiddenChannelImg", defaultSettings.hiddenChannelImg)) {
@@ -158,9 +37,6 @@ export default React.memo((props: Types.LockscreenProps) => {
     }
   };
   React.useEffect(() => {
-    mapChannelRoles();
-    mapAdminRoles();
-    fetchMemberAndMap();
     setImgSrcFromSettings();
   }, [
     props.channel.id,
@@ -205,20 +81,8 @@ export default React.memo((props: Types.LockscreenProps) => {
       <Button
         look={Button.Looks.OUTLINED}
         color={Button.Colors.TRANSPARENT}
-        hover={Button.Hovers.LINK}
         style={{ marginTop: "18px" }}
-        onClick={() =>
-          ModalActions.openModal((modal) => (
-            <DetailsPopout
-              {...props}
-              {...modal}
-              None={() => None}
-              ChannelSpecificRoles={() => channelSpecificRoles}
-              AdminRoles={() => adminRoles}
-              Users={() => users}
-            />
-          ))
-        }>
+        onClick={() => ModalActions.openModal((modal) => <DetailsPopout {...props} {...modal} />)}>
         More Details
       </Button>
     </div>

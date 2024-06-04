@@ -28,7 +28,6 @@ export default React.memo((props: object) => {
         );
         const svgTexts = await fetch(svgURL, { signal: abortion.signal }).then((res) => res.text());
         if (!Utils.isTextSvgHtml(svgTexts)) {
-          console.log("gg");
           setSvgToMap({});
           return;
         }
@@ -37,7 +36,6 @@ export default React.memo((props: object) => {
         const svgElement = container.querySelector("svg");
 
         if (!svgElement) {
-          console.log("gg");
           setSvgToMap({});
           return;
         }
@@ -60,7 +58,6 @@ export default React.memo((props: object) => {
           viewBox: viewBox || "",
           children: children || [],
         });
-        console.log("gg");
       } catch (error) {
         PluginLogger.error(`Error Mapping SVG: ${error}`);
       }
