@@ -1,3 +1,4 @@
+import { webpack } from "replugged";
 import { PluginInjector, PluginLogger, SettingValues } from "../index";
 import Modules from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
@@ -48,6 +49,10 @@ export const injectGuildChannelStore = (): void => {
 
 export const injectChannelStore = (): void => {
   const { ChannelStore, Channels, DiscordConstants, GuildChannelStore } = Modules;
+  const ChannelRecordBase = webpack.getFunctionBySource<(...props: unknown[]) => void>(
+    Channels,
+    "get permissionOverwrites",
+  );
   PluginInjector.after(ChannelStore, "getChannel", (args, res) => {
     if (
       SettingValues.get("sort", defaultSettings.sort) !== "extra" ||
@@ -57,7 +62,7 @@ export const injectChannelStore = (): void => {
       !args[0]?.endsWith("_hidden")
     )
       return res;
-    const HiddenCategoryChannel = new Channels.ChannelRecordBase({
+    const HiddenCategoryChannel = new ChannelRecordBase({
       guild_id: args[0]?.replace("_hidden", ""),
       id: args[0],
       name: "Hidden Channels",
@@ -73,7 +78,7 @@ export const injectChannelStore = (): void => {
     )
       return res;
     const hiddenId = `${args[0]}_hidden`;
-    const HiddenCategoryChannel = new Channels.ChannelRecordBase({
+    const HiddenCategoryChannel = new ChannelRecordBase({
       guild_id: args[0],
       id: hiddenId,
       name: "Hidden Channels",

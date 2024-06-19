@@ -2,6 +2,7 @@ import { types } from "replugged";
 import GeneralDiscordTypes from "discord-types/general";
 import type { Store as StoreType } from "replugged/dist/renderer/modules/common/flux";
 import { ContextMenuProps } from "replugged/dist/renderer/modules/components/ContextMenu";
+import { components } from "replugged/common";
 import util from "replugged/util";
 
 export namespace Types {
@@ -102,10 +103,7 @@ export namespace Types {
     isHidden: () => boolean;
     isGuildVocal: () => boolean;
   }
-  export interface RolePill extends React.ComponentClass {
-    $$typeof: symbol;
-    render: DefaultTypes.AnyFunction;
-  }
+
   export interface MemberRow {
     key: string;
     user: User;
@@ -122,26 +120,19 @@ export namespace Types {
     guildId: string;
   }
   export interface PermissionUtils {
-    ALL: number;
-    ALLOW: string;
-    DEFAULT: string;
-    DENY: string;
-    NONE: number;
-    PASSTHROUGH: string;
-    VIEW_GUILD_SETTINGS: number;
-    applyThreadPermissions: DefaultTypes.AnyFunction;
-    areChannelsLocked: DefaultTypes.AnyFunction;
+    applyThreadPermissions?: DefaultTypes.AnyFunction;
+    areChannelsLocked?: DefaultTypes.AnyFunction;
     can: DefaultTypes.AnyFunction;
-    canEveryone: DefaultTypes.AnyFunction;
-    canEveryoneRole: DefaultTypes.AnyFunction;
-    canManageACategory: DefaultTypes.AnyFunction;
-    computePermissions: DefaultTypes.AnyFunction;
-    computePermissionsForRoles: DefaultTypes.AnyFunction;
-    getGuildVisualOwnerId: DefaultTypes.AnyFunction;
-    getHighestHoistedRole: DefaultTypes.AnyFunction;
-    getHighestRole: DefaultTypes.AnyFunction;
-    isRoleHigher: DefaultTypes.AnyFunction;
-    makeEveryoneOverwrite: DefaultTypes.AnyFunction;
+    canEveryone?: DefaultTypes.AnyFunction;
+    canEveryoneRole?: DefaultTypes.AnyFunction;
+    canManageACategory?: DefaultTypes.AnyFunction;
+    computePermissions?: DefaultTypes.AnyFunction;
+    computePermissionsForRoles?: DefaultTypes.AnyFunction;
+    getGuildVisualOwnerId?: DefaultTypes.AnyFunction;
+    getHighestHoistedRole?: DefaultTypes.AnyFunction;
+    getHighestRole?: DefaultTypes.AnyFunction;
+    isRoleHigher?: DefaultTypes.AnyFunction;
+    makeEveryoneOverwrite?: DefaultTypes.AnyFunction;
   }
   export interface ChannelStore extends Store {
     getAllThreadsForParent: DefaultTypes.AnyFunction;
@@ -321,34 +312,29 @@ export namespace Types {
   export interface ChannelUtils {
     renderTopic: (channel: Channel, guild: Guild) => React.ReactElement;
     HeaderGuildBreadcrumb: DefaultTypes.AnyFunction;
-    ChannelEmoji: DefaultTypes.AnyFunction;
     renderTitle: DefaultTypes.AnyFunction;
   }
-  export interface RolePill {
-    MemberRole: React.ComponentClass<{
-      key: string;
-      canRemove: boolean;
-      className: string;
-      disableBorderColor: boolean;
-      guildId: string | number;
-      onRemove: DefaultTypes.AnyFunction;
-      role: Role;
-    }>;
-  }
-  export interface ForumTags {
-    ForumTagOverflow: React.ComponentType<unknown>;
-    default: React.ComponentType<{
-      key?: string;
-      className?: string;
-      onClick?: DefaultTypes.AnyFunction;
-      selected?: boolean;
-      tag?: { name?: string; id?: string };
-    }>;
-  }
+  export type RolePill = React.ComponentClass<{
+    key: string;
+    canRemove: boolean;
+    className: string;
+    disableBorderColor: boolean;
+    guildId: string | number;
+    onRemove: DefaultTypes.AnyFunction;
+    role: Role;
+  }>;
+
+  export type ForumTags = React.ComponentType<{
+    key?: string;
+    className?: string;
+    onClick?: DefaultTypes.AnyFunction;
+    selected?: boolean;
+    tag?: { name?: string; id?: string };
+  }>;
+
   export interface ProfileActions {
     acceptAgreements: DefaultTypes.AnyFunction;
     fetchCurrentUser: DefaultTypes.AnyFunction;
-    fetchMutualFriends: DefaultTypes.AnyFunction;
     fetchProfile: DefaultTypes.AnyFunction;
     getUser: DefaultTypes.AnyFunction;
     setFlag: DefaultTypes.AnyFunction;
@@ -377,7 +363,7 @@ export namespace Types {
     id: string;
     type: number;
   }
-  export interface Voice {
+  export interface RTCConnectionStore extends Store {
     getAveragePing: DefaultTypes.AnyFunction;
     getChannelId: DefaultTypes.AnyFunction;
     getDuration: DefaultTypes.AnyFunction;
@@ -561,18 +547,15 @@ export namespace Types {
     getChannelIconTooltipText: DefaultTypes.AnyFunction;
     getSimpleChannelIconComponent: DefaultTypes.AnyFunction;
   }
-  export interface Channels {
-    ChannelRecordBase: (...props: unknown[]) => void;
-  }
-  export interface TransitionUtil {
+  export interface RoutingUtils {
     back: DefaultTypes.AnyFunction;
     forward: DefaultTypes.AnyFunction;
-    getFingerprintLocation: DefaultTypes.AnyFunction;
-    getHistory: DefaultTypes.AnyFunction;
-    getLastRouteChangeSource: DefaultTypes.AnyFunction;
-    getLastRouteChangeSourceLocationStack: DefaultTypes.AnyFunction;
-    hasNavigated: DefaultTypes.AnyFunction;
-    isValidFingerprintRoute: DefaultTypes.AnyFunction;
+    getFingerprintLocation?: DefaultTypes.AnyFunction;
+    getHistory?: DefaultTypes.AnyFunction;
+    getLastRouteChangeSource?: DefaultTypes.AnyFunction;
+    getLastRouteChangeSourceLocationStack?: DefaultTypes.AnyFunction;
+    hasNavigated?: DefaultTypes.AnyFunction;
+    isValidFingerprintRoute?: DefaultTypes.AnyFunction;
     replaceWith: DefaultTypes.AnyFunction;
     transitionTo: DefaultTypes.AnyFunction;
     transitionToGuild: DefaultTypes.AnyFunction;
@@ -961,18 +944,7 @@ export namespace Types {
     isAnimatedImageURL: DefaultTypes.AnyFunction;
     isVideoAssetHash: DefaultTypes.AnyFunction;
   }
-  export interface BigIntUtils {
-    add: DefaultTypes.AnyFunction;
-    combine: DefaultTypes.AnyFunction;
-    deserialize: DefaultTypes.AnyFunction;
-    equals: DefaultTypes.AnyFunction;
-    filter: DefaultTypes.AnyFunction;
-    getFlag: DefaultTypes.AnyFunction;
-    has: DefaultTypes.AnyFunction;
-    hasAny: DefaultTypes.AnyFunction;
-    invert: DefaultTypes.AnyFunction;
-    remove: DefaultTypes.AnyFunction;
-  }
+
   export interface ScrollerClasses {
     listHeight: string;
     listItems: string;
@@ -991,7 +963,7 @@ export namespace Types {
       onClear?: () => void;
     }>;
   }
-  export interface DiscordComponents {
+  export type DiscordComponents = {
     Popout: Types.Popout;
     TabBar: TabBar;
     AdvancedScroller: React.ComponentClass;
@@ -1003,29 +975,32 @@ export namespace Types {
     ScrollerAuto: React.ComponentClass;
     ScrollerNone: React.ComponentClass;
     ScrollerThin: React.ComponentClass;
-  }
+  } & typeof components;
+
   export interface Modules {
     loadModules?: () => Promise<void>;
+    DiscordConstantsModule?: GenericModule;
     DiscordConstants?: DiscordConstants;
     ChatClasses?: ChatClasses;
     Route?: GenericModule;
     ChannelIconLocked?: GenericModule;
     ChatContent?: ChatContent;
-    ChannelItem?: ChannelItem;
-    ChannelItemUtil?: ChannelItemUtil;
+    ChannelItem?: GenericModule;
+    ChannelItemUtil?: GenericModule;
     RolePillClasses?: RolePillClasses;
     ChannelButtonClasses?: ChannelButtonClasses;
     PermissionStore?: PermissionStore;
+    PermissionUtilsModule?: GenericModule;
     PermissionUtils?: PermissionUtils;
     ChannelListClasses?: ChannelListClasses;
     LocaleManager?: LocaleManager;
-    Channels?: Channels;
+    Channels?: GenericModule;
     ChannelListStore?: ChannelListStore;
     UserGuildSettingsStore?: UserGuildSettingsStore;
     IconUtils?: IconUtils;
     IconClasses?: IconClasses;
     ReadStateStore?: ReadStateStore;
-    Voice?: Voice;
+    RTCConnectionStore?: RTCConnectionStore;
     GuildStore?: GuildStore;
     RolePill?: RolePill;
     MessageActions?: MessageActions;
@@ -1034,11 +1009,12 @@ export namespace Types {
     CategoryStore?: CategoryStore;
     GuildMemberStore?: GuildMemberStore;
     ChannelStore?: ChannelStore;
-    BigIntUtils?: BigIntUtils;
-    TransitionUtil?: TransitionUtil;
+    RoutingUtilsModule?: GenericModule;
+    RoutingUtils?: RoutingUtils;
+    ChannelUtilsModule?: GenericModule;
     ChannelUtils?: ChannelUtils;
-    ForumTags?: ForumTags;
-    DiscordComponents?: DiscordComponents;
+    ForumTagsModule?: GenericModule;
+    ProfileActionsModule?: GenericModule;
     ProfileActions?: ProfileActions;
     UserProfile?: UserProfile;
   }

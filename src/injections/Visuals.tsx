@@ -1,3 +1,4 @@
+import { webpack } from "replugged";
 import { ErrorBoundary, Tooltip } from "replugged/components";
 import { PluginInjector, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
@@ -6,12 +7,14 @@ import HiddenChannelIcon from "../Components/HiddenChannelIcon";
 import Lockscreen from "../Components/Lockscreen";
 import Utils from "../lib/utils";
 import Types from "../types";
+
 export const injectChannelItem = (): void => {
-  const { ChannelButtonClasses, ChannelItem, DiscordConstants, IconClasses, TransitionUtil } =
+  const { ChannelButtonClasses, ChannelItem, DiscordConstants, IconClasses, RoutingUtils } =
     Modules;
+  const loader = webpack.getFunctionKeyBySource(ChannelItem, ".ALL_MESSAGES");
   PluginInjector.after(
     ChannelItem,
-    "default",
+    loader,
     (
       [props]: [{ channel: Types.Channel; connected: boolean }],
       res: React.ReactElement & Types.Tree,
@@ -53,7 +56,7 @@ export const injectChannelItem = (): void => {
         if (button?.props) {
           button.props.href = `/channels/${props.channel.guild_id}/${props.channel.id}`;
           button.props.onClick = () =>
-            props.channel.isGuildVocal() && TransitionUtil.transitionTo(button.props.href);
+            props.channel.isGuildVocal() && RoutingUtils.transitionTo(button.props.href);
         }
       }
 
@@ -64,15 +67,17 @@ export const injectChannelItem = (): void => {
 
 export const injectChannelIconLocked = (): void => {
   const { ChannelIconLocked } = Modules;
-  PluginInjector.after(ChannelIconLocked, "default", ([channel]: [Types.Channel], res) => {
+  const loader = webpack.getFunctionKeyBySource(ChannelIconLocked, "permissionOverwrites");
+  PluginInjector.after(ChannelIconLocked, loader, ([channel]: [Types.Channel], res) => {
     return !(channel.isHidden() || !res);
   });
 };
 export const injectChannelItemUtil = (): void => {
   const { ChannelItemUtil } = Modules;
+  const loader = webpack.getFunctionKeyBySource(ChannelItemUtil, ".AnnouncementsWarningIcon");
   PluginInjector.before(
     ChannelItemUtil,
-    "getChannelIconComponent",
+    loader,
     ([channel, , props]: [Types.Channel, undefined, Types.ChannelIconArgs2]) => {
       if (!props) return;
       if (channel?.isHidden?.() && props.locked) {
@@ -83,9 +88,10 @@ export const injectChannelItemUtil = (): void => {
 };
 export const injectChannelBrowerLockedIcon = () => {
   const { ChannelItem, IconClasses } = Modules;
+  const loader = webpack.getFunctionKeyBySource(ChannelItem, ".iconContainerWithGuildIcon,");
   PluginInjector.after(
     ChannelItem,
-    "ChannelItemIcon",
+    loader,
     (
       [props]: [
         { channel: Types.Channel; guild: Types.Guild; className?: string; original: boolean },
@@ -145,12 +151,13 @@ export const injectUserGuildSettingsStore = (): void => {
 };
 
 export const injectRoute = (): void => {
-  const { ChannelStore, GuildStore, Route, Voice } = Modules;
-  PluginInjector.before(Route, "default", (args: [Types.RouteArgs]) => {
+  const { ChannelStore, GuildStore, Route, RTCConnectionStore } = Modules;
+  const loader = webpack.getFunctionKeyBySource(Route, "ImpressionTypes.PAGE");
+  PluginInjector.before(Route, loader, (args: [Types.RouteArgs]) => {
     const channelId = args[0]?.computedMatch?.params?.channelId;
     const guildId = args[0]?.computedMatch?.params?.guildId;
     const channel = ChannelStore?.getChannel(channelId);
-    if (guildId && channel?.isHidden?.() && channel?.id !== Voice.getChannelId())
+    if (guildId && channel?.isHidden?.() && channel?.id !== RTCConnectionStore.getChannelId())
       args[0].render = () => (
         <ErrorBoundary>
           <Lockscreen channel={channel} guild={GuildStore.getGuild(guildId)} />
@@ -160,11 +167,11 @@ export const injectRoute = (): void => {
   });
 };
 export const injectSidebarChatContent = (): void => {
-  const { ChatContent, GuildStore, Voice } = Modules;
+  const { ChatContent, GuildStore, RTCConnectionStore } = Modules;
   PluginInjector.after(ChatContent, "type", ([{ channel, chatInputType, guild }], res) => {
     if (
       !channel?.isHidden() ||
-      channel?.id === Voice.getChannelId() ||
+      channel?.id === RTCConnectionStore.getChannelId() ||
       chatInputType.analyticsName !== "sidebar"
     )
       return res;

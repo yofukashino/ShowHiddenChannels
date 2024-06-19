@@ -4,9 +4,9 @@ export default [
     find: "GROUP_DM:return null",
     replacements: [
       {
-        match: /case (\w+)\.ChannelTypes\.GROUP_DM:return null!=\w+\?/,
+        match: /case (\w+\.\w+)\.GROUP_DM:return null!=\w+\?/,
         replace: (match: string, DiscordConstants: string) =>
-          `case ${DiscordConstants}.GUILD_FORUM:${match}!arguments[0]?.isHidden?.()&&arguments[0].type==${DiscordConstants}.ChannelTypes.GUILD_FORUM?null:`,
+          `case ${DiscordConstants}.GUILD_FORUM:${match}!arguments[0]?.isHidden?.()&&arguments[0].type==${DiscordConstants}.GUILD_FORUM?null:`,
       },
     ],
   },
@@ -15,16 +15,9 @@ export default [
     replacements: [
       {
         match:
-          /(function \w+\(\){for\(let \w+ in (\w+)={},(\w+)={},(\w+)\)\w+\[\w+\]\+=1;(\w+)\+=1}.{3700,4100})(getChannelsVersion\(\){)/,
-        replace: (
-          _: string,
-          prefix: string,
-          var1: string,
-          var2: string,
-          var3: string,
-          var4: string,
-          suffix: string,
-        ): string => `${prefix}clearVars(){${var1}={};${var2}={};${var3}={};${var4}=0;};${suffix}`,
+          /(getChannelsVersion\(\){return \w+})(}function \w+(\(\){\w+={},\w+={},\w+={},\w+=0}))/,
+        replace: (_: string, prefix: string, suffix: string, logic: string): string =>
+          `${prefix}clearVars${logic}${suffix}`,
       },
     ],
   },
@@ -33,7 +26,7 @@ export default [
     replacements: [
       {
         match:
-          /(function \w+\(\){let \w+=\w+\.default\.getChannelId\(\),\w+=\w+\.default\.getVoiceChannelId\(\);return (\w+)=\w+,(\w+)=\w+,(\w+)\.clear\(\)}.{1300,1500})(recentsChannelCount\()/,
+          /(function \w+\(\){let \w+=\w+\.\w+\.getChannelId\(\),\w+=\w+\.\w+\.getVoiceChannelId\(\);return (\w+)=\w+,(\w+)=\w+,(\w+)\.clear\(\)}.{1000,1500})(recentsChannelCount\()/,
         replace: (
           _: string,
           prefix: string,

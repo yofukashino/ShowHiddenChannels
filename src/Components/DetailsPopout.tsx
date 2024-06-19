@@ -2,6 +2,7 @@ import {
   React,
   channels as UltimateChannelStore,
   users as UltimateUserStore,
+  components,
 } from "replugged/common";
 import { ErrorBoundary, Flex, FormItem, Modal, Text } from "replugged/components";
 import { SettingValues } from "../index";
@@ -11,6 +12,7 @@ import User from "./User";
 import Modules from "../lib/requiredModules";
 import Utils from "../lib/utils";
 import Types from "../types";
+import { webpack } from "replugged";
 
 export const TabBarItems = ({
   channel,
@@ -18,10 +20,8 @@ export const TabBarItems = ({
 }: {
   channel: Types.Channel;
 }): React.ReactElement[] => {
-  const {
-    DiscordConstants,
-    DiscordComponents: { TabBar },
-  } = Modules;
+  const { DiscordConstants } = Modules;
+  const { TabBar } = components as Types.DiscordComponents;
   const items = [];
   items.push(
     <TabBar.Item id="general" className={`shc-details-tabbar-item`} key="general" {...props}>
@@ -68,7 +68,6 @@ export const Tab = ({
   guild: Types.Guild;
 }): React.ReactElement => {
   const {
-    BigIntUtils,
     DiscordConstants,
     GuildMemberStore,
     GuildStore,
@@ -77,8 +76,12 @@ export const Tab = ({
     RolePill,
     RolePillClasses,
     LocaleManager,
-    ForumTags,
+    ForumTagsModule,
   } = Modules;
+  const ForumTags = webpack.getFunctionBySource<Types.ForumTags>(
+    ForumTagsModule,
+    "FORUM_TAG_A11Y_FILTER_BY_TAG",
+  );
   const [channelSpecificRole, setChannelSpecificRole] = React.useState<Types.Role[]>([]);
   const [adminRole, setAdminRole] = React.useState<Types.Role[]>([]);
   const [user, setUser] = React.useState<Types.User[]>([]);
@@ -99,14 +102,15 @@ export const Tab = ({
 
     const channelRoles = roleOverwrites.reduce((acc, role) => {
       const roleObj = GuildStore.getRole(guild.id, role.id);
-      const hasAdmin = BigIntUtils.has(
-        roleObj.permissions,
-        DiscordConstants.Permissions.ADMINISTRATOR,
-      );
+      const hasAdmin = roleObj.permissions
+        .toString()
+        .includes(DiscordConstants.Permissions.ADMINISTRATOR.toString());
       const canViewChannel =
-        BigIntUtils.has(role.allow, DiscordConstants.Permissions.VIEW_CHANNEL) ||
-        (BigIntUtils.has(roleObj.permissions, DiscordConstants.Permissions.VIEW_CHANNEL) &&
-          !BigIntUtils.has(role.deny, DiscordConstants.Permissions.VIEW_CHANNEL));
+        role.allow.toString().includes(DiscordConstants.Permissions.VIEW_CHANNEL.toString()) ||
+        (roleObj.permissions
+          .toString()
+          .includes(DiscordConstants.Permissions.VIEW_CHANNEL.toString()) &&
+          !role.deny.toString().includes(DiscordConstants.Permissions.VIEW_CHANNEL.toString()));
 
       if ((showAdmin !== "false" && hasAdmin) || canViewChannel) {
         acc.push(roleObj);
@@ -119,10 +123,9 @@ export const Tab = ({
 
     if (showAdmin !== "false") {
       const adminRoles = Object.values(GuildStore.getRoles(guild.id)).filter((role) => {
-        const isAdmin = BigIntUtils.has(
-          role.permissions,
-          DiscordConstants.Permissions.ADMINISTRATOR,
-        );
+        const isAdmin = role.permissions
+          .toString()
+          .includes(DiscordConstants.Permissions.ADMINISTRATOR.toString());
         const showInclude = showAdmin === "include";
         const showExclude = showAdmin === "exclude" && !role.tags?.bot_id;
 
@@ -219,7 +222,7 @@ export const Tab = ({
           <Flex className="shc-detailFlex">
             {channelSpecificRole.length ? (
               channelSpecificRole.map((role) => (
-                <RolePill.MemberRole
+                <RolePill
                   key={role.id}
                   canRemove={false}
                   className={`${RolePillClasses.rolePill} shc-rolePill`}
@@ -244,7 +247,7 @@ export const Tab = ({
           <Flex className="shc-detailFlex">
             {adminRole.length ? (
               adminRole.map((role) => (
-                <RolePill.MemberRole
+                <RolePill
                   key={role.id}
                   canRemove={false}
                   className={`${RolePillClasses.rolePill} shc-rolePill`}
@@ -269,7 +272,7 @@ export const Tab = ({
           <Flex className="shc-detailFlex">
             {channel?.availableTags.length ? (
               channel?.availableTags?.map?.((tag) => (
-                <ForumTags.default key={tag.id} selected={false} tag={tag} />
+                <ForumTags key={tag.id} selected={false} tag={tag} />
               ))
             ) : (
               <NothingButWaumpus />
@@ -284,10 +287,12 @@ export const Tab = ({
   }
 };
 export default React.memo((props: Types.DetailsPopoutProps) => {
-  const {
-    DiscordComponents: { TabBar },
+  const { ChannelItem } = Modules;
+  const { TabBar } = components as Types.DiscordComponents;
+  const ChannelItemIcon = webpack.getFunctionBySource<Types.ChannelItem["ChannelItemIcon"]>(
     ChannelItem,
-  } = Modules;
+    ".iconContainerWithGuildIcon,",
+  );
   const [open, setOpen] = React.useState<string>("general");
   return (
     <Modal.ModalRoot className="shc-details-modal" size="large" {...props}>
@@ -297,7 +302,7 @@ export default React.memo((props: Types.DetailsPopoutProps) => {
             marginTop: 10,
           }}>
           <Flex style={{ alignItems: "center" }}>
-            <ChannelItem.ChannelItemIcon
+            <ChannelItemIcon
               channel={props.channel}
               guild={props.guild}
               original={true}

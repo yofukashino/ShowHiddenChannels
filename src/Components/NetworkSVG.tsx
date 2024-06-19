@@ -71,7 +71,7 @@ export default React.memo((props: object) => {
   return (
     <svg {...props} viewBox={svgToMap.viewBox}>
       {svgToMap.children?.map(([TagName, attributeValue]) => (
-        <TagName {...attributeValue} />
+        <TagName {...attributeValue} fill="currentColor" />
       ))}
     </svg>
   );
