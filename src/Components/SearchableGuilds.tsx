@@ -59,7 +59,7 @@ export default <
           key={Guild.id} // Don't forget to add a unique key
           title={Guild.name}
           note={Guild.description}
-          icon={IconUtils.default.getGuildIconURL(Guild) ?? Utils.getAcronym(Guild.name)}
+          icon={IconUtils.getGuildIconURL(Guild) ?? Utils.getAcronym(Guild.name)}
           {...state}
         />
       ))}
