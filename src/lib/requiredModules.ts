@@ -277,12 +277,9 @@ Modules.loadModules = async (): Promise<void> => {
     webpack.getByStoreName<Types.UserGuildSettingsStore>("UserGuildSettingsStore");
   Modules.GuildChannelStore ??=
     webpack.getByStoreName<Types.GuildChannelStore>("GuildChannelStore");
-  Modules.RTCConnectionStore ??= await webpack.getByStoreName<Types.RTCConnectionStore>(
-    "RTCConnectionStore",
-  );
-  Modules.CategoryStore ??= await webpack.getByStoreName<Types.CategoryStore>(
-    "CategoryCollapseStore",
-  );
+  Modules.RTCConnectionStore ??=
+    webpack.getByStoreName<Types.RTCConnectionStore>("RTCConnectionStore");
+  Modules.CategoryStore ??= webpack.getByStoreName<Types.CategoryStore>("CategoryCollapseStore");
 };
 
 export default Modules;
