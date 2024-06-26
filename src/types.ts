@@ -23,7 +23,7 @@ export namespace Types {
     loaded: boolean;
   }
   export type UserProfile = React.MemoExoticComponent<
-    React.ComponentType<{ user: User; channelId?: string; guildId?: string }>
+    React.ComponentType<{ user: User; currentUser: User; channelId?: string; guildId?: string }>
   >;
   export interface TabBarProps extends React.HTMLAttributes<HTMLDivElement> {
     type: string;

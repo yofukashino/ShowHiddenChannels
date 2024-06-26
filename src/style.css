@@ -137,6 +137,8 @@ shc-detailFlex:not(.shc-generalDetails):not(.shc-nothing-but-waumpus) {
   padding-top: 15px;
   min-height: 315px;
   max-height: 315px;
+  min-width: 768px;
+  max-width: 768px;
 }
 
 .shc-nothing-but-waumpus-img {
@@ -171,7 +173,7 @@ shc-detailFlex:not(.shc-generalDetails):not(.shc-nothing-but-waumpus) {
   top: 0;
   z-index: 1000;
   background: #00000050;
-  width: fit-content;
+  width: min-content;
   text-align: center;
   padding: 5px 10px 5px 10px;
   border-radius: 50px;

@@ -1,4 +1,4 @@
-import { components, React } from "replugged/common";
+import { components,users, React } from "replugged/common";
 import { Clickable, Tooltip } from "replugged/components";
 import Modules from "../lib/requiredModules";
 import Types from "../types";
@@ -19,7 +19,7 @@ export default React.memo(
       <Popout
         renderPopout={(props) =>
           user && UserProfile ? (
-            <UserProfile {...props} user={user} channelId={channelId} guildId={guildId} />
+            <UserProfile {...props} user={user} currentUser={users.getCurrentUser()} channelId={channelId} guildId={guildId} />
           ) : (
             <></>
           )
