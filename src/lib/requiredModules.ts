@@ -260,7 +260,7 @@ Modules.loadModules = async (): Promise<void> => {
   };
 
   Modules.UserProfile ??= await webpack
-    .waitForModule<Types.UserProfile>(webpack.filters.bySource("BiteSizeProfilePopout"), {
+    .waitForModule<Types.UserProfile>(webpack.filters.bySource(".BITE_SIZE,user:"), {
       timeout: 10000,
     })
     .catch(() => {
