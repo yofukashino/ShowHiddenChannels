@@ -20,7 +20,7 @@ importers:
         version: 18.2.31
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.8.0
-        version: 6.8.0(@typescript-eslint/parser@6.8.0)(eslint@8.52.0)(typescript@5.2.2)
+        version: 6.8.0(@typescript-eslint/parser@6.8.0(eslint@8.52.0)(typescript@5.2.2))(eslint@8.52.0)(typescript@5.2.2)
       '@typescript-eslint/parser':
         specifier: ^6.8.0
         version: 6.8.0(eslint@8.52.0)(typescript@5.2.2)
@@ -40,7 +40,7 @@ importers:
         specifier: ^2.8.8
         version: 2.8.8
       replugged:
-        specifier: ^4.7.7
+        specifier: ^4.7.9
         version: 4.7.9(@codemirror/view@6.21.3)(@lezer/common@1.1.0)
       typescript:
         specifier: ^5.0.0
@@ -861,7 +861,6 @@ packages:
 
   eslint-config-dmitmel@https://codeload.github.com/dmitmel/eslint-config-dmitmel/tar.gz/d97129ec35235415c6ae6a42299f55cdbb5d75fd:
     resolution: {tarball: https://codeload.github.com/dmitmel/eslint-config-dmitmel/tar.gz/d97129ec35235415c6ae6a42299f55cdbb5d75fd}
-    name: eslint-config-dmitmel
     version: 8.3.0
     engines: {node: '>=8.10.0'}
     peerDependencies:
@@ -2192,7 +2191,7 @@ snapshots:
 
   '@types/semver@7.5.4': {}
 
-  '@typescript-eslint/eslint-plugin@6.8.0(@typescript-eslint/parser@6.8.0)(eslint@8.52.0)(typescript@5.2.2)':
+  '@typescript-eslint/eslint-plugin@6.8.0(@typescript-eslint/parser@6.8.0(eslint@8.52.0)(typescript@5.2.2))(eslint@8.52.0)(typescript@5.2.2)':
     dependencies:
       '@eslint-community/regexpp': 4.9.1
       '@typescript-eslint/parser': 6.8.0(eslint@8.52.0)(typescript@5.2.2)
@@ -2207,6 +2206,7 @@ snapshots:
       natural-compare: 1.4.0
       semver: 7.5.4
       ts-api-utils: 1.0.3(typescript@5.2.2)
+    optionalDependencies:
       typescript: 5.2.2
     transitivePeerDependencies:
       - supports-color
@@ -2219,6 +2219,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 6.8.0
       debug: 4.3.4
       eslint: 8.52.0
+    optionalDependencies:
       typescript: 5.2.2
     transitivePeerDependencies:
       - supports-color
@@ -2235,6 +2236,7 @@ snapshots:
       debug: 4.3.4
       eslint: 8.52.0
       ts-api-utils: 1.0.3(typescript@5.2.2)
+    optionalDependencies:
       typescript: 5.2.2
     transitivePeerDependencies:
       - supports-color
@@ -2250,6 +2252,7 @@ snapshots:
       is-glob: 4.0.3
       semver: 7.5.4
       ts-api-utils: 1.0.3(typescript@5.2.2)
+    optionalDependencies:
       typescript: 5.2.2
     transitivePeerDependencies:
       - supports-color
@@ -2686,7 +2689,6 @@ snapshots:
   escape-string-regexp@4.0.0: {}
 
   eslint-config-dmitmel@https://codeload.github.com/dmitmel/eslint-config-dmitmel/tar.gz/d97129ec35235415c6ae6a42299f55cdbb5d75fd(eslint@8.52.0):
-    id: eslint-config-dmitmel@https://codeload.github.com/dmitmel/eslint-config-dmitmel/tar.gz/d97129ec35235415c6ae6a42299f55cdbb5d75fd
     dependencies:
       eslint: 8.52.0
 
