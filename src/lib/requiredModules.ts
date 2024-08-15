@@ -44,7 +44,7 @@ Modules.loadModules = async (): Promise<void> => {
     });
 
   Modules.DiscordConstantsModule = await webpack
-    .waitForModule<Types.GenericModule>(webpack.filters.bySource(".MFA_WARNING="), {
+    .waitForModule<Types.GenericModule>(webpack.filters.bySource(".HYPESQUAD=4"), {
       timeout: 10000,
     })
     .catch(() => {
@@ -230,7 +230,7 @@ Modules.loadModules = async (): Promise<void> => {
 
   Modules.ProfileActionsModule ??= await webpack
     .waitForModule<Types.GenericModule>(
-      webpack.filters.bySource("UserProfileModalActionCreators"),
+      webpack.filters.bySource("setFlag: user cannot be undefined"),
       {
         timeout: 10000,
       },
