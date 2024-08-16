@@ -720,9 +720,18 @@ export namespace Types {
     uploadArea: string;
   }
   export interface RolePillClasses {
-    rolePill: string;
-    rolePillBorder: string;
-    roles: string;
+    role: string;
+    roleCircle: string;
+    roleDot: string;
+    roleFlowerStar: string;
+    roleIcon: string;
+    roleName: string;
+    roleNameOverflow: string;
+    roleRemoveButton: string;
+    roleRemoveButtonCanRemove: string;
+    roleRemoveIcon: string;
+    roleRemoveIconFocused: string;
+    roleVerifiedIcon: string;
   }
   export interface ChannelItemClasses {
     channelEmoji: string;

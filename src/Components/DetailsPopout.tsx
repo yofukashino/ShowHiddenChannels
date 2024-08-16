@@ -1,3 +1,4 @@
+import { webpack } from "replugged";
 import {
   React,
   channels as UltimateChannelStore,
@@ -12,7 +13,6 @@ import User from "./User";
 import Modules from "../lib/requiredModules";
 import Utils from "../lib/utils";
 import Types from "../types";
-import { webpack } from "replugged";
 
 export const TabBarItems = ({
   channel,
@@ -225,7 +225,7 @@ export const Tab = ({
                 <RolePill
                   key={role.id}
                   canRemove={false}
-                  className={`${RolePillClasses.rolePill} shc-rolePill`}
+                  className={`${RolePillClasses.role} shc-rolePill`}
                   disableBorderColor={true}
                   guildId={guild.id}
                   onRemove={() => null}
@@ -250,7 +250,7 @@ export const Tab = ({
                 <RolePill
                   key={role.id}
                   canRemove={false}
-                  className={`${RolePillClasses.rolePill} shc-rolePill`}
+                  className={`${RolePillClasses.role} shc-rolePill`}
                   disableBorderColor={true}
                   guildId={guild.id}
                   onRemove={() => null}

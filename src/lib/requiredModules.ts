@@ -12,7 +12,7 @@ Modules.loadModules = async (): Promise<void> => {
     });
 
   Modules.RolePillClasses ??= await webpack
-    .waitForProps<Types.RolePillClasses>(["rolePill", "rolePillBorder"], {
+    .waitForProps<Types.RolePillClasses>(["role", "roleCircle"], {
       timeout: 10000,
     })
     .catch(() => {
