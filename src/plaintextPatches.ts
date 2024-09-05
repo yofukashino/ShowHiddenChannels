@@ -1,6 +1,15 @@
 import Types from "./types";
 export default [
   {
+    find: "[IDENTIFY]",
+    replacements: [
+      {
+        match: /capabilities:\(0,.\..\)\(\)/,
+        replace: () => `capabilities:30717`,
+      },
+    ],
+  },
+  {
     find: "GROUP_DM:return null",
     replacements: [
       {
