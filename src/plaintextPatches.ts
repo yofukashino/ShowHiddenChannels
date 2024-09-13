@@ -4,8 +4,8 @@ export default [
     find: "[IDENTIFY]",
     replacements: [
       {
-        match: /capabilities:\(0,.\..\)\(\)/,
-        replace: () => `capabilities:30717`,
+        match: /capabilities:(\(0,.\..\)\(\))/,
+        replace: (_, intent) => `capabilities:(${intent}&(1<<15))?${intent}&~(1<<15):${intent}`, //30717
       },
     ],
   },
