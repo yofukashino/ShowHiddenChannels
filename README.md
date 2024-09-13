@@ -38,7 +38,7 @@ Install Link:
 - Just make a pull request
 
 ### How Do I support without pull request?
-- You Can Donate on my [ko-fi](https://ko-fi.com/yofukashino) or UPI at `yofukashi.no.singh@fam`
+- You Can Donate on my [ko-fi](https://ko-fi.com/yofukashino) or UPI at `yofukashinooo@oksbi`
 
 [![Buy Me a Coffee at ko-fi.com](https://storage.ko-fi.com/cdn/kofi3.png?v=3)](https://ko-fi.com/yofukashino)
 
