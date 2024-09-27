@@ -5,7 +5,7 @@ export default [
     replacements: [
       {
         match: /capabilities:(\(0,.\..\)\(\))/,
-        replace: (_, intent) => `capabilities:(${intent}&(1<<15))?${intent}&~(1<<15):${intent}`, //30717
+        replace: (prefix) => `${prefix}&~(1<<15)`, //30717
       },
     ],
   },
@@ -20,7 +20,7 @@ export default [
     ],
   },
   {
-    find: '="PermissionStore"',
+    find: ',"PermissionStore"',
     replacements: [
       {
         match:
