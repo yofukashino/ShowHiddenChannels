@@ -136,7 +136,9 @@ export const injectUserGuildSettingsStore = (): void => {
     (args: [string], res: Set<string>) => {
       if (!SettingValues.get("faded", defaultSettings.faded)) return res;
       const HiddenChannelIDs = Utils.getHiddenChannels(args[0]).channels.map((c) => c.id);
-      return new Set([...res, ...HiddenChannelIDs]);
+      const Category =
+        SettingValues.get("sort", defaultSettings.sort) === "extra" ? [`${args[0]}_hidden`] : [];
+      return new Set([...res, ...Category, ...HiddenChannelIDs]);
     },
   );
   PluginInjector.after(
@@ -144,7 +146,13 @@ export const injectUserGuildSettingsStore = (): void => {
     "isChannelMuted",
     (args: [string, string], res: boolean) => {
       const Channel = ChannelStore.getChannel(args[1]);
-      if (!SettingValues.get("faded", defaultSettings.faded) || !Channel?.isHidden()) return res;
+      if (
+        !SettingValues.get("faded", defaultSettings.faded) ||
+        (!Channel?.isHidden() &&
+          (SettingValues.get("sort", defaultSettings.sort) !== "extra" ||
+            !args[1].endsWith("hidden")))
+      )
+        return res;
       return true;
     },
   );
