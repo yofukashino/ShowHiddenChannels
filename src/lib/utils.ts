@@ -191,6 +191,15 @@ export const getHiddenChannelRecord = (
       )
       .filter(Boolean) as Array<[string, Types.ChannelRecord]>;
     category.channels = Object.fromEntries(filteredChannelRecords);
+    if (category.hiddenChannelIds)
+      category.hiddenChannelIds = category.hiddenChannelIds.filter((v) =>
+        filteredChannelRecords.some(([id]) => id == v),
+      );
+
+    if (category.shownChannelIds)
+      category.shownChannelIds = category.shownChannelIds.filter((v) =>
+        filteredChannelRecords.some(([id]) => id == v),
+      );
   }
 
   return { records: Object.fromEntries(hiddenChannelCache[guildId]), ...hiddenChannels };
