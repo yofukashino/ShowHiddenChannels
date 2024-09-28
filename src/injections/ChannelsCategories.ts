@@ -13,6 +13,7 @@ export const injectCategoryStore = (): void => {
       !SettingValues.get("alwaysCollapse", defaultSettings.alwaysCollapse)
     )
       return res;
+
     return SettingValues.get("alwaysCollapse", defaultSettings.alwaysCollapse) && res;
   });
 };
@@ -135,10 +136,13 @@ export const injectChannelListStore = (): void => {
           args[0],
         );
 
+        HiddenCategory.isMuted =
+          SettingValues.get("faded", defaultSettings.faded) || HiddenCategory.isMuted;
         HiddenCategory.channels = Object.fromEntries(
           Object.entries(hiddenChannels.records).map(
             ([id, channel]: [string, Types.ChannelRecord]) => {
               channel.category = HiddenCategory;
+              channel.record.parent_id = hiddenId;
               return [id, channel];
             },
           ),
