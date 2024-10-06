@@ -9,7 +9,7 @@
     "discordID": "1121961711080050780",
     "github": "yofukashino"
   },
-  "version": "1.4.8",
+  "version": "1.4.9",
   "updater": {
     "type": "store",
     "id": "dev.tharki.ShowHiddenChannels"
