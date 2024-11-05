@@ -103,10 +103,9 @@ Modules.loadModules = async (): Promise<void> => {
     });
 
   Modules.ChannelItemUtil ??= await webpack
-    .waitForModule<Types.GenericModule>(
-      webpack.filters.bySource(".Messages.CHANNEL_TOOLTIP_RULES"),
-      { timeout: 10000 },
-    )
+    .waitForModule<Types.GenericModule>(webpack.filters.bySource(".AnnouncementsWarningIcon"), {
+      timeout: 10000,
+    })
     .catch(() => {
       throw new Error("Failed To Find ChannelItemUtils Module");
     });
@@ -158,10 +157,9 @@ Modules.loadModules = async (): Promise<void> => {
     });
 
   Modules.RolePill ??= await webpack
-    .waitForModule<Types.RolePill>(
-      webpack.filters.bySource(".Messages.USER_PROFILE_REMOVE_ROLE,"),
-      { timeout: 10000 },
-    )
+    .waitForModule<Types.RolePill>(webpack.filters.bySource(".roleNameOverflow"), {
+      timeout: 10000,
+    })
     .catch(() => {
       throw new Error("Failed To Find RolePill Module");
     });
@@ -221,7 +219,7 @@ Modules.loadModules = async (): Promise<void> => {
   };
 
   Modules.ForumTagsModule ??= await webpack
-    .waitForModule<Types.GenericModule>(webpack.filters.bySource(".Messages.FORUM_TAGS,"), {
+    .waitForModule<Types.GenericModule>(webpack.filters.bySource("forum-tag"), {
       timeout: 10000,
     })
     .catch(() => {

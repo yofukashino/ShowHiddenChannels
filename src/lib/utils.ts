@@ -206,6 +206,7 @@ export const getHiddenChannelRecord = (
 };
 
 export const forceRerenderElement = (selector: string): void => {
+  try {
   const element = document.querySelector(selector);
 
   if (!element) return;
@@ -218,6 +219,7 @@ export const forceRerenderElement = (selector: string): void => {
   });
 
   ownerInstance.forceUpdate(() => ownerInstance.forceUpdate(() => {}));
+} catch {}
 };
 
 export const rerenderChannels = (): void => {
