@@ -157,7 +157,7 @@ Modules.loadModules = async (): Promise<void> => {
     });
 
   Modules.RolePill ??= await webpack
-    .waitForModule<Types.RolePill>(webpack.filters.bySource(".roleNameOverflow"), {
+    .waitForModule<Types.RolePill>(webpack.filters.bySource(".roleRemoveButton,"), {
       timeout: 10000,
     })
     .catch(() => {
