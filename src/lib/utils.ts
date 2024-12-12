@@ -207,31 +207,35 @@ export const getHiddenChannelRecord = (
 
 export const forceRerenderElement = (selector: string): void => {
   try {
-  const element = document.querySelector(selector);
+    const element = document.querySelector(selector);
 
-  if (!element) return;
+    if (!element) return;
 
-  const ownerInstance = util.getOwnerInstance(element);
+    const ownerInstance = util.getOwnerInstance(element);
 
-  const unpatchRender = PluginInjector.instead(ownerInstance, "render", () => {
-    unpatchRender();
-    return null;
-  });
+    const unpatchRender = PluginInjector.instead(ownerInstance, "render", () => {
+      unpatchRender();
+      return null;
+    });
 
-  ownerInstance.forceUpdate(() => ownerInstance.forceUpdate(() => {}));
-} catch {}
+    ownerInstance.forceUpdate(() => ownerInstance.forceUpdate(() => {}));
+  } catch {}
 };
 
 export const rerenderChannels = (): void => {
-  Modules.PermissionStore?.clearVars();
+  try {
+    Modules.PermissionStore?.clearVars();
 
-  Modules.PermissionStore?.initialize();
+    Modules.PermissionStore?.initialize();
 
-  Modules.ChannelListStore?.clearVars();
+    Modules.ChannelListStore?.clearVars();
 
-  Modules.ChannelListStore?.initialize();
+    Modules.ChannelListStore?.initialize();
 
-  forceRerenderElement(`.${Modules.ChannelListClasses?.container}`);
+    forceRerenderElement(`.${Modules.ChannelListClasses?.container}`);
+  } catch (err) {
+    PluginLogger.error("Error Rerendering the channels", err);
+  }
 };
 
 export default {

@@ -20,7 +20,7 @@ export default [
     ],
   },
   {
-    find: '="PermissionStore"',
+    find: '"PermissionStore"',
     replacements: [
       {
         match:
@@ -31,7 +31,7 @@ export default [
     ],
   },
   {
-    find: '="ChannelListStore"',
+    find: '"ChannelListStore"',
     replacements: [
       {
         match:
