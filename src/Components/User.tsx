@@ -1,4 +1,5 @@
-import { components, users, React } from "replugged/common";
+import { webpack } from "replugged";
+import { React, components, users } from "replugged/common";
 import { Clickable, Tooltip } from "replugged/components";
 import Modules from "../lib/requiredModules";
 import Types from "../types";
@@ -14,7 +15,10 @@ export default React.memo(
     guildId: string;
   }): React.ReactElement => {
     const { UserProfile } = Modules;
-    const { Popout } = components as Types.DiscordComponents;
+    const Popout = webpack.getFunctionBySource<Types.Popout>(
+      components,
+      "Unsupported animation config:",
+    );
     return (
       <Popout
         renderPopout={(props) =>

@@ -74,7 +74,7 @@ export const injectChannelIconLocked = (): void => {
 };
 export const injectChannelItemUtil = (): void => {
   const { ChannelItemUtil } = Modules;
-  const loader = webpack.getFunctionKeyBySource(ChannelItemUtil, ".AnnouncementsWarningIcon");
+  const loader = webpack.getFunctionKeyBySource(ChannelItemUtil, ".ToS;");
   PluginInjector.before(
     ChannelItemUtil,
     loader,

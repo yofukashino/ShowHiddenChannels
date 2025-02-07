@@ -1,5 +1,5 @@
 /* eslint-disable no-undefined */
-import { settings, util } from "replugged";
+import { settings, util, webpack } from "replugged";
 import { React, lodash } from "replugged/common";
 import { PluginInjector, PluginLogger } from "../index";
 import Modules from "./requiredModules";
@@ -238,6 +238,56 @@ export const rerenderChannels = (): void => {
   }
 };
 
+export const unmangleExports = <T>(
+  moduleFilter: Types.DefaultTypes.Filter | Types.DefaultTypes.RawModule,
+  map: Record<string, string | string[] | RegExp | Types.DefaultTypes.AnyFunction>,
+): T => {
+  const getExportKeyFinder = (
+    mapValue: string | string[] | RegExp | Types.DefaultTypes.AnyFunction,
+  ): Types.DefaultTypes.AnyFunction => {
+    if (typeof mapValue === "function") {
+      return (mod: Types.DefaultTypes.RawModule["exports"]) => {
+        return mapValue(mod);
+      };
+    }
+
+    if (Array.isArray(mapValue)) {
+      return (mod: Types.DefaultTypes.RawModule["exports"]) => {
+        if (!isObject(mod)) return "";
+        for (const [k, exported] of Object.entries(mod)) {
+          if (mapValue.every((p) => Object.hasOwnProperty.call(exported, p))) return k;
+        }
+      };
+    }
+
+    return (mod: Types.DefaultTypes.RawModule["exports"]) =>
+      webpack.getFunctionKeyBySource(mod, mapValue as string);
+  };
+
+  const mod: Types.DefaultTypes.RawModule =
+    typeof moduleFilter === "function"
+      ? webpack.getModule(moduleFilter, { raw: true })
+      : moduleFilter;
+
+  if (!mod) return {} as T;
+
+  const unmangled = {} as T;
+
+  for (const key in map) {
+    const findKey = getExportKeyFinder(map[key]);
+    const valueKey = findKey(mod.exports) as string;
+    Object.defineProperty(unmangled, key, {
+      get: () => mod.exports[valueKey],
+      set: (v) => {
+        mod.exports[valueKey] = v;
+      },
+    });
+  }
+
+  // Return the unmangled object
+  return unmangled;
+};
+
 export default {
   ...util,
   capitalizeFirst,
@@ -254,4 +304,5 @@ export default {
   getHiddenChannelRecord,
   forceRerenderElement,
   rerenderChannels,
+  unmangleExports,
 };

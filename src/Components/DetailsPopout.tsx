@@ -21,7 +21,7 @@ export const TabBarItems = ({
   channel: Types.Channel;
 }): React.ReactElement[] => {
   const { DiscordConstants } = Modules;
-  const { TabBar } = components as Types.DiscordComponents;
+  const TabBar = webpack.getFunctionBySource<Types.TabBar>(components, "this.tabBarRef");
   const items = [];
   items.push(
     <TabBar.Item id="general" className={`shc-details-tabbar-item`} key="general" {...props}>
@@ -288,7 +288,7 @@ export const Tab = ({
 };
 export default React.memo((props: Types.DetailsPopoutProps) => {
   const { ChannelItem } = Modules;
-  const { TabBar } = components as Types.DiscordComponents;
+  const TabBar = webpack.getFunctionBySource<Types.TabBar>(components, "this.tabBarRef");
   const ChannelItemIcon = webpack.getFunctionBySource<Types.ChannelItem["ChannelItemIcon"]>(
     ChannelItem,
     ".iconContainerWithGuildIcon,",

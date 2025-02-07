@@ -1,5 +1,6 @@
 import { webpack } from "replugged";
 import Types from "../types";
+import Utils from "./utils";
 export const Modules: Types.Modules = {};
 
 Modules.loadModules = async (): Promise<void> => {
@@ -43,24 +44,20 @@ Modules.loadModules = async (): Promise<void> => {
       throw new Error("Failed To Find IconClasses Module");
     });
 
-  Modules.DiscordConstantsModule = await webpack
-    .waitForModule<Types.GenericModule>(webpack.filters.bySource(".HYPESQUAD=4"), {
+  Modules.DiscordConstants = await webpack
+    .waitForModule<Types.DefaultTypes.RawModule>(webpack.filters.bySource(".HYPESQUAD=4"), {
       timeout: 10000,
+      raw: true,
     })
+    .then((v) =>
+      Utils.unmangleExports<Types.DiscordConstants>(v, {
+        Permissions: ["ADMINISTRATOR", "MANAGE_GUILD"],
+        ChannelTypes: ["GUILD_TEXT", "GUILD_VOICE"],
+      }),
+    )
     .catch(() => {
       throw new Error("Failed To Find DiscordConstants Module");
     });
-
-  Modules.DiscordConstants = {
-    Permissions: webpack.getExportsForProps(Modules.DiscordConstantsModule, [
-      "ADMINISTRATOR",
-      "MANAGE_GUILD",
-    ]),
-    ChannelTypes: webpack.getExportsForProps(Modules.DiscordConstantsModule, [
-      "GUILD_TEXT",
-      "GUILD_VOICE",
-    ]),
-  };
 
   Modules.Route ??= await webpack
     .waitForModule<Types.GenericExport>(
@@ -103,38 +100,30 @@ Modules.loadModules = async (): Promise<void> => {
     });
 
   Modules.ChannelItemUtil ??= await webpack
-    .waitForModule<Types.GenericModule>(webpack.filters.bySource(".AnnouncementsWarningIcon"), {
+    .waitForModule<Types.GenericModule>(webpack.filters.bySource(".ToS;"), {
       timeout: 10000,
     })
     .catch(() => {
       throw new Error("Failed To Find ChannelItemUtils Module");
     });
 
-  Modules.PermissionUtilsModule ??= await webpack
-    .waitForModule<Types.GenericModule>(
+  Modules.PermissionUtils ??= await webpack
+    .waitForModule<Types.DefaultTypes.RawModule>(
       webpack.filters.bySource(".computeLurkerPermissionsAllowList()"),
-      { timeout: 10000 },
+      { timeout: 10000, raw: true },
+    )
+    .then((v) =>
+      Utils.unmangleExports<Types.PermissionUtils>(v, {
+        can: "excludeGuildPermissions:",
+        getGuildVisualOwnerId: ".ownerId",
+        getHighestHoistedRole: ".hoistRoleId?",
+        getHighestRole: ".position).first()",
+        isRoleHigher: /\w+\.indexOf\(\w+\.id\)>/,
+      }),
     )
     .catch(() => {
       throw new Error("Failed To Find PermissionUtils Module");
     });
-
-  Modules.PermissionUtils ??= {
-    can: webpack.getFunctionBySource(Modules.PermissionUtilsModule, "excludeGuildPermissions:"),
-    getGuildVisualOwnerId: webpack.getFunctionBySource(Modules.PermissionUtilsModule, ".ownerId"),
-    getHighestHoistedRole: webpack.getFunctionBySource(
-      Modules.PermissionUtilsModule,
-      ".hoistRoleId?",
-    ),
-    getHighestRole: webpack.getFunctionBySource(
-      Modules.PermissionUtilsModule,
-      ".position).first()",
-    ),
-    isRoleHigher: webpack.getFunctionBySource(
-      Modules.PermissionUtilsModule,
-      /\w+\.indexOf\(\w+\.id\)>/,
-    ),
-  };
 
   Modules.LocaleManager ??= await webpack
     .waitForProps<Types.LocaleManager>(["Messages", "_chosenLocale"], { timeout: 10000 })
@@ -176,30 +165,25 @@ Modules.loadModules = async (): Promise<void> => {
       throw new Error("Failed To Find TextElements Module");
     });
 
-  Modules.RoutingUtilsModule ??= await webpack
-    .waitForModule<Types.GenericModule>(
+  Modules.RoutingUtils ??= await webpack
+    .waitForModule<Types.DefaultTypes.RawModule>(
       webpack.filters.bySource("transitionTo - Transitioning to"),
-      { timeout: 10000 },
+      { timeout: 10000, raw: true },
+    )
+    .then((v) =>
+      Utils.unmangleExports<Types.RoutingUtils>(v, {
+        back: "goBack()",
+        forward: "goForward()",
+        getFingerprintLocation: ".REJECT_IP",
+        isValidFingerprintRoute: ".HANDOFF",
+        replaceWith: "Replacing route with",
+        transitionTo: "transitionTo - Transitioning to",
+        transitionToGuild: "transitionToGuild - Transitioning to",
+      }),
     )
     .catch(() => {
       throw new Error("Failed To Find RoutingUtils Module");
     });
-
-  Modules.RoutingUtils ??= {
-    back: webpack.getFunctionBySource(Modules.RoutingUtilsModule, "goBack()"),
-    forward: webpack.getFunctionBySource(Modules.RoutingUtilsModule, "goForward()"),
-    getFingerprintLocation: webpack.getFunctionBySource(Modules.RoutingUtilsModule, ".REJECT_IP"),
-    isValidFingerprintRoute: webpack.getFunctionBySource(Modules.RoutingUtilsModule, ".HANDOFF"),
-    replaceWith: webpack.getFunctionBySource(Modules.RoutingUtilsModule, "Replacing route with"),
-    transitionTo: webpack.getFunctionBySource(
-      Modules.RoutingUtilsModule,
-      "transitionTo - Transitioning to",
-    ),
-    transitionToGuild: webpack.getFunctionBySource(
-      Modules.RoutingUtilsModule,
-      "transitionToGuild - Transitioning to",
-    ),
-  };
 
   Modules.ChannelUtilsModule ??= await webpack
     .waitForModule<Types.GenericModule>(webpack.filters.bySource(".guildBreadcrumbIcon,"), {
@@ -226,36 +210,26 @@ Modules.loadModules = async (): Promise<void> => {
       throw new Error("Failed To Find ForumTags Module");
     });
 
-  Modules.ProfileActionsModule ??= await webpack
-    .waitForModule<Types.GenericModule>(
+  Modules.ProfileActions ??= await webpack
+    .waitForModule<Types.DefaultTypes.RawModule>(
       webpack.filters.bySource("setFlag: user cannot be undefined"),
       {
         timeout: 10000,
+        raw: true,
       },
+    )
+    .then((v) =>
+      Utils.unmangleExports<Types.ProfileActions>(v, {
+        acceptAgreements: ".USER_ACCEPT_AGREEMENTS",
+        fetchCurrentUser: "CURRENT_USER_UPDATE",
+        fetchProfile: "USER_PROFILE_FETCH_START",
+        getUser: "USER_UPDATE",
+        setFlag: "setFlag: user cannot be undefined",
+      }),
     )
     .catch(() => {
       throw new Error("Failed To Find ProfileActions Module");
     });
-
-  Modules.ProfileActions ??= {
-    acceptAgreements: webpack.getFunctionBySource(
-      Modules.ProfileActionsModule,
-      ".USER_ACCEPT_AGREEMENTS",
-    ),
-    fetchCurrentUser: webpack.getFunctionBySource(
-      Modules.ProfileActionsModule,
-      "CURRENT_USER_UPDATE",
-    ),
-    fetchProfile: webpack.getFunctionBySource(
-      Modules.ProfileActionsModule,
-      "USER_PROFILE_FETCH_START",
-    ),
-    getUser: webpack.getFunctionBySource(Modules.ProfileActionsModule, "USER_UPDATE"),
-    setFlag: webpack.getFunctionBySource(
-      Modules.ProfileActionsModule,
-      "setFlag: user cannot be undefined",
-    ),
-  };
 
   Modules.UserProfile ??= await webpack
     .waitForModule<Types.UserProfile>(webpack.filters.bySource(".BITE_SIZE,user:"), {

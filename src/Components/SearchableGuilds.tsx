@@ -1,4 +1,4 @@
-import { settings } from "replugged";
+import { settings, webpack } from "replugged";
 import { React, components } from "replugged/common";
 import Modules from "../lib/requiredModules";
 import IconSwitch from "./IconSwitch";
@@ -17,9 +17,10 @@ export default <
   path: `${K}.${string}` | K;
 }) => {
   const { GuildStore, IconUtils } = Modules;
-  const {
-    PopoutList: { SearchBar, Divider },
-  } = components as Types.DiscordComponents;
+  const { SearchBar, Divider } = webpack.getExportsForProps<Types.PopoutList>(components, [
+    "SearchBar",
+    "Divider",
+  ]);
   const [searchValue, setSearchValue] = React.useState([]);
   const filteredGuildsWithState = Object.values(GuildStore.getGuilds())
     .map((Guild: Types.Guild) => ({
