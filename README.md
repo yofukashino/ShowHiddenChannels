@@ -38,9 +38,7 @@ Install Link:
 - Just make a pull request
 
 ### How Do I support without pull request?
-- You Can Donate on my [ko-fi](https://ko-fi.com/yofukashino) or UPI at `yofukashinooo@oksbi`
-
-[![Buy Me a Coffee at ko-fi.com](https://storage.ko-fi.com/cdn/kofi3.png?v=3)](https://ko-fi.com/yofukashino)
+- You Can Donate on UPI at `yofukashinooo@oksbi` or Follow me on twitch [@yofukashino_](https://twitch.tv/yofukashino_)
 
 ### Where can I find other plugins by you?
 

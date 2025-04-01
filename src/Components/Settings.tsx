@@ -176,6 +176,11 @@ export const Settings = () => {
       <Category title="Guilds Blacklist" open={false}>
         <SearchableGuilds SettingManager={SettingValues} path="blacklistedGuilds" />
       </Category>
+      {/*   <SwitchItem
+        note="Experimental Bypass for Discord's Experiment 'Private Channel Hiding'."
+        {...Utils.useSetting(SettingValues, "experimental", defaultSettings.experimental)}>
+        Experimental Bypass
+      </SwitchItem> */}
       <ButtonItem
         button="Reload discord"
         onClick={() => {

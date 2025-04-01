@@ -21,4 +21,5 @@ export const defaultSettings = {
   },
   blacklistedGuilds: {},
   collapsed: {},
+  experimental: false,
 };

@@ -11,10 +11,13 @@ import Types from "../types";
 export const injectChannelItem = (): void => {
   const { ChannelButtonClasses, ChannelItem, DiscordConstants, IconClasses, RoutingUtils } =
     Modules;
-  const loader = webpack.getFunctionKeyBySource(ChannelItem, ".ALL_MESSAGES");
+  const ChannelTab = webpack.getExportsForProps<{
+    $$typeof: symbol;
+    render: Types.DefaultTypes.AnyFunction;
+  }>(ChannelItem, ["$$typeof", "render"]);
   PluginInjector.after(
-    ChannelItem,
-    loader,
+    ChannelTab,
+    "render",
     (
       [props]: [{ channel: Types.Channel; connected: boolean }],
       res: React.ReactElement & Types.Tree,

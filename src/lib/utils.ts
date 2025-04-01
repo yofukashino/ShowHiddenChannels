@@ -284,7 +284,6 @@ export const unmangleExports = <T>(
     });
   }
 
-  // Return the unmangled object
   return unmangled;
 };
 

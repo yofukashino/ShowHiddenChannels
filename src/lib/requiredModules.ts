@@ -185,22 +185,24 @@ Modules.loadModules = async (): Promise<void> => {
       throw new Error("Failed To Find RoutingUtils Module");
     });
 
-  Modules.ChannelUtilsModule ??= await webpack
-    .waitForModule<Types.GenericModule>(webpack.filters.bySource(".guildBreadcrumbIcon,"), {
-      timeout: 10000,
-    })
+  Modules.ChannelUtils ??= await webpack
+    .waitForModule<Types.DefaultTypes.RawModule>(
+      webpack.filters.bySource(".guildBreadcrumbIcon,"),
+      {
+        timeout: 10000,
+        raw: true,
+      },
+    )
+    .then((v) =>
+      Utils.unmangleExports<Types.ChannelUtils>(v, {
+        renderTopic: ".GROUP_DM:return null",
+        HeaderGuildBreadcrumb: ".guildBreadcrumbIcon,",
+        renderTitle: ".__invalid_icon,",
+      }),
+    )
     .catch(() => {
       throw new Error("Failed To Find ChannelUtilsModule Module");
     });
-
-  Modules.ChannelUtils ??= {
-    renderTopic: webpack.getFunctionBySource(Modules.ChannelUtilsModule, ".GROUP_DM:return null"),
-    HeaderGuildBreadcrumb: webpack.getFunctionBySource(
-      Modules.ChannelUtilsModule,
-      ".guildBreadcrumbIcon,",
-    ),
-    renderTitle: webpack.getFunctionBySource(Modules.ChannelUtilsModule, ".__invalid_icon,"),
-  };
 
   Modules.ForumTagsModule ??= await webpack
     .waitForModule<Types.GenericModule>(webpack.filters.bySource("forum-tag"), {

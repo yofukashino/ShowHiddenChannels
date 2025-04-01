@@ -1,11 +1,13 @@
 import Types from "./types";
+
 export default [
   {
     find: "[IDENTIFY]",
+    check: () => false,
     replacements: [
       {
         match: /capabilities:(\(0,.\..\)\(\))/,
-        replace: (prefix) => `${prefix}&~(1<<15)`, //30717
+        replace: (prefix) => `${prefix}&~(1<<15)`,
       },
     ],
   },
