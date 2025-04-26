@@ -234,7 +234,7 @@ Modules.loadModules = async (): Promise<void> => {
     });
 
   Modules.UserProfile ??= await webpack
-    .waitForModule<Types.UserProfile>(webpack.filters.bySource(".BITE_SIZE,user:"), {
+    .waitForModule<Types.UserProfile>(webpack.filters.bySource("BotUserProfilePopout"), {
       timeout: 10000,
     })
     .catch(() => {

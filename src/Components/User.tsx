@@ -38,14 +38,16 @@ export default React.memo(
         animation={Popout.Animation.FADE}>
         {({ onClick }: { onClick: Types.DefaultTypes.AnyFunction }) => {
           return (
-            <Tooltip text={user?.globalName ?? user?.username}>
-              <Clickable onClick={onClick}>
-                <img
-                  className="shc-user"
-                  src={user ? user?.getAvatarURL() : "/assets/5d6a5e9d7d77ac29116e.png"}
-                />
-              </Clickable>
-            </Tooltip>
+            <span>
+              <Tooltip text={user?.globalName ?? user?.username}>
+                <Clickable onClick={onClick}>
+                  <img
+                    className="shc-user"
+                    src={user ? user?.getAvatarURL() : "/assets/5d6a5e9d7d77ac29116e.png"}
+                  />
+                </Clickable>
+              </Tooltip>
+            </span>
           );
         }}
       </Popout>
