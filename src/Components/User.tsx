@@ -19,8 +19,10 @@ export default React.memo(
       components,
       "Unsupported animation config:",
     );
+    const userRef = React.useRef();
     return (
       <Popout
+        targetElementRef={userRef}
         renderPopout={(props) =>
           user && UserProfile ? (
             <UserProfile
@@ -38,7 +40,7 @@ export default React.memo(
         animation={Popout.Animation.FADE}>
         {({ onClick }: { onClick: Types.DefaultTypes.AnyFunction }) => {
           return (
-            <span>
+            <span ref={userRef}>
               <Tooltip text={user?.globalName ?? user?.username}>
                 <Clickable onClick={onClick}>
                   <img

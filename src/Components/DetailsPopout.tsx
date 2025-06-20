@@ -170,29 +170,60 @@ export const Tab = ({
           <Flex
             className="shc-detailFlex shc-generalDetails"
             justify={Flex.Justify.AROUND}
-            wrap={Flex.Wrap.WRAP}>
-            <FormItem title="Slowmode">
+            wrap={Flex.Wrap.WRAP}
+            direction={Flex.Direction.VERTICAL}>
+            <FormItem
+              divider={true}
+              noteClassName="shc-generalDetails-notes"
+              note="The time (in seconds) users must wait before sending another message in this text channel"
+              notePosition={"after"}
+              title="Slowmode">
               <Text.Normal>{Utils.convertToHMS(channel.rateLimitPerUser ?? 0)}</Text.Normal>
             </FormItem>
-            <FormItem title="Bitrate">
+            <FormItem
+              divider={true}
+              noteClassName="shc-generalDetails-notes"
+              note="The audio quality of this voice channel, measured in kilobits per second (Kbps)"
+              notePosition={"after"}
+              title="Bitrate">
               <Text.Normal>{`${Number(channel.bitrate) / 1000}`} Kbps</Text.Normal>
             </FormItem>
-            <FormItem title="User Limit">
+            <FormItem
+              divider={true}
+              noteClassName="shc-generalDetails-notes"
+              note="The maximum number of members that can opacity: 0.5;join this voice channel at once, A value of 0 means there's no limit"
+              notePosition={"after"}
+              title="User Limit">
               <Text.Normal>{`${Number(channel.userLimit)}`} Users</Text.Normal>
             </FormItem>
             {channel.lastPinTimestamp && (
-              <FormItem title="Last Message Pinned">
+              <FormItem
+                divider={true}
+                noteClassName="shc-generalDetails-notes"
+                note="The date and time when the last pinned message was added to this channel"
+                notePosition={"after"}
+                title="Last Message Pinned">
                 <Text.Normal>
                   {new Date(channel.lastPinTimestamp).toLocaleString(LocaleManager._chosenLocale)}
                 </Text.Normal>
               </FormItem>
             )}
-            <FormItem title="Parent Category">
+            <FormItem
+              divider={true}
+              noteClassName="shc-generalDetails-notes"
+              note="The category this channel belongs to (like “Voice Channels” or “Text Channels”)"
+              notePosition={"after"}
+              title="Parent Category">
               <Text.Normal>
                 {UltimateChannelStore.getChannel(channel?.parent_id)?.name ?? "None"}
               </Text.Normal>
             </FormItem>
-            <FormItem title="Age Restriction">
+            <FormItem
+              divider={true}
+              noteClassName="shc-generalDetails-notes"
+              note="NSFW channels are hidden behind a warning and require users to confirm they're 18+"
+              notePosition={"after"}
+              title="Age Restriction">
               <Text.Normal>{channel.nsfw ? "18+" : "13+"}</Text.Normal>
             </FormItem>
           </Flex>

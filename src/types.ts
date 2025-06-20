@@ -44,6 +44,7 @@ export namespace Types {
 
   export interface Popout
     extends React.ComponentClass<{
+      targetElementRef: React.Ref<unknown>;
       align?: string;
       renderPopout: DefaultTypes.AnyFunction;
       children: DefaultTypes.AnyFunction;

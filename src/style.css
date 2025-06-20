@@ -14,9 +14,6 @@
   gap: 10px;
   padding-top: 15px;
 }
-.shc-detailFlex.shc-generalDetails {
-  padding-top: 10px;
-}
 
 .shc-detailFlex:not(.shc-generalDetails) {
   justify-content: center;
@@ -25,13 +22,6 @@
   text-align: center;
   flex-wrap: wrap;
   padding-bottom: 15px;
-}
-.shc-generalDetails > * {
-  justify-content: center;
-  margin: 2%;
-  padding-left: 10%;
-  padding-right: 10%;
-  flex-wrap: wrap;
 }
 
 .shc-details-header {
@@ -168,13 +158,41 @@ shc-detailFlex:not(.shc-generalDetails):not(.shc-nothing-but-waumpus) {
   border-radius: 50px;
 }
 
-.shc-details-content-header .shc-generalDetails h2 {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: #00000050;
-  width: min-content;
-  text-align: center;
-  padding: 5px 10px 5px 10px;
-  border-radius: 50px;
+.shc-details-content-header .shc-generalDetails {
+  margin-right: 8px;
+}
+
+.shc-details-content-header .shc-generalDetails > div,
+.shc-details-content-header .shc-generalDetails > div > div {
+  display: flex;
+  flex-flow: wrap;
+  justify-content: space-between;
+  width: 100%;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.shc-details-content-header .shc-generalDetails > div > div[class^="divider"],
+.shc-details-content-header .shc-generalDetails > div > div > div[class^="divider"] {
+  margin-top: 10px;
+  opacity: 0.5;
+  margin-bottom: 5px;
+}
+
+.shc-details-content-header .shc-generalDetails > div > h2,
+.shc-details-content-header .shc-generalDetails > div > div > h2 {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.shc-details-content-header .shc-generalDetails > div > span,
+.shc-details-content-header .shc-generalDetails > div > div > span {
+  font-size: 18px;
+  font-weight: 500;
+  font-variant: all-small-caps;
+}
+
+.shc-generalDetails-notes {
+  width: 100%;
+  text-align: justify;
 }
