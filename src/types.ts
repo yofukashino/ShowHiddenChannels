@@ -1,13 +1,13 @@
 import { types } from "replugged";
 import GeneralDiscordTypes from "discord-types/general";
 import type { Store as StoreType } from "replugged/dist/renderer/modules/common/flux";
-import { ContextMenuProps } from "replugged/dist/renderer/modules/components/ContextMenu";
+import { ContextMenuType } from "replugged/dist/renderer/modules/components/ContextMenu";
 import { components } from "replugged/common";
 import util from "replugged/util";
 
 export namespace Types {
   export import DefaultTypes = types;
-  export type MenuProps = ContextMenuProps["ContextMenu"];
+  export type MenuProps = React.ComponentProps<ContextMenuType["ContextMenu"]>;
   export type Tree = util.Tree;
   export type Store = StoreType;
   export type OriginalChannel = GeneralDiscordTypes.Channel;
