@@ -159,12 +159,6 @@ Modules.loadModules = async (): Promise<void> => {
       throw new Error("Failed To Find MessageActions Module");
     });
 
-  Modules.TextElement ??= await webpack
-    .waitForModule<Types.TextElement>(webpack.filters.bySource("CUSTOM:null"), { timeout: 10000 })
-    .catch(() => {
-      throw new Error("Failed To Find TextElements Module");
-    });
-
   Modules.RoutingUtils ??= await webpack
     .waitForModule<Types.DefaultTypes.RawModule>(
       webpack.filters.bySource("transitionTo - Transitioning to"),

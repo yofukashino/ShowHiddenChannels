@@ -1,5 +1,5 @@
 import { modal as ModalActions, React } from "replugged/common";
-import { Button } from "replugged/components";
+import { Button, Text } from "replugged/components";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
 import DetailsPopout from "./DetailsPopout";
@@ -11,7 +11,7 @@ export default React.memo((props: Types.LockscreenProps) => {
   if (SettingValues.get("debugMode", defaultSettings.debugMode)) {
     PluginLogger.log("LockScreen Props", props);
   }
-  const { ChannelUtils, TextElement } = Modules;
+  const { ChannelUtils } = Modules;
   const [imgSrc, setImgSrc] = React.useState<string>("");
 
   const setImgSrcFromSettings = (): void => {
@@ -53,30 +53,29 @@ export default React.memo((props: Types.LockscreenProps) => {
         }}
         src={imgSrc}
       />
-      <TextElement
-        color={TextElement.Colors.HEADER_PRIMARY}
-        size={TextElement.Sizes.SIZE_32}
+      <Text
+        color="header-primary"
+        variant="heading-xxl/bold"
         style={{
           marginTop: 20,
-          fontWeight: "bold",
         }}>
         This is a hidden channel.
-      </TextElement>
-      <TextElement
-        color={TextElement.Colors.HEADER_SECONDARY}
-        size={TextElement.Sizes.SIZE_16}
+      </Text>
+      <Text
+        color="header-secondary"
+        variant="heading-md/normal"
         style={{
           marginTop: 10,
         }}>
         You cannot see the contents of this channel.
         {props.channel.topic &&
           ` However, you may see its ${props.channel.type !== 15 ? "topic" : "guidelines"}.`}
-      </TextElement>
+      </Text>
       {props.channel.topic && props.guild && ChannelUtils?.renderTopic(props.channel, props.guild)}
       {props.channel.lastMessageId && (
-        <TextElement color={TextElement.Colors.INTERACTIVE_NORMAL} size={TextElement.Sizes.SIZE_14}>
+        <Text color="interactive-normal" variant="heading-sm/normal">
           Last message sent: {Utils.getDateFromSnowflake(props.channel.lastMessageId)}
-        </TextElement>
+        </Text>
       )}
       <Button
         look={Button.Looks.OUTLINED}
