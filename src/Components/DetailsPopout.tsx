@@ -70,7 +70,7 @@ export const Tab = ({
   const {
     DiscordConstants,
     GuildMemberStore,
-    GuildStore,
+    GuildRoleStore,
     PermissionUtils,
     ProfileActions,
     RolePill,
@@ -101,7 +101,7 @@ export const Tab = ({
     );
 
     const channelRoles = roleOverwrites.reduce((acc, role) => {
-      const roleObj = GuildStore.getRole(guild.id, role.id);
+      const roleObj = GuildRoleStore.getRole(guild.id, role.id);
       const hasAdmin = roleObj.permissions
         .toString()
         .includes(DiscordConstants.Permissions.ADMINISTRATOR.toString());
@@ -122,7 +122,7 @@ export const Tab = ({
     setChannelSpecificRole(channelRoles);
 
     if (showAdmin !== "false") {
-      const adminRoles = Object.values(GuildStore.getRoles(guild.id)).filter((role) => {
+      const adminRoles = Object.values(GuildRoleStore.getRoles(guild.id)).filter((role) => {
         const isAdmin = role.permissions
           .toString()
           .includes(DiscordConstants.Permissions.ADMINISTRATOR.toString());

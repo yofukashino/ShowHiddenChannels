@@ -306,6 +306,10 @@ export namespace Types {
     getGuild: (guildId: string) => Guild;
     getGuildCount: DefaultTypes.AnyFunction;
     getGuilds: DefaultTypes.AnyFunction;
+    isLoaded: DefaultTypes.AnyFunction;
+  }
+  export interface GuildRoleStore extends Store {
+    getAllGuildsRoles: DefaultTypes.AnyFunction;
     getRole: (guildId: string, roleId: string) => Role;
     getRoles: (guildId: string) => Role[];
     isLoaded: DefaultTypes.AnyFunction;
@@ -996,6 +1000,7 @@ export namespace Types {
     IconClasses?: IconClasses;
     ReadStateStore?: ReadStateStore;
     RTCConnectionStore?: RTCConnectionStore;
+    GuildRoleStore?: GuildRoleStore;
     GuildStore?: GuildStore;
     RolePill?: RolePill;
     MessageActions?: MessageActions;

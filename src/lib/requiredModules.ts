@@ -245,6 +245,7 @@ Modules.loadModules = async (): Promise<void> => {
   Modules.ChannelListStore ??= webpack.getByStoreName<Types.ChannelListStore>("ChannelListStore");
   Modules.ReadStateStore ??= webpack.getByStoreName<Types.ReadStateStore>("ReadStateStore");
   Modules.GuildStore ??= webpack.getByStoreName<Types.GuildStore>("GuildStore");
+  Modules.GuildRoleStore ??= webpack.getByStoreName<Types.GuildRoleStore>("GuildRoleStore");
   Modules.GuildMemberStore ??= webpack.getByStoreName<Types.GuildMemberStore>("GuildMemberStore");
   Modules.ChannelStore ??= webpack.getByStoreName<Types.ChannelStore>("ChannelStore");
   Modules.UserGuildSettingsStore ??=
