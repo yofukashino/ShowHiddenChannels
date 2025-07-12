@@ -1,7 +1,7 @@
 import Types from "./types";
 
 export default [
-  {
+  /*   {
     find: "[IDENTIFY]",
     check: () => false,
     replacements: [
@@ -10,7 +10,7 @@ export default [
         replace: (prefix) => `${prefix}&~(1<<15)`,
       },
     ],
-  },
+  }, */
   {
     find: "GROUP_DM:return null",
     replacements: [
@@ -26,7 +26,7 @@ export default [
     replacements: [
       {
         match:
-          /(getChannelsVersion\(\){return \w+})(}function \w+(\(\){\w+={},\w+={},\w+={},\w+=0}))/,
+          /(getChannelsVersion\(\){return \w+})(}function [\w$]+(\(\){\w+={},\w+={},\w+={},\w+=0}))/,
         replace: (_: string, prefix: string, suffix: string, logic: string): string =>
           `${prefix}clearVars${logic}${suffix}`,
       },
