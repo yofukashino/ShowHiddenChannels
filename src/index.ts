@@ -3,7 +3,7 @@ import { defaultSettings } from "./lib/consts";
 import "./style.css";
 export const PluginInjector = new Injector();
 export const { utils: PluginInjectorUtils } = PluginInjector;
-export const PluginLogger = Logger.plugin("ShowHiddenChannels", "#b380ff");
+export const PluginLogger = Logger.plugin("ShowHiddenChannels", "#ffffff80");
 export const SettingValues = settings.init("dev.tharki.ShowHiddenChannels", defaultSettings);
 import Settings from "./Components/Settings";
 import Injections from "./injections/index";

@@ -1,5 +1,5 @@
 import { settings, webpack } from "replugged";
-import { React, components } from "replugged/common";
+import { React, guilds as UltimateGuildStore, components } from "replugged/common";
 import Modules from "../lib/requiredModules";
 import IconSwitch from "./IconSwitch";
 import Utils from "../lib/utils";
@@ -16,13 +16,13 @@ export default <
   SettingManager: settings.SettingsManager<T, D>;
   path: `${K}.${string}` | K;
 }) => {
-  const { GuildStore, IconUtils } = Modules;
+  const { IconUtils } = Modules;
   const { SearchBar, Divider } = webpack.getExportsForProps<Types.PopoutList>(components, [
     "SearchBar",
     "Divider",
   ]);
   const [searchValue, setSearchValue] = React.useState([]);
-  const filteredGuildsWithState = Object.values(GuildStore.getGuilds())
+  const filteredGuildsWithState = Object.values(UltimateGuildStore.getGuilds())
     .map((Guild: Types.Guild) => ({
       Guild,
       ...(Utils.useSetting(SettingManager, `${path}.${Guild.id}`, false as never) as {

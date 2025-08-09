@@ -2,6 +2,7 @@ import { webpack } from "replugged";
 import {
   React,
   channels as UltimateChannelStore,
+  guilds as UltimateGuildStore,
   users as UltimateUserStore,
   components,
 } from "replugged/common";
@@ -70,7 +71,6 @@ export const Tab = ({
   const {
     DiscordConstants,
     GuildMemberStore,
-    GuildRoleStore,
     PermissionUtils,
     ProfileActions,
     RolePill,
@@ -101,7 +101,7 @@ export const Tab = ({
     );
 
     const channelRoles = roleOverwrites.reduce((acc, role) => {
-      const roleObj = GuildRoleStore.getRole(guild.id, role.id);
+      const roleObj = UltimateGuildStore.getRole(guild.id, role.id);
       const hasAdmin = roleObj.permissions
         .toString()
         .includes(DiscordConstants.Permissions.ADMINISTRATOR.toString());
@@ -122,15 +122,17 @@ export const Tab = ({
     setChannelSpecificRole(channelRoles);
 
     if (showAdmin !== "false") {
-      const adminRoles = Object.values(GuildRoleStore.getRoles(guild.id)).filter((role) => {
-        const isAdmin = role.permissions
-          .toString()
-          .includes(DiscordConstants.Permissions.ADMINISTRATOR.toString());
-        const showInclude = showAdmin === "include";
-        const showExclude = showAdmin === "exclude" && !role.tags?.bot_id;
+      const adminRoles = Object.values(UltimateGuildStore.getRolesSnapshot(guild.id)).filter(
+        (role) => {
+          const isAdmin = role.permissions
+            .toString()
+            .includes(DiscordConstants.Permissions.ADMINISTRATOR.toString());
+          const showInclude = showAdmin === "include";
+          const showExclude = showAdmin === "exclude" && !role.tags?.bot_id;
 
-        return isAdmin && (showInclude || showExclude);
-      });
+          return isAdmin && (showInclude || showExclude);
+        },
+      );
 
       setAdminRole(adminRoles);
     }

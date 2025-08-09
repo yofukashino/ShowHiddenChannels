@@ -22,6 +22,7 @@ export const applyInjections = async (): Promise<void> => {
       PluginLogger.log(ModuleName, Modules[ModuleName]);
     }
   }
+
   injectChannel();
   injectChannelCategories();
   injectMessageAPI();
@@ -31,6 +32,7 @@ export const applyInjections = async (): Promise<void> => {
   injectGuildContextMenu();
   injectSettingSetter();
   Utils.rerenderChannels();
+  throw Error("test");
 };
 
 export const removeInjections = (): void => {

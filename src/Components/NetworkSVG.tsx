@@ -2,7 +2,7 @@ import { React } from "replugged/common";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
 import Utils from "../lib/utils";
-export default React.memo((props: object) => {
+export default React.memo((props: Partial<React.HTMLAttributes<SVGElement>>) => {
   const [svgToMap, setSvgToMap] = React.useState<{
     viewBox?: string;
     children?: Array<

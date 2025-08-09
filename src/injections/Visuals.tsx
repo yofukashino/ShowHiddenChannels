@@ -1,4 +1,5 @@
 import { webpack } from "replugged";
+import { guilds as UltimateGuildStore } from "replugged/common";
 import { ErrorBoundary, Tooltip } from "replugged/components";
 import { PluginInjector, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
@@ -35,6 +36,7 @@ export const injectChannelItem = (): void => {
         (m: React.ReactElement & Types.Tree) =>
           m?.props?.onClick?.toString().includes("stopPropagation") && m.type === "div",
       ) as React.ReactElement & Types.Tree;
+
       if (children?.props?.children)
         children.props.children = [
           <Tooltip
@@ -162,7 +164,7 @@ export const injectUserGuildSettingsStore = (): void => {
 };
 
 export const injectRoute = (): void => {
-  const { ChannelStore, GuildStore, Route, RTCConnectionStore } = Modules;
+  const { ChannelStore, Route, RTCConnectionStore } = Modules;
   const loader = webpack.getFunctionKeyBySource(Route, "ImpressionTypes.PAGE");
   PluginInjector.before(Route, loader, (args: [Types.RouteArgs]) => {
     const channelId = args[0]?.computedMatch?.params?.channelId;
@@ -171,14 +173,14 @@ export const injectRoute = (): void => {
     if (guildId && channel?.isHidden?.() && channel?.id !== RTCConnectionStore.getChannelId())
       args[0].render = () => (
         <ErrorBoundary>
-          <Lockscreen channel={channel} guild={GuildStore.getGuild(guildId)} />
+          <Lockscreen channel={channel} guild={UltimateGuildStore.getGuild(guildId)} />
         </ErrorBoundary>
       );
     return args;
   });
 };
 export const injectSidebarChatContent = (): void => {
-  const { ChatContent, GuildStore, RTCConnectionStore } = Modules;
+  const { ChatContent, RTCConnectionStore } = Modules;
   PluginInjector.after(ChatContent, "type", ([{ channel, chatInputType, guild }], res) => {
     if (
       !channel?.isHidden() ||
@@ -188,7 +190,7 @@ export const injectSidebarChatContent = (): void => {
       return res;
     return (
       <ErrorBoundary>
-        <Lockscreen channel={channel} guild={GuildStore.getGuild(guild.id)} />
+        <Lockscreen channel={channel} guild={UltimateGuildStore.getGuild(guild.id)} />
       </ErrorBoundary>
     );
   });
