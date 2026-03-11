@@ -18,8 +18,6 @@ const mod = await webpack
     throw new Error("Failed To Find ProfileActions Module");
   });
 
-console.log(mod);
-
 export default {
   acceptAgreements: webpack.getFunctionBySource(mod, ".USER_ACCEPT_AGREEMENTS"),
   fetchCurrentUser: webpack.getFunctionBySource(mod, "CURRENT_USER_UPDATE"),
