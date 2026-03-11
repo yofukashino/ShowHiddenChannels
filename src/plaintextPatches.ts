@@ -1,4 +1,4 @@
-import Types from "./types";
+import type Types from "@Types";
 
 export default [
   /*   {
@@ -46,6 +46,26 @@ export default [
           var3: string,
           suffix: string,
         ) => `${prefix}clearVars(){${var1}=null;${var2}=null;${var3}.clear();};${suffix}`,
+      },
+    ],
+  },
+  {
+    find: '"GuildChannelStore"',
+    replacements: [
+      {
+        match: /getAllGuilds\(\){return (\i)}/,
+        replace: (prefix: string, variable: string): string =>
+          `${prefix}clearVars(){${variable}={}}`,
+      },
+    ],
+  },
+  {
+    find: '"GuildCategoryStore"',
+    replacements: [
+      {
+        match: /(function \i\(\i\){return (\i)\[\i\]\?\?\i\(\i\)}.{100,175})(getCategories\(\i\){)/,
+        replace: (_: string, prefix: string, variable: string, suffix: string): string =>
+          `${prefix}clearVars(){${variable}={}}${suffix}`,
       },
     ],
   },

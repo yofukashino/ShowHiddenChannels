@@ -1,21 +1,31 @@
-import { modal as ModalActions, React } from "replugged/common";
+import { React, channels, guilds, modal } from "replugged/common";
 import { Button, Text } from "replugged/components";
-import { PluginLogger, SettingValues } from "../index";
-import { defaultSettings } from "../lib/consts";
-import DetailsPopout from "./DetailsPopout";
-import Modules from "../lib/requiredModules";
-import Utils from "../lib/utils";
-import Types from "../types";
+import { PluginLogger, SettingValues } from "@this";
+import { DefaultSettings } from "@Consts";
+import { ChannelUtils } from "@lib/RequiredModules";
+import DetailsPopout from "@components/DetailsPopout";
+import Utils from "@Utils";
 
-export default React.memo((props: Types.LockscreenProps) => {
-  if (SettingValues.get("debugMode", defaultSettings.debugMode)) {
-    PluginLogger.log("LockScreen Props", props);
-  }
-  const { ChannelUtils } = Modules;
+import "./Lockscreen.css";
+
+export default React.memo(({ guildId, channelId }: { guildId: string; channelId: string }) => {
+  const debugMode = SettingValues.useValue("debugMode", DefaultSettings.debugMode);
+  const hiddenChannelImg = SettingValues.useValue(
+    "hiddenChannelImg",
+    DefaultSettings.hiddenChannelImg,
+  );
+  const customHiddenChannelImg = SettingValues.useValue(
+    "customHiddenChannelImg",
+    DefaultSettings.customHiddenChannelImg,
+  );
+  const channel = channels.getChannel(channelId);
+  const guild = guilds.getGuild(guildId);
+  if (debugMode) PluginLogger.log("LockScreen Props", { guildId, channelId });
+
   const [imgSrc, setImgSrc] = React.useState<string>("");
 
   const setImgSrcFromSettings = (): void => {
-    switch (SettingValues.get("hiddenChannelImg", defaultSettings.hiddenChannelImg)) {
+    switch (hiddenChannelImg) {
       case "eye": {
         setImgSrc("/assets/5de724e7e966b4897f5d.svg");
         break;
@@ -25,9 +35,7 @@ export default React.memo((props: Types.LockscreenProps) => {
         break;
       }
       case "custom": {
-        setImgSrc(
-          SettingValues.get("customHiddenChannelImg", defaultSettings.customHiddenChannelImg),
-        );
+        setImgSrc(customHiddenChannelImg);
         break;
       }
       case "none": {
@@ -38,12 +46,7 @@ export default React.memo((props: Types.LockscreenProps) => {
   };
   React.useEffect(() => {
     setImgSrcFromSettings();
-  }, [
-    props.channel.id,
-    props.guild.id,
-    SettingValues.get("customHiddenChannelImg"),
-    SettingValues.get("hiddenChannelImg"),
-  ]);
+  }, [customHiddenChannelImg, hiddenChannelImg]);
 
   return (
     <div className="shc-hidden-notice">
@@ -54,7 +57,7 @@ export default React.memo((props: Types.LockscreenProps) => {
         src={imgSrc}
       />
       <Text
-        color="header-primary"
+        color="text-strong"
         variant="heading-xxl/bold"
         style={{
           marginTop: 20,
@@ -62,26 +65,28 @@ export default React.memo((props: Types.LockscreenProps) => {
         This is a hidden channel.
       </Text>
       <Text
-        color="header-secondary"
+        color="text-muted"
         variant="heading-md/normal"
         style={{
           marginTop: 10,
         }}>
         You cannot see the contents of this channel.
-        {props.channel.topic &&
-          ` However, you may see its ${props.channel.type !== 15 ? "topic" : "guidelines"}.`}
+        {channel.topic &&
+          ` However, you may see its ${channel.type !== 15 ? "topic" : "guidelines"}.`}
       </Text>
-      {props.channel.topic && props.guild && ChannelUtils?.renderTopic(props.channel, props.guild)}
-      {props.channel.lastMessageId && (
+      {channel.topic && guild && ChannelUtils?.renderTopic(channel, guild)}
+      {channel.lastMessageId && (
         <Text color="interactive-normal" variant="heading-sm/normal">
-          Last message sent: {Utils.getDateFromSnowflake(props.channel.lastMessageId)}
+          Last message sent: {Utils.getDateFromSnowflake(channel.lastMessageId)}
         </Text>
       )}
       <Button
         look={Button.Looks.OUTLINED}
         color={Button.Colors.TRANSPARENT}
         style={{ marginTop: "18px" }}
-        onClick={() => ModalActions.openModal((modal) => <DetailsPopout {...props} {...modal} />)}>
+        onClick={() =>
+          modal.openModal((modal) => <DetailsPopout channel={channel} guild={guild} {...modal} />)
+        }>
         More Details
       </Button>
     </div>

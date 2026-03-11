@@ -1,16 +1,22 @@
 import { Injector, Logger, settings } from "replugged";
-import { defaultSettings } from "./lib/consts";
+import { DefaultSettings } from "@Consts";
+import Injections from "@Injections";
+import Settings from "@components/Settings";
+import Types from "@Types";
+
 import "./style.css";
+
 export const PluginInjector = new Injector();
 export const { utils: PluginInjectorUtils } = PluginInjector;
 export const PluginLogger = Logger.plugin("ShowHiddenChannels", "#ffffff80");
-export const SettingValues = settings.init("dev.tharki.ShowHiddenChannels", defaultSettings);
-import Settings from "./Components/Settings";
-import Injections from "./injections/index";
+export const SettingValues = settings.init<Types.Settings>(
+  "dev.tharki.ShowHiddenChannels",
+  DefaultSettings,
+);
 
 export const start = (): void => {
   Settings.registerSettings();
-  void Injections.applyInjections().catch((err) => PluginLogger.error(err));
+  void Injections.applyInjections().catch((err: unknown) => PluginLogger.error(err));
 };
 
 export const stop = (): void => {
@@ -18,4 +24,4 @@ export const stop = (): void => {
   Injections.removeInjections();
 };
 
-export { Settings } from "./Components/Settings";
+export { Settings } from "@components/Settings";

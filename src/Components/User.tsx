@@ -1,8 +1,8 @@
 import { webpack } from "replugged";
 import { React, components, users } from "replugged/common";
 import { Clickable, Tooltip } from "replugged/components";
-import Modules from "../lib/requiredModules";
-import Types from "../types";
+import { UserProfile } from "@lib/RequiredModules";
+import Types from "@Types";
 
 export default React.memo(
   ({
@@ -14,7 +14,6 @@ export default React.memo(
     channelId: string;
     guildId: string;
   }): React.ReactElement => {
-    const { UserProfile } = Modules;
     const Popout = webpack.getFunctionBySource<Types.Popout>(
       components,
       "Unsupported animation config:",
@@ -25,7 +24,7 @@ export default React.memo(
         targetElementRef={userRef}
         renderPopout={(props) =>
           user && UserProfile ? (
-            <UserProfile
+            <UserProfile.Popout
               {...props}
               user={user}
               currentUser={users.getCurrentUser()}

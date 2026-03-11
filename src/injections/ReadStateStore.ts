@@ -1,45 +1,33 @@
-import { PluginInjector, SettingValues } from "../index";
-import Modules from "../lib/requiredModules";
-import { defaultSettings } from "../lib/consts";
+import { PluginInjector, SettingValues } from "@this";
+import { ReadStateStore } from "@lib/RequiredModules";
+import { DefaultSettings } from "@Consts";
+import Utils from "@Utils";
 
-export default (): void => {
-  const { ChannelStore, ReadStateStore } = Modules;
-  PluginInjector.after(ReadStateStore, "getGuildChannelUnreadState", (args, res) =>
-    args[0]?.isHidden?.() &&
-    !SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)
-      ? { mentionCount: 0, unread: false }
-      : res,
-  );
+const getStopMarkingRead = (): boolean =>
+  SettingValues.get("stopMarkingUnread", DefaultSettings.stopMarkingUnread);
 
-  PluginInjector.after(ReadStateStore, "getMentionCount", (args, res) =>
-    ChannelStore.getChannel(args[0])?.isHidden?.() &&
-    !SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)
-      ? 0
-      : res,
-  );
+PluginInjector.after(ReadStateStore, "getGuildChannelUnreadState", ([channel], res) =>
+  Utils.isHidden(channel.id, channel) && !getStopMarkingRead()
+    ? { mentionCount: 0, unread: false }
+    : res,
+);
 
-  PluginInjector.after(ReadStateStore, "getUnreadCount", (args, res) =>
-    ChannelStore.getChannel(args[0])?.isHidden?.() &&
-    !SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)
-      ? 0
-      : res,
-  );
+PluginInjector.after(ReadStateStore, "getMentionCount", ([channelId], res) =>
+  Utils.isHidden(channelId) && !getStopMarkingRead() ? 0 : res,
+);
 
-  PluginInjector.after(ReadStateStore, "hasTrackedUnread", (args, res) =>
-    SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)
-      ? res
-      : res && !ChannelStore.getChannel(args[0])?.isHidden?.(),
-  );
+PluginInjector.after(ReadStateStore, "getUnreadCount", ([channelId], res) =>
+  Utils.isHidden(channelId) && !getStopMarkingRead() ? 0 : res,
+);
 
-  PluginInjector.after(ReadStateStore, "hasUnread", (args, res) =>
-    SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)
-      ? res
-      : res && !ChannelStore.getChannel(args[0])?.isHidden?.(),
-  );
+PluginInjector.after(ReadStateStore, "hasTrackedUnread", ([channelId], res) =>
+  getStopMarkingRead() ? res : res && !Utils.isHidden(channelId),
+);
 
-  PluginInjector.after(ReadStateStore, "hasUnreadPins", (args, res) =>
-    SettingValues.get("stopMarkingUnread", defaultSettings.stopMarkingUnread)
-      ? res
-      : res && !ChannelStore.getChannel(args[0])?.isHidden?.(),
-  );
-};
+PluginInjector.after(ReadStateStore, "hasUnread", ([channelId], res) =>
+  getStopMarkingRead() ? res : res && !Utils.isHidden(channelId),
+);
+
+PluginInjector.after(ReadStateStore, "hasUnreadPins", ([channelId], res) =>
+  getStopMarkingRead() ? res : res && !Utils.isHidden(channelId),
+);

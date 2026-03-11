@@ -1,13 +1,17 @@
-import { PluginInjectorUtils } from "../index";
-import ContextMenuEntry from "../Components/MenuItem";
-import Types from "../types";
-export default (): void => {
-  PluginInjectorUtils.addMenuItem(
-    Types.DefaultTypes.ContextMenuTypes.GuildContext,
-    ContextMenuEntry,
-  );
-  PluginInjectorUtils.addMenuItem(
-    Types.DefaultTypes.ContextMenuTypes.GuildHeaderPopout,
-    ContextMenuEntry,
-  );
-};
+import { PluginInjectorUtils } from "@this";
+import ContextMenuEntry from "@components/MenuItem";
+import Types from "@Types";
+
+PluginInjectorUtils.addMenuItem(
+  Types.DefaultTypes.ContextMenuTypes.GuildContext,
+  ContextMenuEntry.Item,
+  ContextMenuEntry.GroupIndex,
+  ContextMenuEntry.ItemIndex,
+);
+
+PluginInjectorUtils.addMenuItem(
+  Types.DefaultTypes.ContextMenuTypes.GuildHeaderPopout,
+  ContextMenuEntry.Item,
+  ContextMenuEntry.GroupIndex,
+  ContextMenuEntry.ItemIndex,
+);

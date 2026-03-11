@@ -1,19 +1,248 @@
 import { webpack } from "replugged";
+import { React, channels, constants, guilds, i18n, users } from "replugged/common";
 import {
-  React,
-  channels as UltimateChannelStore,
-  guilds as UltimateGuildStore,
-  users as UltimateUserStore,
-  components,
-} from "replugged/common";
-import { ErrorBoundary, Flex, FormItem, Modal, Text } from "replugged/components";
-import { SettingValues } from "../index";
-import { defaultSettings } from "../lib/consts";
-import NothingButWaumpus from "./NothingButWaumpus";
-import User from "./User";
-import Modules from "../lib/requiredModules";
-import Utils from "../lib/utils";
-import Types from "../types";
+  ErrorBoundary,
+  Field,
+  Flex,
+  Loader,
+  Modal,
+  Stack,
+  TabBar,
+  Text,
+} from "replugged/components";
+import { SettingValues } from "@this";
+import { DefaultSettings } from "@Consts";
+import {
+  ChannelItem,
+  ForumTags,
+  GuildMemberStore,
+  PermissionUtils,
+  ProfileActions,
+  RolePill,
+  RolePillClasses,
+} from "@lib/RequiredModules";
+import Utils from "@Utils";
+import NothingButWaumpus from "@components/NothingButWaumpus";
+import User from "@components/User";
+
+import type Types from "@Types";
+import type { ChannelItemIcon } from "@lib/RequiredModules/ChannelItem";
+
+import "./DetailsPopout.css";
+
+const { ChannelTypes, Permissions } = constants;
+
+const TabTypes = {
+  GENERAL: "general",
+  USERS: "users",
+  CHANNEL: "channel",
+  ADMIN: "admin",
+  FORUM: "forum",
+};
+
+export const GeneralTab = ({ channel }: { channel: Types.Channel }): React.ReactElement => {
+  return (
+    <Stack gap={24}>
+      <Field
+        layout="horizontal"
+        description="The time (in seconds) users must wait before sending another message in this text channel"
+        label="Slowmode">
+        <Text.Normal>{Utils.convertToHMS(channel.rateLimitPerUser ?? 0)}</Text.Normal>
+      </Field>
+      <Field
+        layout="horizontal"
+        description="The audio quality of this voice channel, measured in kilobits per second (Kbps)"
+        label="Bitrate">
+        <Text.Normal>{`${channel.bitrate / 1000}`} Kbps</Text.Normal>
+      </Field>
+      <Field
+        layout="horizontal"
+        description="The maximum number of members that can opacity: 0.5;join this voice channel at once, A value of 0 means there's no limit"
+        label="User Limit">
+        <Text.Normal>{`${channel.userLimit}`} Users</Text.Normal>
+      </Field>
+      {channel.lastPinTimestamp && (
+        <Field
+          layout="horizontal"
+          description="The date and time when the last pinned message was added to this channel"
+          label="Last Message Pinned">
+          <Text.Normal>
+            {new Date(channel.lastPinTimestamp).toLocaleString(i18n.intl.currentLocale as string)}
+          </Text.Normal>
+        </Field>
+      )}
+      <Field
+        layout="horizontal"
+        description="The category this channel belongs to (like “Voice Channels” or “Text Channels”)"
+        label="Parent Category">
+        <Text.Normal>{channels.getChannel(channel?.parent_id)?.name ?? "None"}</Text.Normal>
+      </Field>
+      <Field
+        layout="horizontal"
+        description="NSFW channels are hidden behind a warning and require users to confirm they're 18+"
+        label="Age Restriction">
+        <Text.Normal>{channel.nsfw ? "18+" : "13+"}</Text.Normal>
+      </Field>
+    </Stack>
+  );
+};
+
+const UserOverwriteTab = ({
+  channel,
+  guild,
+}: {
+  channel: Types.Channel;
+  guild: Types.Guild;
+}): React.ReactElement => {
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [overwriteUsers, setOverwriteUsers] = React.useState<Types.User[]>([]);
+  const mapUsers = async (): Promise<void> => {
+    const userOverwrites = [];
+    for (const overwrite of Object.values(channel.permissionOverwrites)) {
+      if (overwrite?.type !== 1) continue;
+      if (!users.getUser(overwrite.id))
+        await ProfileActions.fetchProfile(overwrite.id, {
+          guildId: guild.id,
+          withMutualGuilds: false,
+        });
+
+      const user = users.getUser(overwrite.id);
+      if (
+        PermissionUtils.can({
+          permission: Permissions.VIEW_CHANNEL,
+          user,
+          context: channel,
+        }) &&
+        GuildMemberStore.isMember(guild.id, overwrite.id)
+      )
+        userOverwrites.push(users.getUser(overwrite.id));
+    }
+
+    if (userOverwrites.length) setOverwriteUsers(userOverwrites);
+
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    void mapUsers();
+  }, [channel.id, guild.id]);
+
+  if (loading)
+    return (
+      <Flex className="shc-detailFlex">
+        <Loader />
+      </Flex>
+    );
+  if (!overwriteUsers.length) return <NothingButWaumpus />;
+  return (
+    <Field helperText="Users that have specific overwrites for this channel">
+      <Flex className="shc-detailFlex">
+        {overwriteUsers.map((user) => (
+          <User key={user.id} user={user} guildId={guild.id} channelId={channel.id} />
+        ))}
+      </Flex>
+    </Field>
+  );
+};
+
+const ChannelOverwriteRolesTab = ({
+  channel,
+  guild,
+}: {
+  channel: Types.Channel;
+  guild: Types.Guild;
+}): React.ReactElement => {
+  const [channelSpecificRole, setChannelSpecificRole] = React.useState<Types.Role[]>([]);
+
+  React.useEffect(() => {
+    const channelRoles = Object.values(channel.permissionOverwrites).reduce((acc, overwrite) => {
+      if (overwrite?.type !== 0) return acc;
+      const ViewChannelString = Permissions.VIEW_CHANNEL.toString();
+      const role = guilds.getRole(guild.id, overwrite.id);
+      const canViewChannel =
+        overwrite.allow.toString().includes(ViewChannelString) ||
+        (role.permissions.toString().includes(ViewChannelString) &&
+          !overwrite.deny.toString().includes(ViewChannelString));
+
+      if (canViewChannel) acc.push(role);
+
+      return acc;
+    }, []);
+
+    setChannelSpecificRole(channelRoles);
+  }, [channel.id, guild.id]);
+
+  if (!channelSpecificRole.length) return <NothingButWaumpus />;
+
+  return (
+    <Field helperText="Roles that have specific overwrites for this channel">
+      <Flex className="shc-detailFlex">
+        {channelSpecificRole.map((role) => (
+          <RolePill.Pill
+            key={role.id}
+            canRemove={false}
+            className={`${RolePillClasses.role} shc-rolePill`}
+            disableBorderColor={true}
+            guildId={guild.id}
+            onRemove={() => null}
+            role={role}
+          />
+        ))}
+      </Flex>
+    </Field>
+  );
+};
+
+const AdminRolesTab = ({ guild }: { guild: Types.Guild }): React.ReactElement => {
+  const [adminRole, setAdminRole] = React.useState<Types.Role[]>([]);
+
+  React.useEffect(() => {
+    const showAdmin = SettingValues.get("showAdmin", DefaultSettings.showAdmin);
+    if (showAdmin === "false") return;
+
+    const adminRoles = Object.values(guilds.getRolesSnapshot(guild.id)).filter((role) => {
+      const isAdmin = role.permissions.toString().includes(Permissions.ADMINISTRATOR.toString());
+      const showInclude = showAdmin === "include";
+      const showExclude = showAdmin === "exclude" && !role.tags?.bot_id;
+
+      return isAdmin && (showInclude || showExclude);
+    });
+
+    setAdminRole(adminRoles);
+  }, [guild.id]);
+
+  if (!adminRole.length) return <NothingButWaumpus />;
+  return (
+    <Field helperText="Administrative Roles with server wide access">
+      <Flex className="shc-detailFlex">
+        {adminRole.map((role) => (
+          <RolePill.Pill
+            key={role.id}
+            canRemove={false}
+            className={`${RolePillClasses.role} shc-rolePill`}
+            disableBorderColor={true}
+            guildId={guild.id}
+            onRemove={() => null}
+            role={role}
+          />
+        ))}
+      </Flex>
+    </Field>
+  );
+};
+
+const ForumTagTab = ({ channel }: { channel: Types.Channel }): React.ReactElement => {
+  if (!channel?.availableTags.length) return <NothingButWaumpus />;
+  return (
+    <Field helperText="Tags Available in this forum channel">
+      <Flex className="shc-detailFlex">
+        {channel?.availableTags?.map?.((tag) => (
+          <ForumTags.Tag key={tag.id} selected={false} tag={tag} />
+        ))}
+      </Flex>
+    </Field>
+  );
+};
 
 export const TabBarItems = ({
   channel,
@@ -21,44 +250,43 @@ export const TabBarItems = ({
 }: {
   channel: Types.Channel;
 }): React.ReactElement[] => {
-  const { DiscordConstants } = Modules;
-  const TabBar = webpack.getFunctionBySource<Types.TabBar>(components, "this.tabBarRef");
+  const showPerms = SettingValues.get("showPerms", DefaultSettings.showPerms);
+  const showAdmin = SettingValues.get("showAdmin", DefaultSettings.showAdmin);
   const items = [];
   items.push(
-    <TabBar.Item id="general" className={`shc-details-tabbar-item`} key="general" {...props}>
+    <TabBar.Item id={TabTypes.GENERAL} key={TabTypes.GENERAL} {...props}>
       General Information
     </TabBar.Item>,
   );
-  if (SettingValues.get("showPerms", defaultSettings.showPerms) && channel.permissionOverwrites) {
+  if (showPerms && channel.permissionOverwrites) {
     items.push(
-      <TabBar.Item id="users" className={`shc-details-tabbar-item`} key="users" {...props}>
+      <TabBar.Item id={TabTypes.USERS} key={TabTypes.USERS} {...props}>
         Users
       </TabBar.Item>,
     );
     items.push(
-      <TabBar.Item id="channel" className={`shc-details-tabbar-item`} key="channel" {...props}>
-        Channel Specific
+      <TabBar.Item id={TabTypes.CHANNEL} key={TabTypes.CHANNEL} {...props}>
+        Channel Overwrite
       </TabBar.Item>,
     );
-    if (
-      SettingValues.get("showAdmin", defaultSettings.showAdmin) !== "false" &&
-      SettingValues.get("showAdmin", defaultSettings.showAdmin) !== "channel"
-    )
+    if (showAdmin !== "false" && showAdmin !== "channel")
       items.push(
-        <TabBar.Item id="admin" className={`shc-details-tabbar-item`} key="admin" {...props}>
+        <TabBar.Item id={TabTypes.ADMIN} key={TabTypes.ADMIN} {...props}>
           Admins
         </TabBar.Item>,
       );
   }
 
-  if (channel?.type === DiscordConstants.ChannelTypes.GUILD_FORUM)
+  if (channel?.type === ChannelTypes.GUILD_FORUM)
     items.push(
-      <TabBar.Item id="forum" className={`shc-details-tabbar-item`} key="forum" {...props}>
+      <TabBar.Item id={TabTypes.FORUM} key={TabTypes.FORUM} {...props}>
         Forum Tags
       </TabBar.Item>,
     );
+
   return items;
 };
+
 export const Tab = ({
   tab,
   channel,
@@ -68,301 +296,77 @@ export const Tab = ({
   channel: Types.Channel;
   guild: Types.Guild;
 }): React.ReactElement => {
-  const {
-    DiscordConstants,
-    GuildMemberStore,
-    PermissionUtils,
-    ProfileActions,
-    RolePill,
-    RolePillClasses,
-    LocaleManager,
-    ForumTagsModule,
-  } = Modules;
-  const ForumTags = webpack.getFunctionBySource<Types.ForumTags>(
-    ForumTagsModule,
-    "FORUM_TAG_A11Y_FILTER_BY_TAG",
-  );
-  const [channelSpecificRole, setChannelSpecificRole] = React.useState<Types.Role[]>([]);
-  const [adminRole, setAdminRole] = React.useState<Types.Role[]>([]);
-  const [user, setUser] = React.useState<Types.User[]>([]);
-  const mapOverwrites = async () => {
-    const showAdmin = SettingValues.get("showAdmin", defaultSettings.showAdmin);
-
-    const { roleOverwrites, userOverwrites } = Object.values(channel.permissionOverwrites).reduce(
-      (acc, overwrite) => {
-        if (overwrite?.type === 0) {
-          acc.roleOverwrites.push(overwrite);
-        } else if (overwrite?.type === 1) {
-          acc.userOverwrites.push(overwrite);
-        }
-        return acc;
-      },
-      { roleOverwrites: [], userOverwrites: [] },
-    );
-
-    const channelRoles = roleOverwrites.reduce((acc, role) => {
-      const roleObj = UltimateGuildStore.getRole(guild.id, role.id);
-      const hasAdmin = roleObj.permissions
-        .toString()
-        .includes(DiscordConstants.Permissions.ADMINISTRATOR.toString());
-      const canViewChannel =
-        role.allow.toString().includes(DiscordConstants.Permissions.VIEW_CHANNEL.toString()) ||
-        (roleObj.permissions
-          .toString()
-          .includes(DiscordConstants.Permissions.VIEW_CHANNEL.toString()) &&
-          !role.deny.toString().includes(DiscordConstants.Permissions.VIEW_CHANNEL.toString()));
-
-      if ((showAdmin !== "false" && hasAdmin) || canViewChannel) {
-        acc.push(roleObj);
-      }
-
-      return acc;
-    }, []);
-
-    setChannelSpecificRole(channelRoles);
-
-    if (showAdmin !== "false") {
-      const adminRoles = Object.values(UltimateGuildStore.getRolesSnapshot(guild.id)).filter(
-        (role) => {
-          const isAdmin = role.permissions
-            .toString()
-            .includes(DiscordConstants.Permissions.ADMINISTRATOR.toString());
-          const showInclude = showAdmin === "include";
-          const showExclude = showAdmin === "exclude" && !role.tags?.bot_id;
-
-          return isAdmin && (showInclude || showExclude);
-        },
-      );
-
-      setAdminRole(adminRoles);
-    }
-
-    for (const user of userOverwrites) {
-      if (!UltimateUserStore.getUser(user.id))
-        await ProfileActions.fetchProfile(user.id, {
-          guildId: guild.id,
-          withMutualGuilds: false,
-        });
-    }
-
-    const filteredUserOverwrites = userOverwrites.filter((user) => {
-      const ultimateUser = UltimateUserStore.getUser(user.id);
-      return (
-        PermissionUtils.can({
-          permission: DiscordConstants.Permissions.VIEW_CHANNEL,
-          user: ultimateUser,
-          context: channel,
-        }) && GuildMemberStore.isMember(guild.id, user.id)
-      );
-    });
-
-    if (filteredUserOverwrites.length) {
-      setUser(filteredUserOverwrites.map((user) => UltimateUserStore.getUser(user.id)));
-    }
-  };
-
-  React.useEffect(() => {
-    mapOverwrites();
-  }, [channel.id, guild.id]);
-
   switch (tab) {
-    case "general": {
-      return (
-        <FormItem title="General Info About the channel" className="shc-details-content-header">
-          <Flex
-            className="shc-detailFlex shc-generalDetails"
-            justify={Flex.Justify.AROUND}
-            wrap={Flex.Wrap.WRAP}
-            direction={Flex.Direction.VERTICAL}>
-            <FormItem
-              divider={true}
-              noteClassName="shc-generalDetails-notes"
-              note="The time (in seconds) users must wait before sending another message in this text channel"
-              notePosition={"after"}
-              title="Slowmode">
-              <Text.Normal>{Utils.convertToHMS(channel.rateLimitPerUser ?? 0)}</Text.Normal>
-            </FormItem>
-            <FormItem
-              divider={true}
-              noteClassName="shc-generalDetails-notes"
-              note="The audio quality of this voice channel, measured in kilobits per second (Kbps)"
-              notePosition={"after"}
-              title="Bitrate">
-              <Text.Normal>{`${Number(channel.bitrate) / 1000}`} Kbps</Text.Normal>
-            </FormItem>
-            <FormItem
-              divider={true}
-              noteClassName="shc-generalDetails-notes"
-              note="The maximum number of members that can opacity: 0.5;join this voice channel at once, A value of 0 means there's no limit"
-              notePosition={"after"}
-              title="User Limit">
-              <Text.Normal>{`${Number(channel.userLimit)}`} Users</Text.Normal>
-            </FormItem>
-            {channel.lastPinTimestamp && (
-              <FormItem
-                divider={true}
-                noteClassName="shc-generalDetails-notes"
-                note="The date and time when the last pinned message was added to this channel"
-                notePosition={"after"}
-                title="Last Message Pinned">
-                <Text.Normal>
-                  {new Date(channel.lastPinTimestamp).toLocaleString(LocaleManager._chosenLocale)}
-                </Text.Normal>
-              </FormItem>
-            )}
-            <FormItem
-              divider={true}
-              noteClassName="shc-generalDetails-notes"
-              note="The category this channel belongs to (like “Voice Channels” or “Text Channels”)"
-              notePosition={"after"}
-              title="Parent Category">
-              <Text.Normal>
-                {UltimateChannelStore.getChannel(channel?.parent_id)?.name ?? "None"}
-              </Text.Normal>
-            </FormItem>
-            <FormItem
-              divider={true}
-              noteClassName="shc-generalDetails-notes"
-              note="NSFW channels are hidden behind a warning and require users to confirm they're 18+"
-              notePosition={"after"}
-              title="Age Restriction">
-              <Text.Normal>{channel.nsfw ? "18+" : "13+"}</Text.Normal>
-            </FormItem>
-          </Flex>
-        </FormItem>
-      );
+    case TabTypes.GENERAL:
+      return <GeneralTab channel={channel} />;
+    case TabTypes.USERS: {
+      return <UserOverwriteTab channel={channel} guild={guild} />;
     }
-    case "users": {
-      return (
-        <FormItem
-          title="Users that have specific overwrites for this channel"
-          className="shc-details-content-header">
-          <Flex className="shc-detailFlex">
-            {user.length ? (
-              user.map((user) => <User user={user} guildId={guild.id} channelId={channel.id} />)
-            ) : (
-              <NothingButWaumpus />
-            )}
-          </Flex>
-        </FormItem>
-      );
-    }
-    case "channel": {
-      return (
-        <FormItem
-          title="Roles that have specific overwrites for this channel"
-          className="shc-details-content-header">
-          <Flex className="shc-detailFlex">
-            {channelSpecificRole.length ? (
-              channelSpecificRole.map((role) => (
-                <RolePill
-                  key={role.id}
-                  canRemove={false}
-                  className={`${RolePillClasses.role} shc-rolePill`}
-                  disableBorderColor={true}
-                  guildId={guild.id}
-                  onRemove={() => null}
-                  role={role}
-                />
-              ))
-            ) : (
-              <NothingButWaumpus />
-            )}
-          </Flex>
-        </FormItem>
-      );
-    }
-    case "admin": {
-      return (
-        <FormItem
-          title="Administrative Roles with server wide access"
-          className="shc-details-content-header">
-          <Flex className="shc-detailFlex">
-            {adminRole.length ? (
-              adminRole.map((role) => (
-                <RolePill
-                  key={role.id}
-                  canRemove={false}
-                  className={`${RolePillClasses.role} shc-rolePill`}
-                  disableBorderColor={true}
-                  guildId={guild.id}
-                  onRemove={() => null}
-                  role={role}
-                />
-              ))
-            ) : (
-              <NothingButWaumpus />
-            )}
-          </Flex>
-        </FormItem>
-      );
-    }
-    case "forum": {
-      return (
-        <FormItem
-          title="Tags Available in this forum channel"
-          className="shc-details-content-header">
-          <Flex className="shc-detailFlex">
-            {channel?.availableTags.length ? (
-              channel?.availableTags?.map?.((tag) => (
-                <ForumTags key={tag.id} selected={false} tag={tag} />
-              ))
-            ) : (
-              <NothingButWaumpus />
-            )}
-          </Flex>
-        </FormItem>
-      );
-    }
-    default: {
+    case TabTypes.CHANNEL:
+      return <ChannelOverwriteRolesTab channel={channel} guild={guild} />;
+    case TabTypes.ADMIN:
+      return <AdminRolesTab guild={guild} />;
+    case TabTypes.FORUM:
+      return <ForumTagTab channel={channel} />;
+    default:
       return <NothingButWaumpus />;
-    }
   }
 };
-export default React.memo((props: Types.DetailsPopoutProps) => {
-  const { ChannelItem } = Modules;
-  const TabBar = webpack.getFunctionBySource<Types.TabBar>(components, "this.tabBarRef");
-  const ChannelItemIcon = webpack.getFunctionBySource<Types.ChannelItem["ChannelItemIcon"]>(
-    ChannelItem,
-    ".iconContainerWithGuildIcon,",
-  );
-  const [open, setOpen] = React.useState<string>("general");
-  return (
-    <Modal.ModalRoot className="shc-details-modal" size="large" {...props}>
-      <Modal.ModalHeader className="shc-details-header">
-        <Text.H2
-          style={{
-            marginTop: 10,
-          }}>
-          <Flex style={{ alignItems: "center" }}>
-            <ChannelItemIcon
-              channel={props.channel}
-              guild={props.guild}
-              original={true}
-              hasActiveThreads={false}
-              locked={false}
-              className="shc-details-channelIcon"
-            />
-            {props.channel.name}'s Details
-          </Flex>
-        </Text.H2>
-        <Modal.ModalCloseButton onClick={props.onClose} />
-      </Modal.ModalHeader>
-      <TabBar
-        type="top"
-        look="brand"
-        className={`shc-details-tabbar`}
-        selectedItem={open}
-        onItemSelect={setOpen}>
-        <TabBarItems channel={props.channel} />
-      </TabBar>
-      <Modal.ModalContent>
+
+export default React.memo(
+  ({
+    channel,
+    guild,
+    onClose,
+
+    ...props
+  }: {
+    channel: Types.Channel;
+    guild: Types.Guild;
+    onClose?: (...args: unknown[]) => unknown;
+    transitionState: number;
+  }) => {
+    const ChannelItemIcon = webpack.getComponentBySource<ChannelItemIcon>(
+      ChannelItem,
+      "containerClassName:",
+    );
+
+    const [open, setOpen] = React.useState<string>("general");
+
+    return (
+      <Modal.ModalRoot className="shc-details-modal" size="large" {...props}>
         <ErrorBoundary>
-          <div key={open}>
-            <Tab tab={open} channel={props.channel} guild={props.guild} />
-          </div>
+          <span className="shc-details-header">
+            <Text color="text-strong" variant="heading-xl/bold">
+              <Flex style={{ gap: "5px", alignItems: "center" }}>
+                <ChannelItemIcon
+                  channel={channel}
+                  guild={guild}
+                  original={true}
+                  hasActiveThreads={false}
+                  locked={false}
+                  className="shc-details-channelIcon"
+                />
+                {channel.name}
+              </Flex>
+            </Text>
+            <Modal.ModalCloseButton onClick={onClose} />
+          </span>
+          <TabBar
+            type="top"
+            look="brand"
+            className="shc-details-tabbar"
+            selectedItem={open}
+            onItemSelect={setOpen}>
+            <TabBarItems channel={channel} />
+          </TabBar>
+          <Modal.ModalContent>
+            <div key={open} className="shc-details-content" {...{ tab: open }}>
+              <Tab tab={open} channel={channel} guild={guild} />
+            </div>
+          </Modal.ModalContent>
         </ErrorBoundary>
-      </Modal.ModalContent>
-    </Modal.ModalRoot>
-  );
-});
+      </Modal.ModalRoot>
+    );
+  },
+);

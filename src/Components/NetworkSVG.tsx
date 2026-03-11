@@ -1,7 +1,8 @@
 import { React } from "replugged/common";
-import { PluginLogger, SettingValues } from "../index";
-import { defaultSettings } from "../lib/consts";
-import Utils from "../lib/utils";
+import { PluginLogger, SettingValues } from "@this";
+import { DefaultSettings } from "@Consts";
+import Utils from "@Utils";
+
 export default React.memo((props: Partial<React.HTMLAttributes<SVGElement>>) => {
   const [svgToMap, setSvgToMap] = React.useState<{
     viewBox?: string;
@@ -20,11 +21,11 @@ export default React.memo((props: Partial<React.HTMLAttributes<SVGElement>>) => 
   }>({});
   const abortion = new AbortController();
   React.useEffect(() => {
-    const fetchSvgToObject = async () => {
+    const fetchSvgToObject = async (): Promise<void> => {
       try {
         const svgURL = SettingValues.get(
           "customHiddenChannelIcon",
-          defaultSettings.customHiddenChannelIcon,
+          DefaultSettings.customHiddenChannelIcon,
         );
         const svgTexts = await fetch(svgURL, { signal: abortion.signal }).then((res) => res.text());
         if (!Utils.isTextSvgHtml(svgTexts)) {
@@ -65,13 +66,13 @@ export default React.memo((props: Partial<React.HTMLAttributes<SVGElement>>) => 
     void fetchSvgToObject();
     return () => abortion.abort();
   }, [
-    SettingValues.get("customHiddenChannelIcon", defaultSettings.customHiddenChannelIcon),
+    SettingValues.get("customHiddenChannelIcon", DefaultSettings.customHiddenChannelIcon),
     props,
   ]);
   return (
     <svg {...props} viewBox={svgToMap.viewBox}>
       {svgToMap.children?.map(([TagName, attributeValue]) => (
-        <TagName {...attributeValue} fill="currentColor" />
+        <TagName key={TagName} {...attributeValue} fill="currentColor" />
       ))}
     </svg>
   );

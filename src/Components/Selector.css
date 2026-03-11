@@ -1,0 +1,11 @@
+.shc-selectorSwitchContainer {
+  max-height: fit-content;
+  gap: var(--space-12);
+}
+
+.shc-noIcon {
+  border-radius: 50%;
+  margin-right: 10px;
+  width: 48px;
+  height: 48px;
+}

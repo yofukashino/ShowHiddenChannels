@@ -1,4 +1,4 @@
-export const defaultSettings = {
+export const DefaultSettings = {
   hiddenChannelIcon: "lock",
   customHiddenChannelIcon: "",
   hiddenChannelImg: "eye",

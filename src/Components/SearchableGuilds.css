@@ -1,0 +1,12 @@
+.shc-noResultContainer,
+.shc-selectorContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.shc-noResultContainer {
+  align-items: center;
+  justify-content: center;
+  min-height: 25em;
+}

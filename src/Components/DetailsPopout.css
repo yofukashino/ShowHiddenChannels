@@ -1,0 +1,51 @@
+.shc-details-tabbar {
+  padding-left: 16px;
+}
+
+.shc-detailFlex {
+  gap: 10px;
+  padding-top: 15px;
+}
+
+.shc-detailFlex:not(.shc-generalDetails) {
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  text-align: center;
+  flex-wrap: wrap;
+  padding-bottom: 15px;
+}
+
+.shc-details-header {
+  opacity: 1 !important;
+  display: flex;
+  flex-direction: row;
+  margin: 14px;
+  justify-content: space-between;
+}
+
+.shc-details-header .shc-details-channelIcon {
+  color: var(--header-primary);
+}
+
+.shc-details-content {
+  min-height: 400px;
+  max-height: 400px;
+  min-width: 800px;
+  max-width: 800px;
+  margin: 8px 8px 20px 8px;
+  display: flex;
+}
+
+.shc-details-content:not([tab="general"]) {
+  text-align: center;
+}
+
+.shc-details-content-header {
+  text-align: center;
+  padding-top: 15px;
+  min-height: 315px;
+  max-height: 315px;
+  min-width: 768px;
+  max-width: 768px;
+}

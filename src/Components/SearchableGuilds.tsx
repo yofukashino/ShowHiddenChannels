@@ -1,69 +1,49 @@
-import { settings, webpack } from "replugged";
-import { React, guilds as UltimateGuildStore, components } from "replugged/common";
-import Modules from "../lib/requiredModules";
-import IconSwitch from "./IconSwitch";
-import Utils from "../lib/utils";
-import Types from "../types";
+import { React, classNames, guilds, marginStyles } from "replugged/common";
+import { Divider, SearchBar } from "replugged/components";
+import type Types from "@Types";
 
-export default <
-  T extends Record<string, Types.Jsonifiable>,
-  D extends keyof T,
-  K extends Extract<keyof T, string>,
->({
-  SettingManager,
-  path,
-}: {
-  SettingManager: settings.SettingsManager<T, D>;
-  path: `${K}.${string}` | K;
-}) => {
-  const { IconUtils } = Modules;
-  const { SearchBar, Divider } = webpack.getExportsForProps<Types.PopoutList>(components, [
-    "SearchBar",
-    "Divider",
-  ]);
-  const [searchValue, setSearchValue] = React.useState([]);
-  const filteredGuildsWithState = Object.values(UltimateGuildStore.getGuilds())
-    .map((Guild: Types.Guild) => ({
-      Guild,
-      ...(Utils.useSetting(SettingManager, `${path}.${Guild.id}`, false as never) as {
-        value: boolean;
-        onChange: (e: boolean) => void;
-      }),
-    }))
-    .filter(({ Guild }: { Guild: Types.Guild }) =>
-      searchValue
-        ? searchValue.every((value) => Guild?.name?.toLowerCase().includes(value.toLowerCase())) ||
-          searchValue.every((value) =>
-            Guild?.description?.toLowerCase().includes(value.toLowerCase()),
-          ) ||
-          (searchValue.some((value) => Guild?.name?.toLowerCase().includes(value.toLowerCase())) &&
-            searchValue.some((value) =>
-              Guild?.description?.toLowerCase().includes(value.toLowerCase()),
-            )) ||
-          searchValue.some((value) => Guild?.id?.includes(value))
-        : true,
-    )
-    .sort((a, b) => a.Guild.name.localeCompare(b.Guild.name));
+import GuildSelector from "./Selector";
+import "./SearchableGuilds.css";
+
+export default (): React.ReactElement => {
+  const [searchValue, setSearchValue] = React.useState<string>("");
+
+  const isFiltered = React.useCallback(
+    (guild: Types.Guild) => {
+      if (!searchValue) return true;
+      const words = searchValue.split(" ").map((w) => w.toLowerCase());
+      return words.some(
+        (w) =>
+          guild?.name?.toLowerCase().includes(w) ||
+          guild?.description?.toLowerCase().includes(w) ||
+          guild?.id?.toLowerCase().includes(w),
+      );
+    },
+    [searchValue],
+  );
+
+  const guildRecords = Object.values(guilds.getGuilds()).filter(isFiltered);
 
   return (
-    <div className={`shc-guild-search`}>
+    <div className={classNames(marginStyles.marginTop20)}>
       <SearchBar
         autoFocus={true}
         placeholder="Search Guilds"
-        query={searchValue.join(" ") || ""}
-        onChange={(query) => setSearchValue(query.split(" "))}
-        onClear={() => setSearchValue([])}
+        query={searchValue}
+        onChange={setSearchValue}
+        onClear={() => setSearchValue("")}
       />
       <Divider />
-      {filteredGuildsWithState.map(({ Guild, ...state }) => (
-        <IconSwitch
-          key={Guild.id} // Don't forget to add a unique key
-          title={Guild.name}
-          note={Guild.description}
-          icon={IconUtils.getGuildIconURL(Guild) ?? Utils.getAcronym(Guild.name)}
-          {...state}
-        />
-      ))}
+      <div
+        key={guildRecords.length ? "selectorContainer" : "noResultContainer"}
+        className={classNames(marginStyles.marginBottom20, marginStyles.marginTop20, {
+          "shc-noResultContainer": !guildRecords.length,
+          "shc-selectorContainer": guildRecords.length,
+        })}>
+        {guildRecords.map((guild) => (
+          <GuildSelector id={guild.id} path="blacklistedGuilds" guild={guild} key={guild.id} />
+        ))}
+      </div>
     </div>
   );
 };
